@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "545497575515",
+    "firebase_url": "https://litpic-f293c.firebaseio.com",
+    "project_id": "litpic-f293c",
+    "storage_bucket": "litpic-f293c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:545497575515:android:321a6898f5eb85cebe8f7e",
+        "android_client_info": {
+          "package_name": "com.io.litpic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "545497575515-cd32d4nevss7n0o257ngf2anc27d9r8e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD24tbpWXaIha5c4JIxD3yrct2_NP3FC-I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "545497575515-cd32d4nevss7n0o257ngf2anc27d9r8e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "545497575515-bpp9b96alehp65v2s3c97isof4n2u5qr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.litpic"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-package com.example.litpic
+package com.io.litpic
 
 import android.os.Bundle
 

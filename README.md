@@ -25,7 +25,8 @@ git init
 git remote add origin [my-repo]
 git fetch
 git checkout origin/master -ft
-(If shit not pushing, use 'git push -f origin master')
+## git branch --set-upstream-to=origin/master master
+## git push -f origin master
 
 # ERROR FIX
 pod update

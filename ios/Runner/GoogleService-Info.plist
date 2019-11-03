@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>545497575515-bpp9b96alehp65v2s3c97isof4n2u5qr.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.545497575515-bpp9b96alehp65v2s3c97isof4n2u5qr</string>
+	<key>API_KEY</key>
+	<string>AIzaSyANcciL5DPZpQeTkLF8KDOOJHuRAupTNwc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>545497575515</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.litpic</string>
+	<key>PROJECT_ID</key>
+	<string>litpic-f293c</string>
+	<key>STORAGE_BUCKET</key>
+	<string>litpic-f293c.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:545497575515:ios:9f6ed29f1ff6ecd1be8f7e</string>
+	<key>DATABASE_URL</key>
+	<string>https://litpic-f293c.firebaseio.com</string>
+</dict>
+</plist>
