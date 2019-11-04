@@ -5,8 +5,10 @@ import 'package:litpic/pages/holder.dart';
 import 'package:litpic/services/auth.dart';
 import 'package:litpic/services/db.dart';
 import 'package:litpic/services/fcm_notification.dart';
+import 'package:litpic/services/image_cart.dart';
 import 'package:litpic/services/modal.dart';
 import 'package:litpic/services/package_device_info.dart';
+import 'package:litpic/services/stripe.dart';
 import 'package:litpic/services/validater.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -18,10 +20,12 @@ void main() {
   getIt.registerSingleton<DB>(DBImplementation(), signalsReady: true);
   getIt.registerSingleton<FCMNotification>(FCMNotificationImplementation(),
       signalsReady: true);
-
+  getIt.registerSingleton<ImageCart>(ImageCartImplementation(),
+      signalsReady: true);
   getIt.registerSingleton<Modal>(ModalImplementation(), signalsReady: true);
   getIt.registerSingleton<PackageDeviceInfo>(PackageDeviceInfoImplementation(),
       signalsReady: true);
+  getIt.registerSingleton<Stripe>(StripeImplementation(), signalsReady: true);
   getIt.registerSingleton<Validator>(ValidatorImplementation(),
       signalsReady: true);
 

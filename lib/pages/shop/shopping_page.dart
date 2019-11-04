@@ -7,10 +7,12 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:litpic/common/logged_out_view.dart';
 import 'package:litpic/common/spinner.dart';
-import 'package:litpic/pages/authentication/login_page.dart';
+import 'package:litpic/pages/shop/checkout_page.dart';
+import 'package:litpic/services/image_cart.dart';
 import 'package:litpic/services/modal.dart';
 import 'package:litpic/services/auth.dart';
 import 'package:litpic/models/database/user.dart';
+import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 
 class ShoppingPage extends StatefulWidget {
   @override
@@ -24,12 +26,13 @@ class ShoppingPageState extends State<ShoppingPage> {
   bool _isLoggedIn = false;
 
   File _image;
-  List<File> _images;
+  List<File> _images = List<File>();
+
+  final double price = 15.00;
 
   @override
   void initState() {
     super.initState();
-
     getIt<Auth>().onAuthStateChanged().listen(
       (firebaseUser) {
         setState(
@@ -48,6 +51,7 @@ class ShoppingPageState extends State<ShoppingPage> {
 
   _load() async {
     try {
+      _images = getIt<ImageCart>().getImages();
       _currentUser = await getIt<Auth>().getCurrentUser();
       setState(
         () {
@@ -147,7 +151,34 @@ class ShoppingPageState extends State<ShoppingPage> {
       return;
     }
 
-    _images.add(_image);
+    setState(() {
+      getIt<ImageCart>().addImage(image: _image);
+      _image = null;
+    });
+  }
+
+  _emptyImages() async {
+    bool confirm = await getIt<Modal>().showConfirmation(
+        context: context, title: 'Empty Images', message: 'Are you sure?');
+    if (confirm) {
+      getIt<ImageCart>().deleteImages();
+      setState(() {});
+    }
+  }
+
+  _deleteImage({@required File image}) async {
+    bool confirm = await getIt<Modal>().showConfirmation(
+        context: context, title: 'Delete Image', message: 'Are you sure?');
+    if (confirm) {
+      getIt<ImageCart>().deleteImage(image: image);
+      setState(() {});
+    }
+  }
+
+  String _price() {
+    FlutterMoneyFormatter fmf =
+        FlutterMoneyFormatter(amount: price * _images.length);
+    return fmf.output.symbolOnLeft;
   }
 
   @override
@@ -183,12 +214,73 @@ class ShoppingPageState extends State<ShoppingPage> {
                   ),
           ),
         ),
+        Padding(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'Images',
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              Text(
+                _price(),
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          height: 100,
+          child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: _images.length,
+            itemBuilder: (BuildContext buildContext, int index) {
+              return _cartImage(image: _images[index]);
+            },
+          ),
+        ),
         RaisedButton(
           color: Colors.white,
-          child: Text('Add Image To Cart'),
+          child: Text('Add Image To Images'),
           onPressed: () => _addImageToCart(),
-        )
+        ),
+        _images.isNotEmpty
+            ? RaisedButton(
+                color: Colors.white,
+                child: Text('Proceed to Checkout'),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CheckoutPage(
+                      images: _images,
+                    ),
+                  ),
+                ),
+              )
+            : Container(),
+        _images.isNotEmpty
+            ? RaisedButton(
+                color: Colors.white,
+                child: Text('Empty Images'),
+                onPressed: () => _emptyImages(),
+              )
+            : Container()
       ],
+    );
+  }
+
+  Widget _cartImage({@required File image}) {
+    return GestureDetector(
+      onTap: () => _deleteImage(image: image),
+      child: Container(
+        width: 100,
+        child: Image(
+          image: FileImage(image),
+          fit: BoxFit.contain,
+        ),
+      ),
     );
   }
 }

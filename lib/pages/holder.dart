@@ -16,12 +16,7 @@ class HolderState extends State<Holder> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
 
-  final List<String> _titles = [
-    'Lit Pic',
-    'Shopping',
-    'Profile',
-    'Settings'
-  ];
+  final List<String> _titles = ['Lit Pic', 'Shopping', 'Profile', 'Settings'];
 
   final List<Widget> _children = [
     Container(
@@ -58,8 +53,9 @@ class HolderState extends State<Holder> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
-           _titles[_currentIndex],
+          _titles[_currentIndex],
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -71,12 +67,19 @@ class HolderState extends State<Holder> {
         color: Colors.black,
         backgroundColor: _colors[_currentIndex],
         items: <Widget>[
+          //           GestureDetector(
+          //   child: Icon(
+          //     MdiIcons.home,
+          //     color: _currentIndex == 0 ? _colors[_currentIndex] : Colors.white,
+          //   ),
+          //   onTap: () => _currentIndex = 1,
+          // ),
           Icon(
             MdiIcons.home,
             color: _currentIndex == 0 ? _colors[_currentIndex] : Colors.white,
           ),
           Icon(
-            Icons.shop,
+            Icons.shopping_cart,
             color: _currentIndex == 1 ? _colors[_currentIndex] : Colors.white,
           ),
           Icon(
