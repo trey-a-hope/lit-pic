@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:heart/common/simple_navbar.dart';
-import 'package:heart/pages/landing_page.dart';
-import 'package:heart/services/auth.dart';
-import 'package:heart/services/modal.dart';
-import 'package:heart/services/validater.dart';
+import 'package:litpic/pages/authentication/sign_up_page.dart';
+import 'package:litpic/services/validater.dart';
+import 'package:litpic/pages/landing_page.dart';
+import 'package:litpic/services/auth.dart';
+import 'package:litpic/services/modal.dart';
+import 'package:litpic/common/simple_navbar.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class LoginPage extends StatefulWidget {
@@ -34,12 +35,7 @@ class LoginPageState extends State<LoginPage>
         );
         await getIt<Auth>().signInWithEmailAndPassword(
             email: _emailController.text, password: _passwordController.text);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LandingPage(),
-          ),
-        );
+        Navigator.pop(context);
       } catch (e) {
         setState(
           () {
@@ -117,11 +113,27 @@ class LoginPageState extends State<LoginPage>
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: RaisedButton(
-                    child: Text('Login'),
-                    onPressed: () {
-                      _login();
-                    },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      RaisedButton(
+                        child: Text('Login'),
+                        onPressed: () {
+                          _login();
+                        },
+                      ),
+                      RaisedButton(
+                        child: Text('Sign Up'),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SignUpPage(),
+                            ),
+                          );
+                        },
+                      )
+                    ],
                   ),
                 )
               ],

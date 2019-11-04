@@ -1,4 +1,4 @@
-name: heart
+name: litpic
 description: Mobile app for requested customed 3D printing lithophanes.
 author: Trey Hope <tr3designs.prints@gmail.com>
 
@@ -14,6 +14,7 @@ dependencies:
   algolia: ^0.1.6+1
   cached_network_image: ^1.1.1
   cloud_firestore: ^0.12.9+1
+  curved_navigation_bar: ^0.3.1
   dash_chat: ^1.0.8
   device_info: ^0.4.0+2
   firebase_auth: ^0.14.0+3

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
-import 'package:heart/pages/landing_page.dart';
-import 'package:heart/services/auth.dart';
-import 'package:heart/services/db.dart';
-import 'package:heart/services/fcm_notification.dart';
-import 'package:heart/services/modal.dart';
-import 'package:heart/services/package_device_info.dart';
-import 'package:heart/services/validater.dart';
+import 'package:litpic/pages/holder.dart';
+import 'package:litpic/services/auth.dart';
+import 'package:litpic/services/db.dart';
+import 'package:litpic/services/fcm_notification.dart';
+import 'package:litpic/services/modal.dart';
+import 'package:litpic/services/package_device_info.dart';
+import 'package:litpic/services/validater.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -39,14 +39,14 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'HEART',
+      title: 'Lit Pic',
       theme: ThemeData(
         brightness: Brightness.light,
         accentColor: Colors.black,
         primaryColor: Colors.black,
         fontFamily: 'Montserrat',
       ),
-      home: LandingPage(),
+      home: Holder(),
     );
   }
 }

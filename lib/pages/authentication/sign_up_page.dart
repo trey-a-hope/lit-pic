@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
-import 'package:heart/common/simple_navbar.dart';
-import 'package:heart/models/database/user.dart';
-import 'package:heart/services/auth.dart';
-import 'package:heart/services/db.dart';
-import 'package:heart/services/modal.dart';
-import 'package:heart/services/validater.dart';
+import 'package:litpic/common/simple_navbar.dart';
+import 'package:litpic/models/database/user.dart';
+import 'package:litpic/services/auth.dart';
+import 'package:litpic/services/db.dart';
+import 'package:litpic/services/modal.dart';
+import 'package:litpic/services/validater.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -17,7 +17,8 @@ class SignUpPage extends StatefulWidget {
 
 class SignUpPageState extends State<SignUpPage>
     with SingleTickerProviderStateMixin {
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -62,12 +63,12 @@ class SignUpPageState extends State<SignUpPage>
             fcmToken: null,
             time: DateTime.now(),
             uid: firebaseUser.uid,
-            username: _usernameController.text,
+            username: _firstNameController.text,
           );
 
           await getIt<DB>().createUser(user: user);
 
-          //Navigator.of(context).pop();
+          Navigator.of(context).pop();
         } catch (e) {
           setState(
             () {
@@ -109,7 +110,7 @@ class SignUpPageState extends State<SignUpPage>
                   child: FractionallySizedBox(
                     widthFactor: 0.9,
                     child: Container(
-                      height: _autoValidate ? 335 : 270,
+                      height: _autoValidate ? 405 : 340,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: Colors.white,
@@ -127,7 +128,9 @@ class SignUpPageState extends State<SignUpPage>
                           autovalidate: _autoValidate,
                           child: Column(
                             children: <Widget>[
-                              usernameFormField(),
+                              firstNameFormField(),
+                              SizedBox(height: 30),
+                              lastNameFormField(),
                               SizedBox(height: 30),
                               emailFormField(),
                               SizedBox(height: 30),
@@ -154,18 +157,37 @@ class SignUpPageState extends State<SignUpPage>
     );
   }
 
-  Widget usernameFormField() {
+  Widget firstNameFormField() {
     return TextFormField(
-      controller: _usernameController,
+      controller: _firstNameController,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
       // maxLength: MyFormData.nameCharLimit,
       onFieldSubmitted: (term) {},
       validator: getIt<Validator>().isEmpty,
       onSaved: (value) {},
       decoration: InputDecoration(
-        hintText: 'Username',
+        hintText: 'First Name',
+        icon: Icon(Icons.face),
+        fillColor: Colors.white,
+      ),
+    );
+  }
+
+
+  Widget lastNameFormField() {
+    return TextFormField(
+      controller: _lastNameController,
+      keyboardType: TextInputType.text,
+      textInputAction: TextInputAction.done,
+      maxLengthEnforced: true,
+      // maxLength: MyFormData.nameCharLimit,
+      onFieldSubmitted: (term) {},
+      validator: getIt<Validator>().isEmpty,
+      onSaved: (value) {},
+      decoration: InputDecoration(
+        hintText: 'Last Name',
         icon: Icon(Icons.face),
         fillColor: Colors.white,
       ),

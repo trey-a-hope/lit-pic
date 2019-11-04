@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:heart/models/database/user.dart';
+import 'package:litpic/models/database/user.dart';
 
 abstract class Auth {
   Future<User> getCurrentUser();

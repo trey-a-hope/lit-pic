@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:heart/services/validater.dart';
+import 'package:litpic/services/validater.dart';
 
 abstract class Modal {
   void showInSnackBar(

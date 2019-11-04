@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:heart/models/database/user.dart';
+import 'package:litpic/models/database/user.dart';
 
 abstract class DB {
 

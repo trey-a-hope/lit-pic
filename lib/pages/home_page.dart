@@ -4,11 +4,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
-import 'package:heart/common/spinner.dart';
-import 'package:heart/models/database/user.dart';
-import 'package:heart/services/auth.dart';
-import 'package:heart/services/db.dart';
-import 'package:heart/services/modal.dart';
+import 'package:litpic/common/spinner.dart';
+import 'package:litpic/models/database/user.dart';
+import 'package:litpic/services/auth.dart';
+import 'package:litpic/services/db.dart';
+import 'package:litpic/services/modal.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,7 +28,7 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _load();
+    // _load();
   }
 
   _load() async {
@@ -92,58 +92,9 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              MdiIcons.faceProfile,
-              color: Colors.grey,
-            ),
-            onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => ProfilePage(),
-              //   ),
-              // );
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              MdiIcons.settings,
-              color: Colors.grey,
-            ),
-            onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => SettingsPage(),
-              //   ),
-              // );
-            },
-          )
-        ],
-        automaticallyImplyLeading: false,
-        iconTheme: IconThemeData(
-          color: Colors.black, //change your color here
-        ),
-        backgroundColor: Colors.white,
-        title: Text(
-          'HEART',
-          style: TextStyle(
-              color: Colors.red[700],
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2.0),
-        ),
-      ),
-      key: _scaffoldKey,
-      backgroundColor: Colors.white,
-      body: _isLoading
-          ? Spinner()
-          : Center(
-              child: Text('Center Page'),
-            ),
-    );
+    return ListView(
+            children: <Widget>[
+            ],
+          );
   }
 }
