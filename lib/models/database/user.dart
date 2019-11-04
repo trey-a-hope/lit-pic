@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class User {
-  final String email;//delete
-  final String username;//delete
+  final String email; //delete
+  final String username; //delete
 
   final String id;
   final String uid;
-   String customerID;
+  String customerID;
   final String fcmToken;
-  final DateTime time;
+  final Timestamp timestamp;
   final bool isAdmin;
   final String imgUrl;
 
@@ -19,20 +19,20 @@ class User {
       @required this.imgUrl,
       @required this.isAdmin,
       @required this.fcmToken,
-      @required this.time,
+      @required this.timestamp,
       @required this.uid,
       @required this.username});
 
-  static User extractDocument(DocumentSnapshot ds) {
+  factory User.fromDoc({@required DocumentSnapshot doc}) {
     return User(
-        email: ds.data['email'],
-        id: ds.data['id'],
-        imgUrl: ds.data['imgUrl'],
-        fcmToken: ds.data['fcmToken'],
-        isAdmin: ds.data['isAdmin'],
-        time: ds.data['time'].toDate(),
-        uid: ds.data['uid'],
-        username: ds.data['username']);
+        email: doc.data['email'],
+        id: doc.data['id'],
+        imgUrl: doc.data['imgUrl'],
+        fcmToken: doc.data['fcmToken'],
+        isAdmin: doc.data['isAdmin'],
+        timestamp: doc.data['time'],
+        uid: doc.data['uid'],
+        username: doc.data['username']);
   }
 
   Map<String, dynamic> toMap() {
@@ -42,7 +42,7 @@ class User {
       'imgUrl': imgUrl,
       'fcmToken': fcmToken,
       'isAdmin': isAdmin,
-      'time': time,
+      'time': timestamp,
       'uid': uid,
       'username': username
     };

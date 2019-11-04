@@ -4,7 +4,8 @@ import 'package:flutter/rendering.dart';
 import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
-import 'package:litpic/pages/shop/shopping_page.dart';
+import 'package:litpic/pages/shop/cart_page.dart';
+import 'package:litpic/pages/shop/shop_page.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class Holder extends StatefulWidget {
@@ -16,7 +17,13 @@ class HolderState extends State<Holder> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
 
-  final List<String> _titles = ['Lit Pic', 'Shopping', 'Profile', 'Settings'];
+  final List<String> _titles = [
+    'Lit Pic',
+    'Shop',
+    'Cart',
+    'Profile',
+    'Settings'
+  ];
 
   final List<Widget> _children = [
     Container(
@@ -25,7 +32,11 @@ class HolderState extends State<Holder> {
     ),
     Container(
       color: Colors.blue,
-      child: ShoppingPage(),
+      child: ShopPage(),
+    ),
+    Container(
+      color: Colors.purpleAccent,
+      child: CartPage(),
     ),
     Container(
       color: Colors.cyan,
@@ -40,6 +51,7 @@ class HolderState extends State<Holder> {
   final List<Color> _colors = [
     Colors.red,
     Colors.blue,
+    Colors.purpleAccent,
     Colors.cyan,
     Colors.green,
   ];
@@ -79,16 +91,20 @@ class HolderState extends State<Holder> {
             color: _currentIndex == 0 ? _colors[_currentIndex] : Colors.white,
           ),
           Icon(
-            Icons.shopping_cart,
+            Icons.image,
             color: _currentIndex == 1 ? _colors[_currentIndex] : Colors.white,
           ),
           Icon(
-            Icons.face,
+            Icons.shopping_cart,
             color: _currentIndex == 2 ? _colors[_currentIndex] : Colors.white,
           ),
           Icon(
-            Icons.settings,
+            Icons.face,
             color: _currentIndex == 3 ? _colors[_currentIndex] : Colors.white,
+          ),
+          Icon(
+            Icons.settings,
+            color: _currentIndex == 4 ? _colors[_currentIndex] : Colors.white,
           )
         ],
         onTap: (index) {

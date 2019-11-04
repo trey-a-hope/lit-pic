@@ -61,7 +61,7 @@ class SignUpPageState extends State<SignUpPage>
             isAdmin: false,
             email: firebaseUser.email,
             fcmToken: null,
-            time: DateTime.now(),
+            timestamp: Timestamp.fromDate(DateTime.now()),
             uid: firebaseUser.uid,
             username: _firstNameController.text,
           );
@@ -174,7 +174,6 @@ class SignUpPageState extends State<SignUpPage>
       ),
     );
   }
-
 
   Widget lastNameFormField() {
     return TextFormField(

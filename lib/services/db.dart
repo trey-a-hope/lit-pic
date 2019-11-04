@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/models/database/user.dart';
 
 abstract class DB {
-
   //Miscellanious
   Future<void> addPropertyToDocuments(
       {@required String collection,
@@ -14,9 +14,12 @@ abstract class DB {
   Future<void> createUser({@required User user});
   Future<User> retrieveUser({@required String id});
   Future<List<User>> retrieveUsers({bool isAdmin, int limit});
-
   Future<void> updateUser(
       {@required String userID, @required Map<String, dynamic> data});
+
+  //Cart Item
+  Future<void> createCartItem(
+      {@required String userID, @required CartItem cartItem});
 }
 
 class DBImplementation extends DB {
@@ -43,7 +46,7 @@ class DBImplementation extends DB {
   Future<User> retrieveUser({String id}) async {
     try {
       DocumentSnapshot documentSnapshot = await _usersDB.document(id).get();
-      return User.extractDocument(documentSnapshot);
+      return User.fromDoc(doc: documentSnapshot);
     } catch (e) {
       throw Exception(e.toString());
     }
@@ -69,7 +72,6 @@ class DBImplementation extends DB {
     }
   }
 
-
   @override
   Future<void> updateUser({String userID, Map<String, dynamic> data}) async {
     try {
@@ -81,7 +83,6 @@ class DBImplementation extends DB {
       );
     }
   }
-
 
   @override
   Future<List<User>> retrieveUsers({bool isAdmin, int limit}) async {
@@ -100,13 +101,33 @@ class DBImplementation extends DB {
       List<User> users = List<User>();
       for (int i = 0; i < docs.length; i++) {
         users.add(
-          User.extractDocument(docs[i]),
+          User.fromDoc(doc: docs[i]),
         );
       }
 
       return users;
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<void> createCartItem({String userID, CartItem cartItem}) async {
+    try {
+      CollectionReference colRef =
+          _usersDB.document(userID).collection('Cart Items');
+
+      DocumentReference docRef = await colRef.add(
+        cartItem.toMap(),
+      );
+      await colRef.document(docRef.documentID).updateData(
+        {'id': docRef.documentID},
+      );
+      return;
+    } catch (e) {
+      throw Exception(
+        e.toString(),
+      );
     }
   }
 }

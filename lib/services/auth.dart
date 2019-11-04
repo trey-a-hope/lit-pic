@@ -30,7 +30,7 @@ class AuthImplementation extends Auth {
           .where('uid', isEqualTo: firebaseUser.uid)
           .getDocuments();
       DocumentSnapshot documentSnapshot = querySnapshot.documents.first;
-      return User.extractDocument(documentSnapshot);
+      return User.fromDoc(doc: documentSnapshot);
     } catch (e) {
       throw Exception('Could not fetch user at this time.');
     }
