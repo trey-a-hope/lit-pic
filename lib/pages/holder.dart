@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
-import 'package:litpic/pages/shopping_page.dart';
+import 'package:litpic/pages/shop/shopping_page.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class Holder extends StatefulWidget {

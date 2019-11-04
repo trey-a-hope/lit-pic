@@ -43,8 +43,7 @@ Do flutter clean
 Go to your ios folder, delete Podfile.lock and Pods folder and then execute pod install --repo-update
 Thank you for giving detailed report!!
 
-#Firebase App Distribution Process
-#iOS
+# Firebase App Distribution Process, iOS
 - Archive app
 - “Distribute App” in Organizer Window
 - Select a Method of Distribution, “Ad Hoc”
@@ -57,3 +56,7 @@ Thank you for giving detailed report!!
 - Enter email of testers, select “Next”
 - Add release notes, select “Distribute to ? Testers”
 - Go to email and look for innovation to test app.
+
+# Flutter widget wrap
+Alt + C to wrap in Container
+Alt + S to wrap in Stack
