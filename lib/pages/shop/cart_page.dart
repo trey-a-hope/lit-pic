@@ -10,6 +10,7 @@ import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/services/storage_service.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -89,8 +90,7 @@ class CartPageState extends State<CartPage> {
               return Center(
                 child: Text('Your shopping cart is empty.'),
               );
-            } 
-            else {
+            } else {
               return ListView(
                 shrinkWrap: true,
                 children:
@@ -189,7 +189,12 @@ class CartPageState extends State<CartPage> {
         title: 'Remove Item From Cart',
         message: 'Are you sure.');
     if (confirm) {
-      print('delete this item');
+      //Remove cart item from database.
+      getIt<DBService>()
+          .deleteCartItem(userID: _currentUser.id, cartItemID: cartItem.id);
+
+      //Remove image of cart item from storage.
+      getIt<StorageService>().deleteImage(imgPath: cartItem.imgPath);
     }
   }
 }

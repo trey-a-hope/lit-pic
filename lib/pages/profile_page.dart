@@ -134,7 +134,7 @@ class ProfilePageState extends State<ProfilePage> {
 
       //Upload image to Storage
       String imgUrl = await getIt<StorageService>().uploadImage(
-          path: 'Users/${_currentUser.id}/profilePic', file: imageFile);
+          imgPath: 'Users/${_currentUser.id}/profilePic', file: imageFile);
 
       //Update imgUrl for user.
       await getIt<DBService>()

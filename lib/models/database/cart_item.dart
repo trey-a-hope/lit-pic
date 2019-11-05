@@ -5,6 +5,7 @@ class CartItem {
   final String id;
   final String productID;
   final String imgUrl;
+  final String imgPath;
   final int quantity;
   final String title;
 
@@ -12,6 +13,7 @@ class CartItem {
       {@required this.productID,
       @required this.id,
       @required this.imgUrl,
+      @required this.imgPath,
       @required this.title,
       @required this.quantity});
 
@@ -19,6 +21,7 @@ class CartItem {
     return CartItem(
         id: doc.data['id'],
         imgUrl: doc.data['imgUrl'],
+        imgPath: doc.data['imgPath'],
         productID: doc.data['productID'],
         quantity: doc.data['quantity'],
         title: doc.data['title']);
@@ -28,6 +31,7 @@ class CartItem {
     return {
       'id': id,
       'imgUrl': imgUrl,
+      'imgPath': imgPath,
       'productID': productID,
       'title': title,
       'quantity': quantity

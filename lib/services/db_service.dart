@@ -25,6 +25,8 @@ abstract class DBService {
       {@required String userID,
       @required String cartItemID,
       @required Map<String, dynamic> data});
+  Future<void> deleteCartItem(
+      {@required String userID, @required String cartItemID});
 }
 
 class DBServiceImplementation extends DBService {
@@ -158,11 +160,25 @@ class DBServiceImplementation extends DBService {
   Future<void> updateCartItem(
       {String userID, String cartItemID, Map<String, dynamic> data}) async {
     try {
-      DocumentReference docRef = _usersDB
-          .document(userID)
-          .collection('Cart Items')
-          .document(cartItemID);
+      CollectionReference colRef =
+          _usersDB.document(userID).collection('Cart Items');
+      DocumentReference docRef = colRef.document(cartItemID);
       await docRef.updateData(data);
+      return;
+    } catch (e) {
+      throw Exception(
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<void> deleteCartItem({String userID, String cartItemID}) async {
+    try {
+      //Delete cart item from database.
+      CollectionReference colRef =
+          _usersDB.document(userID).collection('Cart Items');
+      await colRef.document(cartItemID).delete();
       return;
     } catch (e) {
       throw Exception(

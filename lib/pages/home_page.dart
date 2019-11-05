@@ -14,10 +14,11 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final GetIt getIt = GetIt.I;
   bool _isLoading = true;
+  bool _isLoggedIn = false;
+
   User _currentUser;
   final FirebaseMessaging _fcm = FirebaseMessaging();
 
@@ -25,7 +26,20 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    // _load();
+    getIt<AuthService>().onAuthStateChanged().listen(
+      (firebaseUser) {
+        setState(
+          () {
+            _isLoggedIn = firebaseUser != null;
+            if (_isLoggedIn) {
+              _load();
+            } else {
+              _isLoading = false;
+            }
+          },
+        );
+      },
+    );
   }
 
   _load() async {
@@ -90,8 +104,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-            children: <Widget>[
-            ],
-          );
+      children: <Widget>[],
+    );
   }
 }

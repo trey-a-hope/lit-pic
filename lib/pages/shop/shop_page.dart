@@ -153,17 +153,19 @@ class ShopPageState extends State<ShopPage> {
 
       //Upload image to storage.
       final String photoID = Uuid().v1();
-      String imgUrl = await getIt<StorageService>().uploadImage(
-          file: _image, path: 'Users/${_currentUser.id}/Orders/$photoID');
+      final String imgPath = 'Users/${_currentUser.id}/Orders/$photoID';
+      String imgUrl = await getIt<StorageService>()
+          .uploadImage(file: _image, imgPath: imgPath);
 
       //Save cart item to database.
       getIt<DBService>().createCartItem(
         userID: _currentUser.id,
         cartItem: CartItem(
-            id: '',
+            id: null,
             imgUrl: imgUrl,
+            imgPath: imgPath,
             title: 'Lithophane',
-            productID: '',
+            productID: null,
             quantity: 1),
       );
 
