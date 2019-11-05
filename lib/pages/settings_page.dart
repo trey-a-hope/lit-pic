@@ -70,7 +70,6 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
-
   ListTile _deleteAccount() {
     return ListTile(
       leading: Icon(

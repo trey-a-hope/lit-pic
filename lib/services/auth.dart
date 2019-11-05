@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:litpic/models/database/user.dart';
 
 abstract class Auth {
@@ -48,15 +49,24 @@ class AuthImplementation extends Auth {
 
   @override
   Future<AuthResult> signInWithEmailAndPassword(
-      {@required String email, @required String password}) {
-    return _auth.signInWithEmailAndPassword(email: email, password: password);
+      {@required String email, @required String password}) async {
+    try {
+      return (await _auth.signInWithEmailAndPassword(
+          email: email, password: password));
+    } catch (e) {
+      throw PlatformException(message: e.message, code: e.code);
+    }
   }
 
   @override
   Future<AuthResult> createUserWithEmailAndPassword(
-      {@required String email, @required String password}) {
-    return _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
+      {@required String email, @required String password}) async {
+    try {
+      return (await _auth.createUserWithEmailAndPassword(
+          email: email, password: password));
+    } catch (e) {
+      throw PlatformException(message: e.message, code: e.code);
+    }
   }
 
   @override

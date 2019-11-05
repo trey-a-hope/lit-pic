@@ -7,7 +7,9 @@ import 'dart:convert' show Encoding, json;
 import 'package:litpic/models/stripe/customer.dart';
 
 abstract class StripeCustomer {
-  Future<String> create({@required String email, @required String description});
+  Future<String> create({@required String email,
+      @required String description,
+      @required String name});
   Future<Customer> retrieve({@required String customerID});
   Future<void> update({@required String customerID, @required String token});
 }
@@ -21,8 +23,15 @@ class StripeCustomerImplementation extends StripeCustomer {
 
   @override
   Future<String> create(
-      {@required String email, @required String description}) async {
-    Map data = {'apiKey': apiKey, 'email': email, 'description': description};
+      {@required String email,
+      @required String description,
+      @required String name}) async {
+    Map data = {
+      'apiKey': apiKey,
+      'email': email,
+      'description': description,
+      'name': name
+    };
 
     http.Response response = await http.post(
       endpoint + 'StripeCreateCustomer',
@@ -67,8 +76,10 @@ class StripeCustomerImplementation extends StripeCustomer {
 
       return Customer(
           id: customerMap['id'],
+          email: customerMap['email'],
           default_source: customerMap['default_source'],
           card: card,
+          name: customerMap['name'],
           isSubscribed: customerMap['subscriptions'] != null);
     } catch (e) {
       throw Exception();

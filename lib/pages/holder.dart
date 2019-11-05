@@ -1,11 +1,13 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get_it/get_it.dart';
 import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
 import 'package:litpic/pages/shop/cart_page.dart';
 import 'package:litpic/pages/shop/shop_page.dart';
+import 'package:litpic/services/modal.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class Holder extends StatefulWidget {
@@ -16,6 +18,7 @@ class Holder extends StatefulWidget {
 class HolderState extends State<Holder> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
+  final GetIt getIt = GetIt.I;
 
   final List<String> _titles = [
     'Lit Pic',
@@ -65,11 +68,32 @@ class HolderState extends State<Holder> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: _currentIndex == 3
+            ? IconButton(icon: Icon(Icons.message), onPressed: () {
+                    getIt<Modal>().showAlert(
+                        context: context,
+                        title: 'To Do',
+                        message: 'Open Messages');
+                  },)
+            : Container(),
         centerTitle: true,
         title: Text(
           _titles[_currentIndex],
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        actions: <Widget>[
+          _currentIndex == 3
+              ? IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    getIt<Modal>().showAlert(
+                        context: context,
+                        title: 'To Do',
+                        message: 'Open Edit Profile');
+                  },
+                )
+              : Container(),
+        ],
       ),
       body: _children[_currentIndex],
       key: _scaffoldKey,

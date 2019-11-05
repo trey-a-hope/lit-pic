@@ -86,18 +86,25 @@ class CartPageState extends State<CartPage> {
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData)
               return Center(
+                child: Text('Loading...'),
+              );
+            else if (snapshot.hasData && snapshot.data.documents.isEmpty) {
+              return Center(
                 child: Text('Your shopping cart is empty.'),
               );
-            return ListView(
-              shrinkWrap: true,
-              children:
-                  snapshot.data.documents.map((DocumentSnapshot document) {
-                CartItem cartItem = CartItem.fromDoc(doc: document);
-                return _cartItem(
-                  cartItem: cartItem,
-                );
-              }).toList(),
-            );
+            } 
+            else {
+              return ListView(
+                shrinkWrap: true,
+                children:
+                    snapshot.data.documents.map((DocumentSnapshot document) {
+                  CartItem cartItem = CartItem.fromDoc(doc: document);
+                  return _cartItem(
+                    cartItem: cartItem,
+                  );
+                }).toList(),
+              );
+            }
           },
         ),
         Container(

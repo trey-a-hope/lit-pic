@@ -7,6 +7,7 @@ import 'package:litpic/models/database/user.dart';
 import 'package:litpic/services/auth.dart';
 import 'package:litpic/services/db.dart';
 import 'package:litpic/services/modal.dart';
+import 'package:litpic/services/stripe/customer.dart';
 import 'package:litpic/services/validater.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -46,38 +47,43 @@ class SignUpPageState extends State<SignUpPage>
             },
           );
 
-          //Create new user in auth.
+          //Create user in Auth.
           AuthResult authResult =
               await getIt<Auth>().createUserWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
           );
 
+          //Create customer in Stripe.
           final FirebaseUser firebaseUser = authResult.user;
+          String customerID = await getIt<StripeCustomer>().create(
+              email: firebaseUser.email,
+              description: '',
+              name: _firstNameController.text + ' ' + _lastNameController.text);
 
           User user = User(
-            id: null,
-            imgUrl: null,
-            isAdmin: false,
-            email: firebaseUser.email,
-            fcmToken: null,
-            timestamp: Timestamp.fromDate(DateTime.now()),
-            uid: firebaseUser.uid,
-            username: _firstNameController.text,
-          );
+              id: null,
+              imgUrl: null,
+              isAdmin: false,
+              fcmToken: null,
+              timestamp: Timestamp.fromDate(DateTime.now()),
+              uid: firebaseUser.uid,
+              customerID: customerID);
 
+          //Create user in Database.
           await getIt<DB>().createUser(user: user);
 
-          Navigator.of(context).pop();
+          Navigator.of(context).popUntil((route) => route.isFirst);
         } catch (e) {
           setState(
             () {
-              getIt<Modal>().showAlert(
-                context: context,
-                title: 'Error',
-                message: e.message(),
-              );
+              _isLoading = false;
             },
+          );
+          getIt<Modal>().showAlert(
+            context: context,
+            title: 'Error',
+            message: e.message,
           );
         }
       }

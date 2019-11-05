@@ -53,7 +53,6 @@ class ShopPageState extends State<ShopPage> {
 
   _load() async {
     try {
-      // _images = getIt<ImageCart>().getImages();
       _currentUser = await getIt<Auth>().getCurrentUser();
       setState(
         () {
@@ -198,24 +197,6 @@ class ShopPageState extends State<ShopPage> {
       );
     }
   }
-
-  // _emptyImages() async {
-  //   bool confirm = await getIt<Modal>().showConfirmation(
-  //       context: context, title: 'Empty Images', message: 'Are you sure?');
-  //   if (confirm) {
-  //     getIt<ImageCart>().deleteImages();
-  //     setState(() {});
-  //   }
-  // }
-
-  // _deleteImage({@required File image}) async {
-  //   bool confirm = await getIt<Modal>().showConfirmation(
-  //       context: context, title: 'Delete Image', message: 'Are you sure?');
-  //   if (confirm) {
-  //     getIt<ImageCart>().deleteImage(image: image);
-  //     setState(() {});
-  //   }
-  // }
 
   String _price() {
     FlutterMoneyFormatter fmf = FlutterMoneyFormatter(amount: price);

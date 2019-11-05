@@ -1,50 +1,49 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:litpic/models/stripe/customer.dart';
 
 class User {
-  final String email; //delete
-  final String username; //delete
 
   final String id;
   final String uid;
-  String customerID;
+  final String customerID;
   final String fcmToken;
   final Timestamp timestamp;
   final bool isAdmin;
   final String imgUrl;
 
+  Customer customer; //Not saved to database, used strictly on FE.
+
   User(
-      {@required this.email,
+      {
       @required this.id,
+      @required this.customerID,
       @required this.imgUrl,
-      @required this.isAdmin,
       @required this.fcmToken,
       @required this.timestamp,
       @required this.uid,
-      @required this.username});
+      @required this.isAdmin});
 
   factory User.fromDoc({@required DocumentSnapshot doc}) {
     return User(
-        email: doc.data['email'],
         id: doc.data['id'],
         imgUrl: doc.data['imgUrl'],
         fcmToken: doc.data['fcmToken'],
         isAdmin: doc.data['isAdmin'],
-        timestamp: doc.data['time'],
+        timestamp: doc.data['timestamp'],
         uid: doc.data['uid'],
-        username: doc.data['username']);
+        customerID: doc.data['customerID']);
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'email': email,
       'id': id,
       'imgUrl': imgUrl,
       'fcmToken': fcmToken,
       'isAdmin': isAdmin,
-      'time': timestamp,
+      'timestamp': timestamp,
       'uid': uid,
-      'username': username
+      'customerID': customerID
     };
   }
 }
