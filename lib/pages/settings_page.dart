@@ -88,32 +88,45 @@ class SettingsPageState extends State<SettingsPage> {
       ),
       trailing: Icon(Icons.chevron_right),
       onTap: () async {
-        bool confirm = await getIt<ModalService>().showConfirmation(
+        getIt<ModalService>().showAlert(
             context: context,
             title: 'Delete Account',
-            message: 'Are you sure?');
-        if (confirm) {
-          try {
-            //Delete user from Stripe.
-            await getIt<StripeCustomer>()
-                .delete(customerID: _currentUser.customerID);
-            //Delete user from Database.
-            await getIt<DBService>().deleteUser(id: _currentUser.id);
-            //Delete user from Auth, (last because of security rules).
-            await getIt<AuthService>().deleteUser(userID: _currentUser.id);
+            message:
+                'Contact tr3umphant.designs@gmail.com to remove your account. Thank you.');
 
-            Navigator.popUntil(
-              context,
-              ModalRoute.withName(Navigator.defaultRouteName),
-            );
-          } catch (e) {
-            getIt<ModalService>().showAlert(
-              context: context,
-              title: 'Error',
-              message: e.toString(),
-            );
-          }
-        }
+        // bool confirm = await getIt<ModalService>().showConfirmation(
+        //     context: context,
+        //     title: 'Delete Account',
+        //     message: 'Are you sure?');
+        // if (confirm) {
+        //   try {
+        //     //Delete user from Stripe.
+        //     await getIt<StripeCustomer>()
+        //         .delete(customerID: _currentUser.customerID);
+        //     //Delete user from Database.
+        //     await getIt<DBService>().deleteUser(id: _currentUser.id);
+        //     //Delete user from Auth, (last because of security rules).
+        //     await getIt<AuthService>().deleteUser(userID: _currentUser.id);
+
+        //     The problem with this solution is;
+
+        //     1. Deleting from DB first; Auth may not delete because it requires fresh login or some bullshit.
+        //     2. Deleting from Auth first; DB won't delete because of security rules.
+
+        //     Thus, I'm holding off on this for now.
+
+        //     Navigator.popUntil(
+        //       context,
+        //       ModalRoute.withName(Navigator.defaultRouteName),
+        //     );
+        //   } catch (e) {
+        //     getIt<ModalService>().showAlert(
+        //       context: context,
+        //       title: 'Error',
+        //       message: e.toString(),
+        //     );
+        //   }
+        // }
       },
     );
   }
