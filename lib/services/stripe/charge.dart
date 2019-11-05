@@ -8,9 +8,9 @@ abstract class StripeCharge {
   Future<bool> create(
       {@required double amount,
       @required String description,
-      @required String customerId});
-  Future<String> retrieve({@required String chargeId});
-  Future<List<Charge>> listAll({@required String customerId});
+      @required String customerID});
+  Future<String> retrieve({@required String chargeID});
+  Future<List<Charge>> listAll({@required String customerID});
 }
 
 class StripeChargeImplementation extends StripeCharge {
@@ -23,11 +23,11 @@ class StripeChargeImplementation extends StripeCharge {
   Future<bool> create(
       {@required double amount,
       @required String description,
-      @required String customerId}) async {
+      @required String customerID}) async {
     Map data = {
       'apiKey': apiKey,
       'amount': (amount * 100).toInt().toString(),
-      'customerId': customerId,
+      'customerID': customerID,
       'description': description
     };
 
@@ -46,10 +46,10 @@ class StripeChargeImplementation extends StripeCharge {
   }
 
   @override
-  Future<String> retrieve({@required String chargeId}) async {
+  Future<String> retrieve({@required String chargeID}) async {
     Map data = {
       'apiKey': apiKey,
-      'chargeId': chargeId,
+      'chargeID': chargeID,
     };
 
     http.Response response = await http.post(
@@ -67,10 +67,10 @@ class StripeChargeImplementation extends StripeCharge {
   }
 
   @override
-  Future<List<Charge>> listAll({@required String customerId}) async {
+  Future<List<Charge>> listAll({@required String customerID}) async {
     Map data = {
       'apiKey': apiKey,
-      'customerId': customerId,
+      'customerID': customerID,
     };
 
     http.Response response = await http.post(

@@ -48,7 +48,7 @@ class StripeCustomerImplementation extends StripeCustomer {
 
   @override
   Future<Customer> retrieve({@required String customerID}) async {
-    Map data = {'apiKey': apiKey, 'customerId': customerID};
+    Map data = {'apiKey': apiKey, 'customerID': customerID};
 
     http.Response response = await http.post(
       endpoint + 'StripeRetrieveCustomer',
@@ -88,7 +88,7 @@ class StripeCustomerImplementation extends StripeCustomer {
   @override
   Future<void> update(
       {@required String customerID, @required String token}) async {
-    Map data = {'apiKey': apiKey, 'customerId': customerID, 'token': token};
+    Map data = {'apiKey': apiKey, 'customerID': customerID, 'token': token};
 
     http.Response response = await http.post(
       endpoint + 'StripeUpdateCustomer',

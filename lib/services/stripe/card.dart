@@ -16,7 +16,7 @@ class StripeCardImplementation extends StripeCard {
   @override
   Future<String> create(
       {@required String customerID, @required String token}) async {
-    Map data = {'apiKey': apiKey, 'customerId': customerID, 'token': token};
+    Map data = {'apiKey': apiKey, 'customerID': customerID, 'token': token};
 
     http.Response response = await http.post(
       endpoint + 'StripeCreateCard',
@@ -35,7 +35,7 @@ class StripeCardImplementation extends StripeCard {
   @override
   Future<bool> delete(
       {@required String customerID, @required String cardID}) async {
-    Map data = {'apiKey': apiKey, 'customerId': customerID, 'cardId': cardID};
+    Map data = {'apiKey': apiKey, 'customerID': customerID, 'cardID': cardID};
 
     http.Response response = await http.post(
       endpoint + 'StripeDeleteCard',
