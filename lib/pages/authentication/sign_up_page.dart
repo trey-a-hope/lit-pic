@@ -4,11 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/simple_navbar.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/services/auth.dart';
-import 'package:litpic/services/db.dart';
-import 'package:litpic/services/modal.dart';
+import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/services/db_service.dart';
+import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
-import 'package:litpic/services/validater.dart';
+import 'package:litpic/services/validater_service.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -37,7 +37,7 @@ class SignUpPageState extends State<SignUpPage>
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      bool confirm = await getIt<Modal>().showConfirmation(
+      bool confirm = await getIt<ModalService>().showConfirmation(
           context: context, title: 'Submit', message: 'Are you ready?');
       if (confirm) {
         try {
@@ -49,7 +49,7 @@ class SignUpPageState extends State<SignUpPage>
 
           //Create user in Auth.
           AuthResult authResult =
-              await getIt<Auth>().createUserWithEmailAndPassword(
+              await getIt<AuthService>().createUserWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
           );
@@ -71,7 +71,7 @@ class SignUpPageState extends State<SignUpPage>
               customerID: customerID);
 
           //Create user in Database.
-          await getIt<DB>().createUser(user: user);
+          await getIt<DBService>().createUser(user: user);
 
           Navigator.of(context).popUntil((route) => route.isFirst);
         } catch (e) {
@@ -80,7 +80,7 @@ class SignUpPageState extends State<SignUpPage>
               _isLoading = false;
             },
           );
-          getIt<Modal>().showAlert(
+          getIt<ModalService>().showAlert(
             context: context,
             title: 'Error',
             message: e.message,
@@ -171,7 +171,7 @@ class SignUpPageState extends State<SignUpPage>
       maxLengthEnforced: true,
       // maxLength: MyFormData.nameCharLimit,
       onFieldSubmitted: (term) {},
-      validator: getIt<Validator>().isEmpty,
+      validator: getIt<ValidatorService>().isEmpty,
       onSaved: (value) {},
       decoration: InputDecoration(
         hintText: 'First Name',
@@ -189,7 +189,7 @@ class SignUpPageState extends State<SignUpPage>
       maxLengthEnforced: true,
       // maxLength: MyFormData.nameCharLimit,
       onFieldSubmitted: (term) {},
-      validator: getIt<Validator>().isEmpty,
+      validator: getIt<ValidatorService>().isEmpty,
       onSaved: (value) {},
       decoration: InputDecoration(
         hintText: 'Last Name',
@@ -207,7 +207,7 @@ class SignUpPageState extends State<SignUpPage>
       maxLengthEnforced: true,
       // maxLength: MyFormData.nameCharLimit,
       onFieldSubmitted: (term) {},
-      validator: getIt<Validator>().email,
+      validator: getIt<ValidatorService>().email,
       onSaved: (value) {},
       decoration: InputDecoration(
         hintText: 'Email',
@@ -224,7 +224,7 @@ class SignUpPageState extends State<SignUpPage>
       textInputAction: TextInputAction.next,
       obscureText: true,
       onFieldSubmitted: (term) {},
-      validator: getIt<Validator>().isEmpty,
+      validator: getIt<ValidatorService>().isEmpty,
       onSaved: (value) {},
       decoration: InputDecoration(
         hintText: 'Password',

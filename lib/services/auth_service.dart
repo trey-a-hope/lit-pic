@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:litpic/models/database/user.dart';
 
-abstract class Auth {
+abstract class AuthService {
   Future<User> getCurrentUser();
   Future<void> signOut();
   Stream<FirebaseUser> onAuthStateChanged();
@@ -17,8 +17,7 @@ abstract class Auth {
   Future<void> deleteUser({@required String userID});
 }
 
-class AuthImplementation extends Auth {
-  AuthImplementation();
+class AuthServiceImplementation extends AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final CollectionReference _usersDB = Firestore.instance.collection('Users');

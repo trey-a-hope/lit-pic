@@ -1,4 +1,4 @@
-abstract class Validator {
+abstract class ValidatorService {
   String isEmpty(String value);
   String mobile(String value);
   String email(String value);
@@ -10,7 +10,7 @@ abstract class Validator {
   String cardCVC(String value);
 }
 
-class ValidatorImplementation extends Validator {
+class ValidatorServiceImplementation extends ValidatorService {
   @override
   String isEmpty(String value) {
     if (value.length == 0) {

@@ -2,14 +2,11 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
-import 'package:litpic/common/spinner.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/services/auth.dart';
-import 'package:litpic/services/db.dart';
-import 'package:litpic/services/modal.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/services/db_service.dart';
+import 'package:litpic/services/modal_service.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -33,7 +30,7 @@ class HomePageState extends State<HomePage> {
 
   _load() async {
     try {
-      _currentUser = await getIt<Auth>().getCurrentUser();
+      _currentUser = await getIt<AuthService>().getCurrentUser();
       _setUpFirebaseMessaging();
 
       setState(
@@ -42,7 +39,7 @@ class HomePageState extends State<HomePage> {
         },
       );
     } catch (e) {
-      getIt<Modal>().showAlert(
+      getIt<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),
@@ -62,7 +59,7 @@ class HomePageState extends State<HomePage> {
     final String fcmToken = await _fcm.getToken();
     if (fcmToken != null) {
       print(fcmToken);
-      getIt<DB>()
+      getIt<DBService>()
           .updateUser(userID: _currentUser.id, data: {'fcmToken': fcmToken});
     }
 
@@ -70,19 +67,19 @@ class HomePageState extends State<HomePage> {
     _fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
-        getIt<Modal>().showAlert(
+        getIt<ModalService>().showAlert(
             context: context,
             title: message['notification']['title'],
             message: '');
       },
       onLaunch: (Map<String, dynamic> message) async {
-        getIt<Modal>().showAlert(
+        getIt<ModalService>().showAlert(
             context: context,
             title: message['notification']['title'],
             message: '');
       },
       onResume: (Map<String, dynamic> message) async {
-        getIt<Modal>().showAlert(
+        getIt<ModalService>().showAlert(
             context: context,
             title: message['notification']['title'],
             message: '');

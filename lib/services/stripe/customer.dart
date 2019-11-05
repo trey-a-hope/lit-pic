@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:litpic/models/stripe/credit_card.dart';
-import 'dart:convert' show Encoding, json;
+import 'dart:convert' show json;
 
 import 'package:litpic/models/stripe/customer.dart';
 
@@ -68,8 +67,8 @@ class StripeCustomerImplementation extends StripeCustomer {
           id: cardMap['id'],
           brand: cardMap['brand'],
           country: cardMap['country'],
-          exp_month: cardMap['exp_month'],
-          exp_year: cardMap['exp_year'],
+          expMonth: cardMap['exp_month'],
+          expYear: cardMap['exp_year'],
           last4: cardMap['last4'],
         );
       }
@@ -77,7 +76,7 @@ class StripeCustomerImplementation extends StripeCustomer {
       return Customer(
           id: customerMap['id'],
           email: customerMap['email'],
-          default_source: customerMap['default_source'],
+          defaultSource: customerMap['default_source'],
           card: card,
           name: customerMap['name'],
           isSubscribed: customerMap['subscriptions'] != null);

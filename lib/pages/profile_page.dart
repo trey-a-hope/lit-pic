@@ -4,17 +4,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:litpic/common/logged_out_view.dart';
 import 'package:litpic/common/spinner.dart';
-import 'package:litpic/models/stripe/customer.dart';
-import 'package:litpic/pages/authentication/login_page.dart';
-import 'package:litpic/services/db.dart';
-import 'package:litpic/services/modal.dart';
-import 'package:litpic/services/auth.dart';
+import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/services/db_service.dart';
+import 'package:litpic/services/image_service.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/services/storage.dart';
+import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/services/storage_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -34,7 +32,7 @@ class ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
 
-    getIt<Auth>().onAuthStateChanged().listen(
+    getIt<AuthService>().onAuthStateChanged().listen(
       (firebaseUser) {
         setState(
           () {
@@ -52,7 +50,7 @@ class ProfilePageState extends State<ProfilePage> {
 
   _load() async {
     try {
-      _currentUser = await getIt<Auth>().getCurrentUser();
+      _currentUser = await getIt<AuthService>().getCurrentUser();
       _currentUser.customer = await getIt<StripeCustomer>()
           .retrieve(customerID: _currentUser.customerID);
       print(_currentUser.customer.email);
@@ -62,7 +60,7 @@ class ProfilePageState extends State<ProfilePage> {
         },
       );
     } catch (e) {
-      getIt<Modal>().showAlert(
+      getIt<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),
@@ -132,25 +130,18 @@ class ProfilePageState extends State<ProfilePage> {
     Navigator.pop(context);
     File imageFile = await ImagePicker.pickImage(source: source);
     if (imageFile != null) {
-      imageFile = await _cropImage(imageFile: imageFile);
+      imageFile = await getIt<ImageService>().cropImage(imageFile: imageFile);
 
       //Upload image to Storage
-      String imgUrl = await getIt<Storage>().uploadImage(
+      String imgUrl = await getIt<StorageService>().uploadImage(
           path: 'Users/${_currentUser.id}/profilePic', file: imageFile);
 
       //Update imgUrl for user.
-      await getIt<DB>()
+      await getIt<DBService>()
           .updateUser(userID: _currentUser.id, data: {'imgUrl': imgUrl});
 
       _load();
     }
-  }
-
-  _cropImage({@required File imageFile}) async {
-    File croppedImage = await ImageCropper.cropImage(
-        sourcePath: imageFile.path,
-        aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0));
-    return croppedImage;
   }
 
   @override

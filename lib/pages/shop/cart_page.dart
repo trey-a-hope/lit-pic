@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +5,11 @@ import 'package:get_it/get_it.dart';
 import 'package:litpic/common/logged_out_view.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/models/database/cart_item.dart';
-import 'package:litpic/pages/authentication/login_page.dart';
-import 'package:litpic/services/db.dart';
-import 'package:litpic/services/formatter.dart';
-import 'package:litpic/services/modal.dart';
-import 'package:litpic/services/auth.dart';
+import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/services/db_service.dart';
+import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/models/database/user.dart';
+import 'package:litpic/services/modal_service.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -33,7 +30,7 @@ class CartPageState extends State<CartPage> {
     super.initState();
 
     super.initState();
-    getIt<Auth>().onAuthStateChanged().listen(
+    getIt<AuthService>().onAuthStateChanged().listen(
       (firebaseUser) {
         setState(
           () {
@@ -51,14 +48,14 @@ class CartPageState extends State<CartPage> {
 
   _load() async {
     try {
-      _currentUser = await getIt<Auth>().getCurrentUser();
+      _currentUser = await getIt<AuthService>().getCurrentUser();
       setState(
         () {
           _isLoading = false;
         },
       );
     } catch (e) {
-      getIt<Modal>().showAlert(
+      getIt<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),
@@ -135,7 +132,7 @@ class CartPageState extends State<CartPage> {
     for (int i = 0; i < _cartItems.length; i++) {
       total += _cartItems[i].quantity * 15.00;
     }
-    return getIt<Formatter>().money(amount: total);
+    return getIt<FormatterService>().money(amount: total);
   }
 
   Widget _cartItem({@required CartItem cartItem}) {
@@ -154,11 +151,11 @@ class CartPageState extends State<CartPage> {
           subtitle: Row(
             children: <Widget>[
               cartItem.quantity == 1
-                  ? Container()
+                  ? SizedBox.shrink()
                   : FlatButton(
                       child: Icon(Icons.chevron_left),
                       onPressed: () {
-                        getIt<DB>().updateCartItem(
+                        getIt<DBService>().updateCartItem(
                             userID: _currentUser.id,
                             cartItemID: cartItem.id,
                             data: {'quantity': cartItem.quantity - 1});
@@ -168,7 +165,7 @@ class CartPageState extends State<CartPage> {
               FlatButton(
                 child: Icon(Icons.chevron_right),
                 onPressed: () {
-                  getIt<DB>().updateCartItem(
+                  getIt<DBService>().updateCartItem(
                       userID: _currentUser.id,
                       cartItemID: cartItem.id,
                       data: {'quantity': cartItem.quantity + 1});
@@ -187,7 +184,7 @@ class CartPageState extends State<CartPage> {
   }
 
   _deleteCartItem({@required CartItem cartItem}) async {
-    bool confirm = await getIt<Modal>().showConfirmation(
+    bool confirm = await getIt<ModalService>().showConfirmation(
         context: context,
         title: 'Remove Item From Cart',
         message: 'Are you sure.');

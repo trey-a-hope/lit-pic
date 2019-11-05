@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:litpic/services/validater.dart';
 
-abstract class Modal {
+abstract class ModalService {
   // void showInSnackBar(
   //     {@required GlobalKey<ScaffoldState> scaffoldKey,
   //     @required String message});
@@ -21,7 +19,7 @@ abstract class Modal {
       @required String message});
 }
 
-class ModalImplementation extends Modal {
+class ModalServiceImplementation extends ModalService {
   final GetIt getIt = GetIt.I;
 
   // @override

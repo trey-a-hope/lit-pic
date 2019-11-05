@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/pages/authentication/sign_up_page.dart';
-import 'package:litpic/services/validater.dart';
-import 'package:litpic/pages/landing_page.dart';
-import 'package:litpic/services/auth.dart';
-import 'package:litpic/services/modal.dart';
+import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/common/simple_navbar.dart';
+import 'package:litpic/services/validater_service.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class LoginPage extends StatefulWidget {
@@ -33,14 +32,14 @@ class LoginPageState extends State<LoginPage>
             _isLoading = true;
           },
         );
-        await getIt<Auth>().signInWithEmailAndPassword(
+        await getIt<AuthService>().signInWithEmailAndPassword(
             email: _emailController.text, password: _passwordController.text);
         Navigator.pop(context);
       } catch (e) {
         setState(
           () {
             _isLoading = false;
-            getIt<Modal>().showAlert(
+            getIt<ModalService>().showAlert(
               context: context,
               title: 'Error',
               message: e.message,
@@ -65,6 +64,7 @@ class LoginPageState extends State<LoginPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       body: _isLoading
           ? Center(
@@ -149,7 +149,7 @@ class LoginPageState extends State<LoginPage>
       maxLengthEnforced: true,
       // maxLength: MyFormData.nameCharLimit,
       onFieldSubmitted: (term) {},
-      validator: getIt<Validator>().email,
+      validator: getIt<ValidatorService>().email,
       onSaved: (value) {},
       decoration: InputDecoration(
         hintText: 'Email',
@@ -166,7 +166,7 @@ class LoginPageState extends State<LoginPage>
       textInputAction: TextInputAction.next,
       obscureText: true,
       onFieldSubmitted: (term) {},
-      validator: getIt<Validator>().isEmpty,
+      validator: getIt<ValidatorService>().isEmpty,
       onSaved: (value) {},
       decoration: InputDecoration(
         hintText: 'Password',

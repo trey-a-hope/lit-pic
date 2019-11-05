@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/models/database/user.dart';
 
-abstract class DB {
+abstract class DBService {
   //Miscellanious
   Future<void> addPropertyToDocuments(
       {@required String collection,
@@ -27,7 +27,7 @@ abstract class DB {
       @required Map<String, dynamic> data});
 }
 
-class DBImplementation extends DB {
+class DBServiceImplementation extends DBService {
   final CollectionReference _usersDB = Firestore.instance.collection('Users');
 
   @override

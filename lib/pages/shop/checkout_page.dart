@@ -2,12 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:litpic/common/logged_out_view.dart';
 import 'package:litpic/common/spinner.dart';
-import 'package:litpic/pages/authentication/login_page.dart';
-import 'package:litpic/services/modal.dart';
-import 'package:litpic/services/auth.dart';
+import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/models/database/user.dart';
+import 'package:litpic/services/modal_service.dart';
 
 class CheckoutPage extends StatefulWidget {
   CheckoutPage({@required this.images});
@@ -33,14 +31,14 @@ class CheckoutPageState extends State<CheckoutPage> {
 
   _load() async {
     try {
-      _currentUser = await getIt<Auth>().getCurrentUser();
+      _currentUser = await getIt<AuthService>().getCurrentUser();
       setState(
         () {
           _isLoading = false;
         },
       );
     } catch (e) {
-      getIt<Modal>().showAlert(
+      getIt<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),

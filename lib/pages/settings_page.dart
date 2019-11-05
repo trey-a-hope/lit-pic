@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/logged_out_view.dart';
 import 'package:litpic/common/spinner.dart';
-import 'package:litpic/pages/authentication/login_page.dart';
-import 'package:litpic/services/modal.dart';
-import 'package:litpic/services/auth.dart';
+import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/models/database/user.dart';
+import 'package:litpic/services/modal_service.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -24,7 +23,7 @@ class SettingsPageState extends State<SettingsPage> {
   void initState() {
     super.initState();
 
-    getIt<Auth>().onAuthStateChanged().listen(
+    getIt<AuthService>().onAuthStateChanged().listen(
       (firebaseUser) {
         setState(
           () {
@@ -42,14 +41,14 @@ class SettingsPageState extends State<SettingsPage> {
 
   _load() async {
     try {
-      _currentUser = await getIt<Auth>().getCurrentUser();
+      _currentUser = await getIt<AuthService>().getCurrentUser();
       setState(
         () {
           _isLoading = false;
         },
       );
     } catch (e) {
-      getIt<Modal>().showAlert(
+      getIt<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),
@@ -86,19 +85,19 @@ class SettingsPageState extends State<SettingsPage> {
       ),
       trailing: Icon(Icons.chevron_right),
       onTap: () async {
-        bool confirm = await getIt<Modal>().showConfirmation(
+        bool confirm = await getIt<ModalService>().showConfirmation(
             context: context,
             title: 'Delete Account',
             message: 'Are you sure?');
         if (confirm) {
           try {
-            await getIt<Auth>().deleteUser(userID: _currentUser.id);
+            await getIt<AuthService>().deleteUser(userID: _currentUser.id);
             Navigator.popUntil(
               context,
               ModalRoute.withName(Navigator.defaultRouteName),
             );
           } catch (e) {
-            getIt<Modal>().showAlert(
+            getIt<ModalService>().showAlert(
               context: context,
               title: 'Error',
               message: e.toString(),
@@ -125,10 +124,10 @@ class SettingsPageState extends State<SettingsPage> {
       ),
       trailing: Icon(Icons.chevron_right),
       onTap: () async {
-        bool confirm = await getIt<Modal>().showConfirmation(
+        bool confirm = await getIt<ModalService>().showConfirmation(
             context: context, title: 'Sign Out', message: 'Are you sure?');
         if (confirm) {
-          await getIt<Auth>().signOut();
+          await getIt<AuthService>().signOut();
         }
       },
     );

@@ -7,7 +7,7 @@ import 'package:litpic/pages/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
 import 'package:litpic/pages/shop/cart_page.dart';
 import 'package:litpic/pages/shop/shop_page.dart';
-import 'package:litpic/services/modal.dart';
+import 'package:litpic/services/modal_service.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class Holder extends StatefulWidget {
@@ -70,12 +70,12 @@ class HolderState extends State<Holder> {
       appBar: AppBar(
         leading: _currentIndex == 3
             ? IconButton(icon: Icon(Icons.message), onPressed: () {
-                    getIt<Modal>().showAlert(
+                    getIt<ModalService>().showAlert(
                         context: context,
                         title: 'To Do',
                         message: 'Open Messages');
                   },)
-            : Container(),
+            : SizedBox.shrink(),
         centerTitle: true,
         title: Text(
           _titles[_currentIndex],
@@ -86,13 +86,13 @@ class HolderState extends State<Holder> {
               ? IconButton(
                   icon: Icon(Icons.edit),
                   onPressed: () {
-                    getIt<Modal>().showAlert(
+                    getIt<ModalService>().showAlert(
                         context: context,
                         title: 'To Do',
                         message: 'Open Edit Profile');
                   },
                 )
-              : Container(),
+              : SizedBox.shrink(),
         ],
       ),
       body: _children[_currentIndex],

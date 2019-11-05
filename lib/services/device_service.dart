@@ -2,13 +2,13 @@ import 'package:device_info/device_info.dart';
 import 'package:package_info/package_info.dart';
 import 'dart:io';
 
-abstract class PackageDeviceInfo {
+abstract class DeviceService {
   Future<String> getDeviceID();
   Future<String> getAppVersionNumber();
   Future<String> getAppBuildNumber();
 }
 
-class PackageDeviceInfoImplementation extends PackageDeviceInfo {
+class DeviceServiceImplementation extends DeviceService {
   final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
   @override

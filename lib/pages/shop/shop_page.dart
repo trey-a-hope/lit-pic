@@ -1,19 +1,18 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:litpic/common/logged_out_view.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/models/database/cart_item.dart';
-import 'package:litpic/services/db.dart';
-import 'package:litpic/services/modal.dart';
-import 'package:litpic/services/auth.dart';
+import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/services/db_service.dart';
+import 'package:litpic/services/image_service.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
-import 'package:litpic/services/storage.dart';
+import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/services/storage_service.dart';
 import 'package:uuid/uuid.dart';
 
 class ShopPage extends StatefulWidget {
@@ -35,7 +34,7 @@ class ShopPageState extends State<ShopPage> {
   @override
   void initState() {
     super.initState();
-    getIt<Auth>().onAuthStateChanged().listen(
+    getIt<AuthService>().onAuthStateChanged().listen(
       (firebaseUser) {
         setState(
           () {
@@ -53,14 +52,14 @@ class ShopPageState extends State<ShopPage> {
 
   _load() async {
     try {
-      _currentUser = await getIt<Auth>().getCurrentUser();
+      _currentUser = await getIt<AuthService>().getCurrentUser();
       setState(
         () {
           _isLoading = false;
         },
       );
     } catch (e) {
-      getIt<Modal>().showAlert(
+      getIt<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),
@@ -130,22 +129,16 @@ class ShopPageState extends State<ShopPage> {
     Navigator.pop(context);
     File imageFile = await ImagePicker.pickImage(source: source);
     if (imageFile != null) {
-      imageFile = await _cropImage(imageFile: imageFile);
+      imageFile = await getIt<ImageService>().cropImage(imageFile: imageFile);
       setState(() {
         _image = imageFile;
       });
     }
   }
 
-  _cropImage({@required File imageFile}) async {
-    File croppedImage =
-        await ImageCropper.cropImage(sourcePath: imageFile.path);
-    return croppedImage;
-  }
-
   _addImageToCart() async {
     if (_image == null) {
-      getIt<Modal>().showAlert(
+      getIt<ModalService>().showAlert(
           context: context,
           title: 'Error',
           message: 'Please select an image first.');
@@ -160,11 +153,11 @@ class ShopPageState extends State<ShopPage> {
 
       //Upload image to storage.
       final String photoID = Uuid().v1();
-      String imgUrl = await getIt<Storage>().uploadImage(
+      String imgUrl = await getIt<StorageService>().uploadImage(
           file: _image, path: 'Users/${_currentUser.id}/Orders/$photoID');
 
       //Save cart item to database.
-      getIt<DB>().createCartItem(
+      getIt<DBService>().createCartItem(
         userID: _currentUser.id,
         cartItem: CartItem(
             id: '',
@@ -181,7 +174,7 @@ class ShopPageState extends State<ShopPage> {
       });
 
       //Display success modal.
-      getIt<Modal>().showAlert(
+      getIt<ModalService>().showAlert(
         context: context,
         title: 'Got It',
         message: 'This item has been added to your shopping cart.',
@@ -190,7 +183,7 @@ class ShopPageState extends State<ShopPage> {
       setState(() {
         _isPosting = false;
       });
-      getIt<Modal>().showAlert(
+      getIt<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),
@@ -246,78 +239,37 @@ class ShopPageState extends State<ShopPage> {
           ),
         ),
         Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'Lithophane Price',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                    Text(
-                      _price(),
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                  ],
-                ),
-                Divider(),
-                Text(
-                  'Choose an image for your lithophane. Buy two and get the third one free.',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ],
-            )),
-        // Container(
-        //   height: 100,
-        //   child: ListView.builder(
-        //     shrinkWrap: true,
-        //     scrollDirection: Axis.horizontal,
-        //     itemCount: _images.length,
-        //     itemBuilder: (BuildContext buildContext, int index) {
-        //       return _cartImage(image: _images[index]);
-        //     },
-        //   ),
-        // ),
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Lithophane Price',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  Text(
+                    _price(),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ],
+              ),
+              Divider(),
+              Text(
+                'Choose an image for your lithophane. Buy two and get the third one free.',
+                style: TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
         RaisedButton(
           color: Colors.white,
           child: Text('Add Lithophane To Cart'),
           onPressed: () => _addImageToCart(),
         ),
-        // _images.isNotEmpty
-        //     ? RaisedButton(
-        //         color: Colors.white,
-        //         child: Text('Proceed to Checkout'),
-        //         onPressed: () => Navigator.push(
-        //           context,
-        //           MaterialPageRoute(
-        //             builder: (context) => CheckoutPage(
-        //               images: _images,
-        //             ),
-        //           ),
-        //         ),
-        //       )
-        //     : Container(),
-        // _images.isNotEmpty
-        //     ? RaisedButton(
-        //         color: Colors.white,
-        //         child: Text('Empty Images'),
-        //         onPressed: () => _emptyImages(),
-        //       )
-        //     : Container()
       ],
-    );
-  }
-
-  Widget _cartImage({@required File image}) {
-    return Container(
-      width: 100,
-      child: Image(
-        image: FileImage(image),
-        fit: BoxFit.contain,
-      ),
     );
   }
 }

@@ -4,15 +4,15 @@ class CreditCard {
   String id;
   String brand;
   String country;
-  int exp_month;
-  int exp_year;
+  int expMonth;
+  int expYear;
   String last4;
 
   CreditCard(
       {@required this.id,
       @required this.brand,
       @required this.country,
-      @required this.exp_month,
-      @required this.exp_year,
+      @required this.expMonth,
+      @required this.expYear,
       @required this.last4});
 }
