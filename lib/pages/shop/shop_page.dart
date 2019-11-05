@@ -212,13 +212,10 @@ class ShopPageState extends State<ShopPage> {
     return Column(
       children: <Widget>[
         _isPosting
-            ? Padding(
-                padding: EdgeInsets.only(bottom: 10.0),
-                child: LinearProgressIndicator(
+            ? LinearProgressIndicator(
                   backgroundColor: Colors.blue[200],
                   valueColor: AlwaysStoppedAnimation(Colors.blue),
-                ),
-              )
+                )
             : SizedBox.shrink(),
         GestureDetector(
           onTap: () {

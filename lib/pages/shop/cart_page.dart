@@ -11,6 +11,7 @@ import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/storage_service.dart';
+import 'dart:math';
 
 class CartPage extends StatefulWidget {
   @override
@@ -22,7 +23,9 @@ class CartPageState extends State<CartPage> {
   User _currentUser;
   bool _isLoading = true;
   bool _isLoggedIn = false;
-  double total = 0;
+  int count = 0;
+  int freeLithophanes = 0;
+  double price = 15.00;
 
   List<CartItem> _cartItems = List<CartItem>();
 
@@ -82,6 +85,8 @@ class CartPageState extends State<CartPage> {
               .snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            //Reset total on every change.
+            count = 0;
             if (!snapshot.hasData)
               return Center(
                 child: Text('Loading...'),
@@ -93,9 +98,12 @@ class CartPageState extends State<CartPage> {
             } else {
               return ListView(
                 shrinkWrap: true,
-                children:
-                    snapshot.data.documents.map((DocumentSnapshot document) {
-                  CartItem cartItem = CartItem.fromDoc(doc: document);
+                children: snapshot.data.documents.map((DocumentSnapshot doc) {
+                  CartItem cartItem = CartItem.fromDoc(doc: doc);
+
+                  count += cartItem.quantity;
+                  Future.delayed(Duration.zero, () => setState(() {}));
+
                   return _cartItem(
                     cartItem: cartItem,
                   );
@@ -113,7 +121,7 @@ class CartPageState extends State<CartPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    'Total : ' + _total(),
+                    'Total : ' + getTotal() + ' ( $freeLithophanes free )',
                     style: TextStyle(color: Colors.white),
                   ),
                   RaisedButton(
@@ -127,11 +135,13 @@ class CartPageState extends State<CartPage> {
     );
   }
 
-  String _total() {
+  //Buy two, get one free.
+  String getTotal() {
     double total = 0;
-    for (int i = 0; i < _cartItems.length; i++) {
-      total += _cartItems[i].quantity * 15.00;
-    }
+    freeLithophanes = (count / 3).floor();
+    double discount = freeLithophanes * price;
+    total = count * price;
+    total -= discount;
     return getIt<FormatterService>().money(amount: total);
   }
 
