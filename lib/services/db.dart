@@ -20,6 +20,11 @@ abstract class DB {
   //Cart Item
   Future<void> createCartItem(
       {@required String userID, @required CartItem cartItem});
+  Future<List<CartItem>> retrieveCartItems({@required String userID});
+  Future<void> updateCartItem(
+      {@required String userID,
+      @required String cartItemID,
+      @required Map<String, dynamic> data});
 }
 
 class DBImplementation extends DB {
@@ -123,6 +128,41 @@ class DBImplementation extends DB {
       await colRef.document(docRef.documentID).updateData(
         {'id': docRef.documentID},
       );
+      return;
+    } catch (e) {
+      throw Exception(
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<List<CartItem>> retrieveCartItems({String userID}) async {
+    try {
+      CollectionReference colRef =
+          _usersDB.document(userID).collection('Cart Items');
+      List<DocumentSnapshot> docs = (await colRef.getDocuments()).documents;
+      List<CartItem> cartItems = List<CartItem>();
+      for (int i = 0; i < docs.length; i++) {
+        cartItems.add(
+          CartItem.fromDoc(doc: docs[i]),
+        );
+      }
+      return cartItems;
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<void> updateCartItem(
+      {String userID, String cartItemID, Map<String, dynamic> data}) async {
+    try {
+      DocumentReference docRef = _usersDB
+          .document(userID)
+          .collection('Cart Items')
+          .document(cartItemID);
+      await docRef.updateData(data);
       return;
     } catch (e) {
       throw Exception(

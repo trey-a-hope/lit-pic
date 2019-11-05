@@ -8,9 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:litpic/common/logged_out_view.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/models/database/cart_item.dart';
-import 'package:litpic/pages/shop/checkout_page.dart';
 import 'package:litpic/services/db.dart';
-import 'package:litpic/services/image_cart.dart';
 import 'package:litpic/services/modal.dart';
 import 'package:litpic/services/auth.dart';
 import 'package:litpic/models/database/user.dart';
@@ -31,7 +29,6 @@ class ShopPageState extends State<ShopPage> {
   bool _isLoggedIn = false;
 
   File _image;
-  // List<File> _images = List<File>();
 
   final double price = 15.00;
 
@@ -171,7 +168,11 @@ class ShopPageState extends State<ShopPage> {
       getIt<DB>().createCartItem(
         userID: _currentUser.id,
         cartItem: CartItem(
-            id: '', imgUrl: imgUrl, title: 'Lithophane', productID: ''),
+            id: '',
+            imgUrl: imgUrl,
+            title: 'Lithophane',
+            productID: '',
+            quantity: 1),
       );
 
       //Clear image and stop loading indicator.
@@ -283,7 +284,7 @@ class ShopPageState extends State<ShopPage> {
                 ),
                 Divider(),
                 Text(
-                  'Choose an image for your lithophane.',
+                  'Choose an image for your lithophane. Buy two and get the third one free.',
                   style: TextStyle(color: Colors.white, fontSize: 12),
                 ),
               ],

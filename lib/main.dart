@@ -5,7 +5,7 @@ import 'package:litpic/pages/holder.dart';
 import 'package:litpic/services/auth.dart';
 import 'package:litpic/services/db.dart';
 import 'package:litpic/services/fcm_notification.dart';
-import 'package:litpic/services/image_cart.dart';
+import 'package:litpic/services/formatter.dart';
 import 'package:litpic/services/modal.dart';
 import 'package:litpic/services/package_device_info.dart';
 import 'package:litpic/services/storage.dart';
@@ -34,8 +34,8 @@ void main() {
   //Firebase Cloud Messaging
   getIt.registerSingleton<FCMNotification>(FCMNotificationImplementation(),
       signalsReady: true);
-  //Image Cart
-  getIt.registerSingleton<ImageCart>(ImageCartImplementation(),
+  //Formatter
+  getIt.registerSingleton<Formatter>(FormatterImplementation(),
       signalsReady: true);
   //Modal
   getIt.registerSingleton<Modal>(ModalImplementation(), signalsReady: true);
