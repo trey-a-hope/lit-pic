@@ -12,6 +12,7 @@ abstract class DBService {
 
   //Users
   Future<void> createUser({@required User user});
+  Future<void> deleteUser({@required String id});
   Future<User> retrieveUser({@required String id});
   Future<List<User>> retrieveUsers({bool isAdmin, int limit});
   Future<void> updateUser(
@@ -179,6 +180,18 @@ class DBServiceImplementation extends DBService {
       CollectionReference colRef =
           _usersDB.document(userID).collection('Cart Items');
       await colRef.document(cartItemID).delete();
+      return;
+    } catch (e) {
+      throw Exception(
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<void> deleteUser({String id}) async {
+    try {
+      await _usersDB.document(id).delete();
       return;
     } catch (e) {
       throw Exception(

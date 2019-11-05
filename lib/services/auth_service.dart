@@ -18,7 +18,6 @@ abstract class AuthService {
 }
 
 class AuthServiceImplementation extends AuthService {
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final CollectionReference _usersDB = Firestore.instance.collection('Users');
 
@@ -86,8 +85,6 @@ class AuthServiceImplementation extends AuthService {
     try {
       FirebaseUser firebaseUser = await _auth.currentUser();
       await firebaseUser.delete();
-      await _usersDB.document(userID).delete();
-      //TODO: DELETE STRIPE ACCOUNT
       return;
     } catch (e) {
       throw Exception(

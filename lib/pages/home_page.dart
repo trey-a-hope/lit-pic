@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -32,7 +33,7 @@ class HomePageState extends State<HomePage> {
           () {
             _isLoggedIn = firebaseUser != null;
             if (_isLoggedIn) {
-              _load();
+              _load(firebaseUser: firebaseUser);
             } else {
               _isLoading = false;
             }
@@ -42,7 +43,7 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  _load() async {
+  _load({@required FirebaseUser firebaseUser}) async {
     try {
       _currentUser = await getIt<AuthService>().getCurrentUser();
       _setUpFirebaseMessaging();

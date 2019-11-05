@@ -4,7 +4,10 @@ import 'package:litpic/common/logged_out_view.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/models/database/user.dart';
+import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/services/storage_service.dart';
+import 'package:litpic/services/stripe/customer.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -91,7 +94,14 @@ class SettingsPageState extends State<SettingsPage> {
             message: 'Are you sure?');
         if (confirm) {
           try {
+            //Delete user from Stripe.
+            await getIt<StripeCustomer>()
+                .delete(customerID: _currentUser.customerID);
+            //Delete user from Database.
+            await getIt<DBService>().deleteUser(id: _currentUser.id);
+            //Delete user from Auth, (last because of security rules).
             await getIt<AuthService>().deleteUser(userID: _currentUser.id);
+
             Navigator.popUntil(
               context,
               ModalRoute.withName(Navigator.defaultRouteName),

@@ -92,6 +92,9 @@ class CartPageState extends State<CartPage> {
                 child: Text('Loading...'),
               );
             else if (snapshot.hasData && snapshot.data.documents.isEmpty) {
+              count = 0;
+              Future.delayed(Duration.zero, () => setState(() {}));
+
               return Center(
                 child: Text('Your shopping cart is empty.'),
               );

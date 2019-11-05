@@ -6,11 +6,13 @@ import 'dart:convert' show json;
 import 'package:litpic/models/stripe/customer.dart';
 
 abstract class StripeCustomer {
-  Future<String> create({@required String email,
+  Future<String> create(
+      {@required String email,
       @required String description,
       @required String name});
   Future<Customer> retrieve({@required String customerID});
   Future<void> update({@required String customerID, @required String token});
+  Future<void> delete({@required String customerID});
 }
 
 class StripeCustomerImplementation extends StripeCustomer {
@@ -101,6 +103,24 @@ class StripeCustomerImplementation extends StripeCustomer {
       return;
     } catch (e) {
       throw Exception();
+    }
+  }
+
+  @override
+  Future<void> delete({String customerID}) async {
+    Map data = {'apiKey': apiKey, 'customerID': customerID};
+
+    http.Response response = await http.post(
+      endpoint + 'StripeDeleteCustomer',
+      body: data,
+      headers: {'content-type': 'application/x-www-form-urlencoded'},
+    );
+
+    try {
+      Map map = json.decode(response.body);
+      return;
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 }
