@@ -22,32 +22,32 @@ class CartPageState extends State<CartPage> {
   final GetIt getIt = GetIt.I;
   User _currentUser;
   bool _isLoading = true;
-  bool _isLoggedIn = false;
   int count = 0;
   int freeLithophanes = 0;
   double price = 15.00;
 
-  List<CartItem> _cartItems = List<CartItem>();
+  // List<CartItem> _cartItems = List<CartItem>();
 
   @override
   void initState() {
     super.initState();
 
     super.initState();
-    getIt<AuthService>().onAuthStateChanged().listen(
-      (firebaseUser) {
-        setState(
-          () {
-            _isLoggedIn = firebaseUser != null;
-            if (_isLoggedIn) {
-              _load();
-            } else {
-              _isLoading = false;
-            }
-          },
-        );
-      },
-    );
+    // getIt<AuthService>().onAuthStateChanged().listen(
+    //   (firebaseUser) {
+    //     setState(
+    //       () {
+    //         _isLoggedIn = firebaseUser != null;
+    //         if (_isLoggedIn) {
+    //           _load();
+    //         } else {
+    //           _isLoading = false;
+    //         }
+    //       },
+    //     );
+    //   },
+    // );
+    _load();
   }
 
   _load() async {
@@ -71,71 +71,71 @@ class CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     return _isLoading
         ? Spinner()
-        : _isLoggedIn ? isLoggedInView() : LoggedOutView();
-  }
+        : ListView(
+            children: <Widget>[
+              StreamBuilder<QuerySnapshot>(
+                stream: Firestore.instance
+                    .collection('Users')
+                    .document(_currentUser.id)
+                    .collection('Cart Items')
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  //Reset total on every change.
+                  count = 0;
+                  if (!snapshot.hasData)
+                    return Center(
+                      child: Text('Loading...'),
+                    );
+                  else if (snapshot.hasData &&
+                      snapshot.data.documents.isEmpty) {
+                    count = 0;
+                    Future.delayed(Duration.zero, () => setState(() {}));
 
-  Widget isLoggedInView() {
-    return ListView(
-      children: <Widget>[
-        StreamBuilder<QuerySnapshot>(
-          stream: Firestore.instance
-              .collection('Users')
-              .document(_currentUser.id)
-              .collection('Cart Items')
-              .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            //Reset total on every change.
-            count = 0;
-            if (!snapshot.hasData)
-              return Center(
-                child: Text('Loading...'),
-              );
-            else if (snapshot.hasData && snapshot.data.documents.isEmpty) {
-              count = 0;
-              Future.delayed(Duration.zero, () => setState(() {}));
+                    return Center(
+                      child: Text('Your shopping cart is empty.'),
+                    );
+                  } else {
+                    return ListView(
+                      shrinkWrap: true,
+                      children:
+                          snapshot.data.documents.map((DocumentSnapshot doc) {
+                        CartItem cartItem = CartItem.fromDoc(doc: doc);
 
-              return Center(
-                child: Text('Your shopping cart is empty.'),
-              );
-            } else {
-              return ListView(
-                shrinkWrap: true,
-                children: snapshot.data.documents.map((DocumentSnapshot doc) {
-                  CartItem cartItem = CartItem.fromDoc(doc: doc);
+                        count += cartItem.quantity;
+                        Future.delayed(Duration.zero, () => setState(() {}));
 
-                  count += cartItem.quantity;
-                  Future.delayed(Duration.zero, () => setState(() {}));
-
-                  return _cartItem(
-                    cartItem: cartItem,
-                  );
-                }).toList(),
-              );
-            }
-          },
-        ),
-        Container(
-          color: Colors.black,
-          height: 60,
-          child: Padding(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'Total : ' + getTotal() + ' ( $freeLithophanes free )',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  RaisedButton(
-                    child: Text('Checkout'),
-                    onPressed: () {},
-                  )
-                ],
-              )),
-        )
-      ],
-    );
+                        return _cartItem(
+                          cartItem: cartItem,
+                        );
+                      }).toList(),
+                    );
+                  }
+                },
+              ),
+              Container(
+                color: Colors.black,
+                height: 60,
+                child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          'Total : ' +
+                              getTotal() +
+                              ' ( $freeLithophanes free )',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        RaisedButton(
+                          child: Text('Checkout'),
+                          onPressed: () {},
+                        )
+                      ],
+                    )),
+              )
+            ],
+          );
   }
 
   //Buy two, get one free.

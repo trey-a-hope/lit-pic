@@ -34,17 +34,17 @@ class LoginPageState extends State<LoginPage>
         );
         await getIt<AuthService>().signInWithEmailAndPassword(
             email: _emailController.text, password: _passwordController.text);
-        Navigator.pop(context);
+        // Navigator.pop(context);
       } catch (e) {
         setState(
           () {
             _isLoading = false;
-            getIt<ModalService>().showAlert(
-              context: context,
-              title: 'Error',
-              message: e.message,
-            );
           },
+        );
+        getIt<ModalService>().showAlert(
+          context: context,
+          title: 'Error',
+          message: e.message,
         );
       }
     } else {
@@ -72,12 +72,12 @@ class LoginPageState extends State<LoginPage>
             )
           : Stack(
               children: <Widget>[
-                SimpleNavbar(
-                  leftWidget: Icon(MdiIcons.arrowLeft),
-                  leftTap: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
+                // SimpleNavbar(
+                //   leftWidget: Icon(MdiIcons.arrowLeft),
+                //   leftTap: () {
+                //     Navigator.of(context).pop();
+                //   },
+                // ),
                 Center(
                   child: FractionallySizedBox(
                     widthFactor: 0.9,

@@ -15,7 +15,6 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-
   final GetIt getIt = GetIt.I;
   bool _isLoading = true;
   bool _isLoggedIn = false;
@@ -27,23 +26,29 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    getIt<AuthService>().onAuthStateChanged().listen(
-      (firebaseUser) {
-        setState(
-          () {
-            _isLoggedIn = firebaseUser != null;
-            if (_isLoggedIn) {
-              _load(firebaseUser: firebaseUser);
-            } else {
-              _isLoading = false;
-            }
-          },
-        );
-      },
-    );
+    //CAN'T CALL GET CURRENT USER HERE, AS THIS IS THE FIRST VIEW CALLED IN THE WIDGET TREE, SO WHEN A NEW USER 
+    //IS CREATED IN AUTH, IT AUTOMATICALLY SWITCHES TO THE HOLDER, WHICH IS TECHNICALLY THIS VIEW, BEFORE THE USER IS ACTUALLY ADDED TO THE FIRESTORE DATABASE.
+
+    // getIt<AuthService>().onAuthStateChanged().listen(
+    //   (firebaseUser) {
+    //     setState(
+    //       () {
+    //         _isLoggedIn = firebaseUser != null;
+    //         if (_isLoggedIn) {
+    //           _load(firebaseUser: firebaseUser);
+    //         } else {
+    //           _isLoading = false;
+    //         }
+    //       },
+    //     );
+    //   },
+    // );
+    // Future.delayed(Duration(seconds: 5), () => _load());
+
+    // _load();
   }
 
-  _load({@required FirebaseUser firebaseUser}) async {
+  _load() async {
     try {
       _currentUser = await getIt<AuthService>().getCurrentUser();
       _setUpFirebaseMessaging();

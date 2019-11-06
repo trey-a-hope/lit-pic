@@ -73,7 +73,7 @@ class SignUpPageState extends State<SignUpPage>
           //Create user in Database.
           await getIt<DBService>().createUser(user: user);
 
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.of(context).pop();
         } catch (e) {
           setState(
             () {

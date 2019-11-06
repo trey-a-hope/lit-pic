@@ -25,28 +25,27 @@ class ProfilePageState extends State<ProfilePage> {
   final GetIt getIt = GetIt.I;
   User _currentUser;
   bool _isLoading = true;
-
-  bool _isLoggedIn = false;
   int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
 
-    getIt<AuthService>().onAuthStateChanged().listen(
-      (firebaseUser) {
-        setState(
-          () {
-            _isLoggedIn = firebaseUser != null;
-            if (_isLoggedIn) {
-              _load();
-            } else {
-              _isLoading = false;
-            }
-          },
-        );
-      },
-    );
+    // getIt<AuthService>().onAuthStateChanged().listen(
+    //   (firebaseUser) {
+    //     setState(
+    //       () {
+    //         _isLoggedIn = firebaseUser != null;
+    //         if (_isLoggedIn) {
+    //           _load();
+    //         } else {
+    //           _isLoading = false;
+    //         }
+    //       },
+    //     );
+    //   },
+    // );
+    _load();
   }
 
   _load() async {
@@ -149,67 +148,70 @@ class ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return _isLoading
         ? Spinner()
-        : _isLoggedIn ? isLoggedInView() : LoggedOutView();
-  }
-
-  Widget isLoggedInView() {
-    return ListView(
-      children: <Widget>[
-        Container(
-            height: 200,
-            color: Colors.grey,
-            child: GestureDetector(
-              onTap: () => _showSelectImageDialog(),
-              child: _currentUser.imgUrl == null
-                  ? CircleAvatar(
-                      child: Center(
-                        child: Icon(
-                          Icons.add_a_photo,
-                          size: 50,
-                        ),
-                      ),
-                    )
-                  : CircleAvatar(
-                      child: Image(
-                        image: CachedNetworkImageProvider(_currentUser.imgUrl),
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-            )),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            RaisedButton(
-                color: _currentIndex == 0 ? Colors.greenAccent : Colors.white,
-                child: Text('Info'),
-                onPressed: () => {
-                      setState(() {
-                        _currentIndex = 0;
-                      })
-                    }),
-            RaisedButton(
-                color: _currentIndex == 1 ? Colors.greenAccent : Colors.white,
-                child: Text('Orders'),
-                onPressed: () => {
-                      setState(() {
-                        _currentIndex = 1;
-                      })
-                    }),
-            RaisedButton(
-                color: _currentIndex == 2 ? Colors.greenAccent : Colors.white,
-                child: Text('Saved Cards'),
-                onPressed: () => {
-                      setState(() {
-                        _currentIndex = 2;
-                      })
-                    }),
-          ],
-        ),
-        _currentIndex == 0 ? _infoView() : SizedBox.shrink(),
-        _currentIndex == 1 ? _ordersView() : SizedBox.shrink(),
-        _currentIndex == 2 ? _savedCardsView() : SizedBox.shrink()
-      ],
-    );
+        : ListView(
+            children: <Widget>[
+              Container(
+                  height: 200,
+                  color: Colors.grey,
+                  child: GestureDetector(
+                    onTap: () => _showSelectImageDialog(),
+                    child: _currentUser.imgUrl == null
+                        ? CircleAvatar(
+                            child: Center(
+                              child: Icon(
+                                Icons.add_a_photo,
+                                size: 50,
+                              ),
+                            ),
+                          )
+                        : CircleAvatar(
+                            child: Image(
+                              image: CachedNetworkImageProvider(
+                                  _currentUser.imgUrl),
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                  )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  RaisedButton(
+                      color: _currentIndex == 0
+                          ? Colors.greenAccent
+                          : Colors.white,
+                      child: Text('Info'),
+                      onPressed: () => {
+                            setState(() {
+                              _currentIndex = 0;
+                            })
+                          }),
+                  RaisedButton(
+                      color: _currentIndex == 1
+                          ? Colors.greenAccent
+                          : Colors.white,
+                      child: Text('Orders'),
+                      onPressed: () => {
+                            setState(() {
+                              _currentIndex = 1;
+                            })
+                          }),
+                  RaisedButton(
+                      color: _currentIndex == 2
+                          ? Colors.greenAccent
+                          : Colors.white,
+                      child: Text('Saved Cards'),
+                      onPressed: () => {
+                            setState(() {
+                              _currentIndex = 2;
+                            })
+                          }),
+                ],
+              ),
+              _currentIndex == 0 ? _infoView() : SizedBox.shrink(),
+              _currentIndex == 1 ? _ordersView() : SizedBox.shrink(),
+              _currentIndex == 2 ? _savedCardsView() : SizedBox.shrink()
+            ],
+          );
   }
 
   Widget _infoView() {

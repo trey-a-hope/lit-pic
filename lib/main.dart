@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/constants.dart';
+import 'package:litpic/pages/authentication/login_page.dart';
 import 'package:litpic/pages/holder.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
@@ -84,7 +86,29 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.black,
         fontFamily: 'Montserrat',
       ),
-      home: Holder(),
+      home: LandingPage(),
+    );
+  }
+}
+
+
+class LandingPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<FirebaseUser>(
+      stream: FirebaseAuth.instance.onAuthStateChanged,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          FirebaseUser user = snapshot.data;
+          return user == null ? LoginPage() : Holder();
+        } else {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
     );
   }
 }

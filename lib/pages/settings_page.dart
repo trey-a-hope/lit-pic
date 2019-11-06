@@ -20,26 +20,26 @@ class SettingsPageState extends State<SettingsPage> {
   User _currentUser;
   bool _isLoading = true;
 
-  bool _isLoggedIn = false;
-
   @override
   void initState() {
     super.initState();
 
-    getIt<AuthService>().onAuthStateChanged().listen(
-      (firebaseUser) {
-        setState(
-          () {
-            _isLoggedIn = firebaseUser != null;
-            if (_isLoggedIn) {
-              _load();
-            } else {
-              _isLoading = false;
-            }
-          },
-        );
-      },
-    );
+    // getIt<AuthService>().onAuthStateChanged().listen(
+    //   (firebaseUser) {
+    //     setState(
+    //       () {
+    //         _isLoggedIn = firebaseUser != null;
+    //         if (_isLoggedIn) {
+    //           _load();
+    //         } else {
+    //           _isLoading = false;
+    //         }
+    //       },
+    //     );
+    //   },
+    // );
+
+    _load();
   }
 
   _load() async {
@@ -63,13 +63,21 @@ class SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return _isLoading
         ? Spinner()
-        : _isLoggedIn ? isLoggedInView() : LoggedOutView();
-  }
-
-  Widget isLoggedInView() {
-    return ListView(
-      children: <Widget>[_deleteAccount(), Divider(), _signOut(), Divider()],
-    );
+        : ListView(
+            children: <Widget>[
+              
+              _about(),
+              Divider(),
+              _faqs(),
+              Divider(),
+              _helpSupport(),
+              Divider(),
+              _deleteAccount(),
+              Divider(),
+              _signOut(),
+              Divider()
+            ],
+          );
   }
 
   ListTile _deleteAccount() {
@@ -152,6 +160,69 @@ class SettingsPageState extends State<SettingsPage> {
         if (confirm) {
           await getIt<AuthService>().signOut();
         }
+      },
+    );
+  }
+
+  ListTile _about() {
+    return ListTile(
+      leading: Icon(
+        MdiIcons.information,
+        color: Colors.white,
+      ),
+      title: Text(
+        'About',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(
+        'Learn more about Lit Pic.',
+        style: TextStyle(color: Colors.grey.shade200),
+      ),
+      trailing: Icon(Icons.chevron_right),
+      onTap: () async {
+        print('Open About');
+      },
+    );
+  }
+
+  ListTile _faqs() {
+    return ListTile(
+      leading: Icon(
+        MdiIcons.carInfo,
+        color: Colors.white,
+      ),
+      title: Text(
+        'FAQs',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(
+        'See what other people are asking.',
+        style: TextStyle(color: Colors.grey.shade200),
+      ),
+      trailing: Icon(Icons.chevron_right),
+      onTap: () async {
+        print('Open FAQs');
+      },
+    );
+  }
+
+    ListTile _helpSupport() {
+    return ListTile(
+      leading: Icon(
+        MdiIcons.office,
+        color: Colors.white,
+      ),
+      title: Text(
+        'Help / Support',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(
+        'What can we do for you today?',
+        style: TextStyle(color: Colors.grey.shade200),
+      ),
+      trailing: Icon(Icons.chevron_right),
+      onTap: () async {
+        print('Open Help / Support');
       },
     );
   }

@@ -25,7 +25,6 @@ class ShopPageState extends State<ShopPage> {
   User _currentUser;
   bool _isLoading = true;
   bool _isPosting = false;
-  bool _isLoggedIn = false;
 
   File _image;
 
@@ -34,20 +33,21 @@ class ShopPageState extends State<ShopPage> {
   @override
   void initState() {
     super.initState();
-    getIt<AuthService>().onAuthStateChanged().listen(
-      (firebaseUser) {
-        setState(
-          () {
-            _isLoggedIn = firebaseUser != null;
-            if (_isLoggedIn) {
-              _load();
-            } else {
-              _isLoading = false;
-            }
-          },
-        );
-      },
-    );
+    // getIt<AuthService>().onAuthStateChanged().listen(
+    //   (firebaseUser) {
+    //     setState(
+    //       () {
+    //         _isLoggedIn = firebaseUser != null;
+    //         if (_isLoggedIn) {
+    //           _load();
+    //         } else {
+    //           _isLoading = false;
+    //         }
+    //       },
+    //     );
+    //   },
+    // );
+    _load();
   }
 
   _load() async {
@@ -200,12 +200,10 @@ class ShopPageState extends State<ShopPage> {
 
   @override
   Widget build(BuildContext context) {
-    return _isLoading
-        ? Spinner()
-        : _isLoggedIn ? isLoggedInView() : LoggedOutView();
+    return _isLoading ? Spinner() : view();
   }
 
-  Widget isLoggedInView() {
+  Widget view() {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
@@ -213,9 +211,9 @@ class ShopPageState extends State<ShopPage> {
       children: <Widget>[
         _isPosting
             ? LinearProgressIndicator(
-                  backgroundColor: Colors.blue[200],
-                  valueColor: AlwaysStoppedAnimation(Colors.blue),
-                )
+                backgroundColor: Colors.blue[200],
+                valueColor: AlwaysStoppedAnimation(Colors.blue),
+              )
             : SizedBox.shrink(),
         GestureDetector(
           onTap: () {
