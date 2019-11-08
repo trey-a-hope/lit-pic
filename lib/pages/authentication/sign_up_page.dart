@@ -18,8 +18,7 @@ class SignUpPage extends StatefulWidget {
 
 class SignUpPageState extends State<SignUpPage>
     with SingleTickerProviderStateMixin {
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -59,7 +58,7 @@ class SignUpPageState extends State<SignUpPage>
           String customerID = await getIt<StripeCustomer>().create(
               email: firebaseUser.email,
               description: '',
-              name: _firstNameController.text + ' ' + _lastNameController.text);
+              name: _nameController.text);
 
           User user = User(
               id: null,
@@ -134,9 +133,7 @@ class SignUpPageState extends State<SignUpPage>
                           autovalidate: _autoValidate,
                           child: Column(
                             children: <Widget>[
-                              firstNameFormField(),
-                              SizedBox(height: 30),
-                              lastNameFormField(),
+                              nameFormField(),
                               SizedBox(height: 30),
                               emailFormField(),
                               SizedBox(height: 30),
@@ -163,9 +160,9 @@ class SignUpPageState extends State<SignUpPage>
     );
   }
 
-  Widget firstNameFormField() {
+  Widget nameFormField() {
     return TextFormField(
-      controller: _firstNameController,
+      controller: _nameController,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
@@ -174,25 +171,7 @@ class SignUpPageState extends State<SignUpPage>
       validator: getIt<ValidatorService>().isEmpty,
       onSaved: (value) {},
       decoration: InputDecoration(
-        hintText: 'First Name',
-        icon: Icon(Icons.face),
-        fillColor: Colors.white,
-      ),
-    );
-  }
-
-  Widget lastNameFormField() {
-    return TextFormField(
-      controller: _lastNameController,
-      keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.done,
-      maxLengthEnforced: true,
-      // maxLength: MyFormData.nameCharLimit,
-      onFieldSubmitted: (term) {},
-      validator: getIt<ValidatorService>().isEmpty,
-      onSaved: (value) {},
-      decoration: InputDecoration(
-        hintText: 'Last Name',
+        hintText: 'Name',
         icon: Icon(Icons.face),
         fillColor: Colors.white,
       ),

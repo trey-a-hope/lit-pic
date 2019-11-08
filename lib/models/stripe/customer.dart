@@ -6,14 +6,40 @@ class Customer {
   final String email;
   final String defaultSource;
   final CreditCard card;
-  final bool isSubscribed;
   final String name;
+  final Address address;
 
   Customer(
       {@required this.id,
       @required this.defaultSource,
       @required this.card,
-      @required this.isSubscribed,
       @required this.email,
-      @required this.name});
+      @required this.name,
+      @required this.address});
+}
+
+class Address {
+  final String city;
+  final String country;
+  final String line1;
+  final String postalCode;
+  final String state;
+
+  Address(
+      {@required this.city,
+      @required this.country,
+      @required this.line1,
+      @required this.postalCode,
+      @required this.state});
+
+  factory Address.fromMap({@required Map map}) {
+    return map == null
+        ? map
+        : Address(
+            city: map['city'],
+            country: map['country'],
+            line1: map['line1'],
+            postalCode: map['postal_code'],
+            state: map['state']);
+  }
 }

@@ -8,6 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:litpic/common/logged_out_view.dart';
 import 'package:litpic/common/spinner.dart';
+import 'package:litpic/pages/profile/personal_info_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/image_service.dart';
@@ -155,7 +156,9 @@ class ProfilePageState extends State<ProfilePage> {
                   color: Colors.grey,
                   child: GestureDetector(
                     onTap: () => _showSelectImageDialog(),
-                    child: _currentUser.imgUrl == null
+                    child: Column(
+                      children: <Widget>[
+                        _currentUser.imgUrl == null
                         ? CircleAvatar(
                             child: Center(
                               child: Icon(
@@ -171,6 +174,9 @@ class ProfilePageState extends State<ProfilePage> {
                               fit: BoxFit.contain,
                             ),
                           ),
+                          Text('Hello ${_currentUser.customer.name}')
+                      ],
+                    ),
                   )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -179,11 +185,14 @@ class ProfilePageState extends State<ProfilePage> {
                       color: _currentIndex == 0
                           ? Colors.greenAccent
                           : Colors.white,
-                      child: Text('Info'),
+                      child: Text('Personal Info'),
                       onPressed: () => {
-                            setState(() {
-                              _currentIndex = 0;
-                            })
+                             Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PersonalInfoPage(),
+                ),
+              )
                           }),
                   RaisedButton(
                       color: _currentIndex == 1
@@ -205,31 +214,36 @@ class ProfilePageState extends State<ProfilePage> {
                               _currentIndex = 2;
                             })
                           }),
+                                          RaisedButton(
+                      color: Colors.white,
+                      child: Text('Messages'),
+                      onPressed: () => {
+                            setState(() {
+                              _currentIndex = 2;
+                            })
+                          }),
                 ],
               ),
-              _currentIndex == 0 ? _infoView() : SizedBox.shrink(),
-              _currentIndex == 1 ? _ordersView() : SizedBox.shrink(),
-              _currentIndex == 2 ? _savedCardsView() : SizedBox.shrink()
             ],
           );
   }
 
-  Widget _infoView() {
-    return Column(
-      children: <Widget>[
-        Text('Name'),
-        Text(_currentUser.customer.name),
-        Text('Email'),
-        Text(_currentUser.customer.email),
-      ],
-    );
-  }
+  // Widget _infoView() {
+  //   return Column(
+  //     children: <Widget>[
+  //       Text('Name'),
+  //       Text(_currentUser.customer.name),
+  //       Text('Email'),
+  //       Text(_currentUser.customer.email),
+  //     ],
+  //   );
+  // }
 
-  Widget _ordersView() {
-    return Text('Currently No Orders');
-  }
+  // Widget _ordersView() {
+  //   return Text('Currently No Orders');
+  // }
 
-  Widget _savedCardsView() {
-    return Text('Currently No Saved Cards');
-  }
+  // Widget _savedCardsView() {
+  //   return Text('Currently No Saved Cards');
+  // }
 }

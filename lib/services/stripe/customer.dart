@@ -11,7 +11,23 @@ abstract class StripeCustomer {
       @required String description,
       @required String name});
   Future<Customer> retrieve({@required String customerID});
-  Future<void> update({@required String customerID, @required String token});
+  // Future<void> update(
+  //     {@required String customerID,
+  //     String token,
+  //     String city,
+  //     String country,
+  //     String line1,
+  //     String postalCode,
+  //     String state});
+  Future<void> updateAddress(
+      {@required String customerID,
+      String city,
+      String country,
+      String line1,
+      String postalCode,
+      String state});
+  Future<void> updateName({@required String customerID, String name});
+  Future<void> updateEmail({@required String customerID, String email});
   Future<void> delete({@required String customerID});
 }
 
@@ -60,6 +76,7 @@ class StripeCustomerImplementation extends StripeCustomer {
 
     try {
       Map customerMap = json.decode(response.body);
+      Map addressMap = customerMap['address'];
 
       //Add default card if one is active.
       CreditCard card;
@@ -76,21 +93,35 @@ class StripeCustomerImplementation extends StripeCustomer {
       }
 
       return Customer(
-          id: customerMap['id'],
-          email: customerMap['email'],
-          defaultSource: customerMap['default_source'],
-          card: card,
-          name: customerMap['name'],
-          isSubscribed: customerMap['subscriptions'] != null);
+        id: customerMap['id'],
+        email: customerMap['email'],
+        defaultSource: customerMap['default_source'],
+        card: card,
+        name: customerMap['name'],
+        address: Address.fromMap(map: addressMap),
+      );
     } catch (e) {
       throw Exception();
     }
   }
 
   @override
-  Future<void> update(
-      {@required String customerID, @required String token}) async {
-    Map data = {'apiKey': apiKey, 'customerID': customerID, 'token': token};
+  Future<void> updateAddress(
+      {String customerID,
+      String city,
+      String country,
+      String line1,
+      String postalCode,
+      String state}) async {
+    Map data = {
+      'apiKey': apiKey,
+      'customerID': customerID,
+      'city': city,
+      'country': country,
+      'line1': line1,
+      'postal_code': postalCode,
+      'state': state
+    };
 
     http.Response response = await http.post(
       endpoint + 'StripeUpdateCustomer',
@@ -121,6 +152,50 @@ class StripeCustomerImplementation extends StripeCustomer {
       return;
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<void> updateEmail({String customerID, String email}) async {
+    Map data = {
+      'apiKey': apiKey,
+      'customerID': customerID,
+      'email': email
+    };
+
+    http.Response response = await http.post(
+      endpoint + 'StripeUpdateCustomer',
+      body: data,
+      headers: {'content-type': 'application/x-www-form-urlencoded'},
+    );
+
+    try {
+      Map map = json.decode(response.body);
+      return;
+    } catch (e) {
+      throw Exception();
+    }
+  }
+
+  @override
+  Future<void> updateName({String customerID, String name}) async {
+    Map data = {
+      'apiKey': apiKey,
+      'customerID': customerID,
+      'name': name,
+    };
+
+    http.Response response = await http.post(
+      endpoint + 'StripeUpdateCustomer',
+      body: data,
+      headers: {'content-type': 'application/x-www-form-urlencoded'},
+    );
+
+    try {
+      Map map = json.decode(response.body);
+      return;
+    } catch (e) {
+      throw Exception();
     }
   }
 }

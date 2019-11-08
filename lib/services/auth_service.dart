@@ -14,6 +14,8 @@ abstract class AuthService {
   Future<AuthResult> createUserWithEmailAndPassword(
       {@required String email, @required String password});
   Future<void> updatePassword({@required String password});
+    Future<void> updateEmail({@required String email});
+
   Future<void> deleteUser({@required String userID});
 }
 
@@ -85,6 +87,19 @@ class AuthServiceImplementation extends AuthService {
     try {
       FirebaseUser firebaseUser = await _auth.currentUser();
       await firebaseUser.delete();
+      return;
+    } catch (e) {
+      throw Exception(
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<void> updateEmail({String email}) async {
+    try {
+      FirebaseUser firebaseUser = await _auth.currentUser();
+      firebaseUser.updateEmail(email);
       return;
     } catch (e) {
       throw Exception(
