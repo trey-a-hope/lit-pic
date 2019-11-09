@@ -8,6 +8,7 @@ class Customer {
   final CreditCard card;
   final String name;
   final Address address;
+  final List<CreditCard> sources;
 
   Customer(
       {@required this.id,
@@ -15,7 +16,8 @@ class Customer {
       @required this.card,
       @required this.email,
       @required this.name,
-      @required this.address});
+      @required this.address,
+      @required this.sources});
 }
 
 class Address {

@@ -5,6 +5,21 @@ final String livePublishableKey = '?';
 final String endpoint =
     'https://us-central1-hidden-gems-e481d.cloudfunctions.net/';
 
+final List<String> months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
+
 final List<String> unitedStates = [
   "AK",
   "AL",

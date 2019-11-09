@@ -11,14 +11,8 @@ abstract class StripeCustomer {
       @required String description,
       @required String name});
   Future<Customer> retrieve({@required String customerID});
-  // Future<void> update(
-  //     {@required String customerID,
-  //     String token,
-  //     String city,
-  //     String country,
-  //     String line1,
-  //     String postalCode,
-  //     String state});
+  Future<void> updateDefaultSource(
+      {@required String customerID, String defaultSource});
   Future<void> updateAddress(
       {@required String customerID,
       String city,
@@ -77,6 +71,7 @@ class StripeCustomerImplementation extends StripeCustomer {
     try {
       Map customerMap = json.decode(response.body);
       Map addressMap = customerMap['address'];
+      Map sourcesMap = customerMap['sources'];
 
       //Add default card if one is active.
       CreditCard card;
@@ -92,14 +87,31 @@ class StripeCustomerImplementation extends StripeCustomer {
         );
       }
 
+      //Add sources if available.
+      List<CreditCard> sources = List<CreditCard>();
+      if (sourcesMap != null) {
+        for (int i = 0; i < sourcesMap['data'].length; i++) {
+          Map sourceMap = sourcesMap['data'][i];
+          CreditCard creditCard = CreditCard(
+            id: sourceMap['id'],
+            country: sourceMap['country'],
+            expMonth: sourceMap['exp_month'],
+            expYear: sourceMap['exp_year'],
+            brand: sourceMap['brand'],
+            last4: sourceMap['last4'],
+          );
+          sources.add(creditCard);
+        }
+      }
+
       return Customer(
-        id: customerMap['id'],
-        email: customerMap['email'],
-        defaultSource: customerMap['default_source'],
-        card: card,
-        name: customerMap['name'],
-        address: Address.fromMap(map: addressMap),
-      );
+          id: customerMap['id'],
+          email: customerMap['email'],
+          defaultSource: customerMap['default_source'],
+          card: card,
+          name: customerMap['name'],
+          address: Address.fromMap(map: addressMap),
+          sources: sources);
     } catch (e) {
       throw Exception();
     }
@@ -157,11 +169,7 @@ class StripeCustomerImplementation extends StripeCustomer {
 
   @override
   Future<void> updateEmail({String customerID, String email}) async {
-    Map data = {
-      'apiKey': apiKey,
-      'customerID': customerID,
-      'email': email
-    };
+    Map data = {'apiKey': apiKey, 'customerID': customerID, 'email': email};
 
     http.Response response = await http.post(
       endpoint + 'StripeUpdateCustomer',
@@ -183,6 +191,28 @@ class StripeCustomerImplementation extends StripeCustomer {
       'apiKey': apiKey,
       'customerID': customerID,
       'name': name,
+    };
+
+    http.Response response = await http.post(
+      endpoint + 'StripeUpdateCustomer',
+      body: data,
+      headers: {'content-type': 'application/x-www-form-urlencoded'},
+    );
+
+    try {
+      Map map = json.decode(response.body);
+      return;
+    } catch (e) {
+      throw Exception();
+    }
+  }
+
+  @override
+  Future<void> updateDefaultSource({String customerID, String defaultSource}) async {
+    Map data = {
+      'apiKey': apiKey,
+      'customerID': customerID,
+      'default_source': defaultSource,
     };
 
     http.Response response = await http.post(

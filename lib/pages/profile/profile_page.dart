@@ -1,13 +1,11 @@
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:litpic/common/logged_out_view.dart';
 import 'package:litpic/common/spinner.dart';
+import 'package:litpic/pages/payments/saved_cards_page.dart';
 import 'package:litpic/pages/profile/personal_info_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
@@ -159,22 +157,22 @@ class ProfilePageState extends State<ProfilePage> {
                     child: Column(
                       children: <Widget>[
                         _currentUser.imgUrl == null
-                        ? CircleAvatar(
-                            child: Center(
-                              child: Icon(
-                                Icons.add_a_photo,
-                                size: 50,
+                            ? CircleAvatar(
+                                child: Center(
+                                  child: Icon(
+                                    Icons.add_a_photo,
+                                    size: 50,
+                                  ),
+                                ),
+                              )
+                            : CircleAvatar(
+                                child: Image(
+                                  image: CachedNetworkImageProvider(
+                                      _currentUser.imgUrl),
+                                  fit: BoxFit.contain,
+                                ),
                               ),
-                            ),
-                          )
-                        : CircleAvatar(
-                            child: Image(
-                              image: CachedNetworkImageProvider(
-                                  _currentUser.imgUrl),
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          Text('Hello ${_currentUser.customer.name}')
+                        Text('Hello ${_currentUser.customer.name}')
                       ],
                     ),
                   )),
@@ -187,12 +185,12 @@ class ProfilePageState extends State<ProfilePage> {
                           : Colors.white,
                       child: Text('Personal Info'),
                       onPressed: () => {
-                             Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PersonalInfoPage(),
-                ),
-              )
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PersonalInfoPage(),
+                              ),
+                            )
                           }),
                   RaisedButton(
                       color: _currentIndex == 1
@@ -210,11 +208,14 @@ class ProfilePageState extends State<ProfilePage> {
                           : Colors.white,
                       child: Text('Saved Cards'),
                       onPressed: () => {
-                            setState(() {
-                              _currentIndex = 2;
-                            })
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SavedCardsPage(),
+                              ),
+                            )
                           }),
-                                          RaisedButton(
+                  RaisedButton(
                       color: Colors.white,
                       child: Text('Messages'),
                       onPressed: () => {
