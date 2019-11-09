@@ -1,19 +1,10 @@
-import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:litpic/common/logged_out_view.dart';
-import 'package:litpic/common/spinner.dart';
+import 'package:litpic/constants.dart';
 import 'package:litpic/services/auth_service.dart';
-import 'package:litpic/services/db_service.dart';
-import 'package:litpic/services/image_service.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/storage_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
 import 'package:litpic/services/validater_service.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -30,7 +21,8 @@ class EditAddressPageState extends State<EditAddressPage> {
 
   TextEditingController _addressController = TextEditingController();
   TextEditingController _cityController = TextEditingController();
-  TextEditingController _stateController = TextEditingController();
+  String _stateController;
+  String selectedState;
   TextEditingController _zipController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -51,7 +43,7 @@ class EditAddressPageState extends State<EditAddressPage> {
       if (_currentUser.customer.address != null) {
         _addressController.text = _currentUser.customer.address.line1;
         _cityController.text = _currentUser.customer.address.city;
-        _stateController.text = _currentUser.customer.address.state;
+        selectedState = _currentUser.customer.address.state;
         _zipController.text = _currentUser.customer.address.postalCode;
       }
 
@@ -89,7 +81,7 @@ class EditAddressPageState extends State<EditAddressPage> {
               customerID: _currentUser.customerID,
               line1: _addressController.text,
               city: _cityController.text,
-              state: _stateController.text,
+              state: selectedState,
               postalCode: _zipController.text,
               country: 'USA');
 
@@ -201,21 +193,20 @@ class EditAddressPageState extends State<EditAddressPage> {
   }
 
   Widget _stateFormField() {
-    return TextFormField(
-      controller: _stateController,
-      keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.done,
-      maxLengthEnforced: true,
-      // maxLength: MyFormData.nameCharLimit,
-      onFieldSubmitted: (term) {},
-      validator: getIt<ValidatorService>().isEmpty,
-      onSaved: (value) {},
-      decoration: InputDecoration(
-        hintText: 'State',
-        icon: Icon(Icons.hotel),
-        fillColor: Colors.white,
-      ),
-    );
+    return DropdownButton<String>(
+        hint: Text('State'),
+        items: unitedStates.map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+        value: selectedState,
+        onChanged: (String newValue) {
+          setState(() {
+            selectedState = newValue;
+          });
+        });
   }
 
   Widget _zipFormField() {

@@ -69,7 +69,7 @@ class PersonalInfoPageState extends State<PersonalInfoPage> {
       ),
       body: _isLoading
           ? Spinner()
-          : ListView(
+          : Column(
               children: <Widget>[
                 //Name
                 Padding(

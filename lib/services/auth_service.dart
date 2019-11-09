@@ -99,7 +99,7 @@ class AuthServiceImplementation extends AuthService {
   Future<void> updateEmail({String email}) async {
     try {
       FirebaseUser firebaseUser = await _auth.currentUser();
-      firebaseUser.updateEmail(email);
+      await firebaseUser.updateEmail(email);
       return;
     } catch (e) {
       throw Exception(
