@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:litpic/common/logged_out_view.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/services/auth_service.dart';

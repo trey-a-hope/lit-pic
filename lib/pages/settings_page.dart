@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:litpic/common/logged_out_view.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/storage_service.dart';
-import 'package:litpic/services/stripe/customer.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -23,21 +19,6 @@ class SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
-
-    // getIt<AuthService>().onAuthStateChanged().listen(
-    //   (firebaseUser) {
-    //     setState(
-    //       () {
-    //         _isLoggedIn = firebaseUser != null;
-    //         if (_isLoggedIn) {
-    //           _load();
-    //         } else {
-    //           _isLoading = false;
-    //         }
-    //       },
-    //     );
-    //   },
-    // );
 
     _load();
   }

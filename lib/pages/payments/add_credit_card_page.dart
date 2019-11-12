@@ -53,7 +53,7 @@ class AddCreditCardPageState extends State<AddCreditCardPage> {
       bool confirm = await getIt<ModalService>().showConfirmation(
           context: context,
           title: 'Add Card',
-          message: 'This will become your default card on file. Proceed?');
+          message: 'Are you sure?');
       if (confirm) {
         setState(
           () {

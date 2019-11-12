@@ -1,4 +1,6 @@
+https://codecanyon.net/item/shoppers-flutter-ecommerce-app-using-firebase/24930116
 
+https://www.youtube.com/watch?time_continue=1&v=mjHR4qkXRSc
 
 ## Create keystore file.
 - Command [keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key]

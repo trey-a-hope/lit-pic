@@ -130,7 +130,7 @@ class EditAddressPageState extends State<EditAddressPage> {
                   backgroundColor: Colors.blue[200],
                   valueColor: AlwaysStoppedAnimation(Colors.blue),
                 )
-              : SizedBox.shrink(),
+              : Container(),
           Form(
             key: _formKey,
             autovalidate: _autoValidate,

@@ -1,19 +1,10 @@
-import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:litpic/common/logged_out_view.dart';
-import 'package:litpic/common/spinner.dart';
 import 'package:litpic/services/auth_service.dart';
-import 'package:litpic/services/db_service.dart';
-import 'package:litpic/services/image_service.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/storage_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
 import 'package:litpic/services/validater_service.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
