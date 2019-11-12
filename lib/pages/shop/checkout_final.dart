@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/constants.dart';
+import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/models/stripe/credit_card.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/models/database/user.dart';
@@ -92,6 +95,46 @@ class CheckoutFinalPageState extends State<CheckoutFinalPage> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 _buildCreditCard(creditCard: _currentUser.customer.card),
+                StreamBuilder<QuerySnapshot>(
+                stream: Firestore.instance
+                    .collection('Users')
+                    .document(_currentUser.id)
+                    .collection('Cart Items')
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  //Reset total on every change.
+                  items = 0;
+                  if (!snapshot.hasData)
+                    return Center(
+                      child: Text('Loading...'),
+                    );
+                  else if (snapshot.hasData &&
+                      snapshot.data.documents.isEmpty) {
+                    items = 0;
+                    Future.delayed(Duration.zero, () => setState(() {}));
+
+                    return Center(
+                      child: Text('Your shopping cart is empty.'),
+                    );
+                  } else {
+                    return ListView(
+                      shrinkWrap: true,
+                      children:
+                          snapshot.data.documents.map((DocumentSnapshot doc) {
+                        CartItem cartItem = CartItem.fromDoc(doc: doc);
+
+                        items += cartItem.quantity;
+                        Future.delayed(Duration.zero, () => setState(() {}));
+
+                        return _cartItem(
+                          cartItem: cartItem,
+                        );
+                      }).toList(),
+                    );
+                  }
+                },
+              ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -164,6 +207,26 @@ class CheckoutFinalPageState extends State<CheckoutFinalPage> {
           trailing: Icon(Icons.chevron_right),
         ),
       ),
+    );
+  }
+
+  Widget _cartItem({@required CartItem cartItem}) {
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: Text('Lithophane'),
+          leading: Container(
+            width: 100,
+            height: 100,
+            child: Image(
+              image: CachedNetworkImageProvider(cartItem.imgUrl),
+              fit: BoxFit.contain,
+            ),
+          ),
+          subtitle: Text('${cartItem.quantity}'),
+        ),
+        Divider(),
+      ],
     );
   }
 }
