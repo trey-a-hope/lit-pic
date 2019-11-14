@@ -93,7 +93,7 @@ class LoginPageState extends State<LoginPage>
                       child: Form(
                         key: _formKey,
                         autovalidate: _autoValidate,
-                        child: Column(
+                        child: ListView(
                           children: <Widget>[
                             Padding(
                               padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
