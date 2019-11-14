@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:litpic/common/pay_flow_diagram.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/pages/profile/edit_address_page.dart';
 import 'package:litpic/pages/shop/checkout_payment.dart';
@@ -9,6 +10,7 @@ import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class CheckoutShippingPage extends StatefulWidget {
   @override
@@ -72,6 +74,7 @@ class CheckoutShippingPageState extends State<CheckoutShippingPage> {
           ? Spinner()
           : Column(
               children: <Widget>[
+                PayFlowDiagram(shippingComplete: false, paymentComplete: false, submitComplete: false),
                 _currentUser.customer.address == null
                     ? SizedBox.shrink()
                     : Padding(

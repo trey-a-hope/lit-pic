@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/simple_navbar.dart';
+import 'package:litpic/common/spinner.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
@@ -100,63 +101,204 @@ class SignUpPageState extends State<SignUpPage>
     return Scaffold(
       backgroundColor: Colors.white,
       body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? Spinner()
           : Stack(
               children: <Widget>[
-                SimpleNavbar(
-                  leftWidget: Icon(MdiIcons.arrowLeft),
-                  leftTap: () {
-                    Navigator.of(context).pop();
-                  },
+                Container(
+                  color: Colors.blue,
+                  // decoration: BoxDecoration(
+                  //   image: DecorationImage(
+                  //     image: AssetImage('Assets/image1.png'),
+                  //     fit: BoxFit.fitWidth,
+                  //     alignment: Alignment.topCenter
+                  //   )
+                  // ),
                 ),
-                Center(
-                  child: FractionallySizedBox(
-                    widthFactor: 0.9,
-                    child: Container(
-                      height: _autoValidate ? 405 : 340,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black12,
-                              offset: Offset(0, 6),
-                              blurRadius: 6),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Form(
-                          key: _formKey,
-                          autovalidate: _autoValidate,
-                          child: Column(
-                            children: <Widget>[
-                              nameFormField(),
-                              SizedBox(height: 30),
-                              emailFormField(),
-                              SizedBox(height: 30),
-                              passwordFormField(),
-                              SizedBox(height: 30),
-                            ],
-                          ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: EdgeInsets.only(top: 270),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white,
+                  ),
+                  child: Padding(
+                      padding: EdgeInsets.all(23),
+                      child: Form(
+                        key: _formKey,
+                        autovalidate: _autoValidate,
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                                color: Color(0xfff5f5f5),
+                                child: TextFormField(
+                                  validator: getIt<ValidatorService>().isEmpty,
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.done,
+                                  controller: _nameController,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'SFUIDisplay'),
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: 'Name',
+                                      prefixIcon: Icon(Icons.face),
+                                      labelStyle: TextStyle(fontSize: 15)),
+                                ),
+                              ),
+                              SizedBox(height: 20,),
+                               Container(
+                                color: Color(0xfff5f5f5),
+                                child: TextFormField(
+                                  validator: getIt<ValidatorService>().email,
+                                  keyboardType: TextInputType.text,
+                                  textInputAction: TextInputAction.done,
+                                  controller: _emailController,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'SFUIDisplay'),
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      labelText: 'Email',
+                                      prefixIcon: Icon(Icons.email),
+                                      labelStyle: TextStyle(fontSize: 15)),
+                                ),
+                              ),
+                                                            SizedBox(height: 20,),
+
+                            Container(
+                              color: Color(0xfff5f5f5),
+                              child: TextFormField(
+                                validator: getIt<ValidatorService>().password,
+                                keyboardType: TextInputType.text,
+                                textInputAction: TextInputAction.done,
+                                controller: _passwordController,
+                                obscureText: true,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'SFUIDisplay'),
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Password',
+                                    prefixIcon: Icon(Icons.lock_outline),
+                                    labelStyle: TextStyle(fontSize: 15)),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 20),
+                              child: MaterialButton(
+                                onPressed: () {
+                                  _signUp();
+                                }, //since this is only a UI app
+                                child: Text(
+                                  'SIGN UP',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontFamily: 'SFUIDisplay',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                color: Color(0xffff2d55),
+                                elevation: 0,
+                                minWidth: 400,
+                                height: 50,
+                                textColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
+                            ),
+
+                            Padding(
+                              padding: EdgeInsets.only(top: 30),
+                              child: Center(
+                                  child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: RichText(
+                                  text: TextSpan(children: [
+                                    TextSpan(
+                                        text: "Already have an account?",
+                                        style: TextStyle(
+                                          fontFamily: 'SFUIDisplay',
+                                          color: Colors.black,
+                                          fontSize: 15,
+                                        )),
+                                    TextSpan(text: ' '),
+                                    TextSpan(
+                                        text: "Sign In",
+                                        style: TextStyle(
+                                          fontFamily: 'SFUIDisplay',
+                                          color: Color(0xffff2d55),
+                                          fontSize: 15,
+                                        ))
+                                  ]),
+                                ),
+                              )),
+                            )
+                          ],
                         ),
-                      ),
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: RaisedButton(
-                    child: Text('Sign Up'),
-                    onPressed: () {
-                      _signUp();
-                    },
-                  ),
+                      )),
                 )
               ],
             ),
+      // body: _isLoading
+      //     ? Center(
+      //         child: CircularProgressIndicator(),
+      //       )
+      //     : Stack(
+      //         children: <Widget>[
+      //           SimpleNavbar(
+      //             leftWidget: Icon(MdiIcons.arrowLeft),
+      //             leftTap: () {
+      //               Navigator.of(context).pop();
+      //             },
+      //           ),
+      //           Center(
+      //             child: FractionallySizedBox(
+      //               widthFactor: 0.9,
+      //               child: Container(
+      //                 height: _autoValidate ? 405 : 340,
+      //                 decoration: BoxDecoration(
+      //                   borderRadius: BorderRadius.circular(8),
+      //                   color: Colors.white,
+      //                   boxShadow: [
+      //                     BoxShadow(
+      //                         color: Colors.black12,
+      //                         offset: Offset(0, 6),
+      //                         blurRadius: 6),
+      //                   ],
+      //                 ),
+      //                 child: Padding(
+      //                   padding: EdgeInsets.all(20),
+      //                   child: Form(
+      //                     key: _formKey,
+      //                     autovalidate: _autoValidate,
+      //                     child: Column(
+      //                       children: <Widget>[
+      //                         nameFormField(),
+      //                         SizedBox(height: 30),
+      //                         emailFormField(),
+      //                         SizedBox(height: 30),
+      //                         passwordFormField(),
+      //                         SizedBox(height: 30),
+      //                       ],
+      //                     ),
+      //                   ),
+      //                 ),
+      //               ),
+      //             ),
+      //           ),
+      //           Align(
+      //             alignment: Alignment.bottomCenter,
+      //             child: RaisedButton(
+      //               child: Text('Sign Up'),
+      //               onPressed: () {
+      //                 _signUp();
+      //               },
+      //             ),
+      //           )
+      //         ],
+      //       ),
     );
   }
 

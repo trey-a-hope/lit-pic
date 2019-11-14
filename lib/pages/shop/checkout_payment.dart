@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:litpic/common/pay_flow_diagram.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/models/stripe/credit_card.dart';
@@ -80,6 +81,8 @@ class CheckoutPaymentPageState extends State<CheckoutPaymentPage> {
                 )
               : Column(
                   children: <Widget>[
+                                    PayFlowDiagram(shippingComplete: true, paymentComplete: false, submitComplete: false),
+
                     _buildCreditCard(creditCard: _currentUser.customer.card),
                     RaisedButton(
                       child: Text('Update Default Card'),

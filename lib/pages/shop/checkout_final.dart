@@ -2,10 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:litpic/common/pay_flow_diagram.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/models/stripe/credit_card.dart';
+import 'package:litpic/pages/shop/checkout_success.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/services/formatter_service.dart';
@@ -75,6 +77,8 @@ class CheckoutFinalPageState extends State<CheckoutFinalPage> {
           ? Spinner()
           : ListView(
               children: <Widget>[
+                                PayFlowDiagram(shippingComplete: true, paymentComplete: true, submitComplete: false),
+
                 Text(
                   'Double check your order details.',
                   style: TextStyle(fontSize: 20),
@@ -96,45 +100,45 @@ class CheckoutFinalPageState extends State<CheckoutFinalPage> {
                 ),
                 _buildCreditCard(creditCard: _currentUser.customer.card),
                 StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance
-                    .collection('Users')
-                    .document(_currentUser.id)
-                    .collection('Cart Items')
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  //Reset total on every change.
-                  items = 0;
-                  if (!snapshot.hasData)
-                    return Center(
-                      child: Text('Loading...'),
-                    );
-                  else if (snapshot.hasData &&
-                      snapshot.data.documents.isEmpty) {
+                  stream: Firestore.instance
+                      .collection('Users')
+                      .document(_currentUser.id)
+                      .collection('Cart Items')
+                      .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    //Reset total on every change.
                     items = 0;
-                    Future.delayed(Duration.zero, () => setState(() {}));
+                    if (!snapshot.hasData)
+                      return Center(
+                        child: Text('Loading...'),
+                      );
+                    else if (snapshot.hasData &&
+                        snapshot.data.documents.isEmpty) {
+                      items = 0;
+                      Future.delayed(Duration.zero, () => setState(() {}));
 
-                    return Center(
-                      child: Text('Your shopping cart is empty.'),
-                    );
-                  } else {
-                    return ListView(
-                      shrinkWrap: true,
-                      children:
-                          snapshot.data.documents.map((DocumentSnapshot doc) {
-                        CartItem cartItem = CartItem.fromDoc(doc: doc);
+                      return Center(
+                        child: Text('Your shopping cart is empty.'),
+                      );
+                    } else {
+                      return ListView(
+                        shrinkWrap: true,
+                        children:
+                            snapshot.data.documents.map((DocumentSnapshot doc) {
+                          CartItem cartItem = CartItem.fromDoc(doc: doc);
 
-                        items += cartItem.quantity;
-                        Future.delayed(Duration.zero, () => setState(() {}));
+                          items += cartItem.quantity;
+                          Future.delayed(Duration.zero, () => setState(() {}));
 
-                        return _cartItem(
-                          cartItem: cartItem,
-                        );
-                      }).toList(),
-                    );
-                  }
-                },
-              ),
+                          return _cartItem(
+                            cartItem: cartItem,
+                          );
+                        }).toList(),
+                      );
+                    }
+                  },
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -168,11 +172,21 @@ class CheckoutFinalPageState extends State<CheckoutFinalPage> {
                 ),
                 RaisedButton(
                   child: Text('Submit Order'),
-                  onPressed: () {
-                    getIt<ModalService>().showAlert(
+                  onPressed: () async {
+                    bool confirm = await getIt<ModalService>().showConfirmation(
                         context: context,
                         title: 'Submit Payment',
-                        message: 'TODO');
+                        message:
+                            '${getIt<FormatterService>().money(amount: orderTotal)} will be charged to your card.');
+                    if (confirm) {
+                      //CREATE/PAY ORDER
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CheckoutSuccessPage(),
+                          ),
+                        );
+                    }
                   },
                 )
               ],
@@ -186,14 +200,6 @@ class CheckoutFinalPageState extends State<CheckoutFinalPage> {
       child: Card(
         elevation: 3,
         child: ListTile(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CheckoutFinalPage(),
-              ),
-            );
-          },
           leading: Icon(Icons.credit_card,
               color: _currentUser.customer.defaultSource == creditCard.id
                   ? Colors.green
@@ -204,7 +210,6 @@ class CheckoutFinalPageState extends State<CheckoutFinalPage> {
               months[creditCard.expMonth] +
               ' ' +
               '${creditCard.expYear}'),
-          trailing: Icon(Icons.chevron_right),
         ),
       ),
     );
