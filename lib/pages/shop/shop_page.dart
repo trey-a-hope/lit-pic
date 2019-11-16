@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/services/auth_service.dart';
@@ -32,20 +33,6 @@ class ShopPageState extends State<ShopPage> {
   @override
   void initState() {
     super.initState();
-    // getIt<AuthService>().onAuthStateChanged().listen(
-    //   (firebaseUser) {
-    //     setState(
-    //       () {
-    //         _isLoggedIn = firebaseUser != null;
-    //         if (_isLoggedIn) {
-    //           _load();
-    //         } else {
-    //           _isLoading = false;
-    //         }
-    //       },
-    //     );
-    //   },
-    // );
     _load();
   }
 
@@ -254,16 +241,17 @@ class ShopPageState extends State<ShopPage> {
               ),
               Divider(),
               Text(
-                'Choose an image for your lithophane. Buy two and get the third one free.',
+                'Choose an image for your lithophane.',
                 style: TextStyle(color: Colors.white, fontSize: 12),
               ),
             ],
           ),
         ),
-        RaisedButton(
-          color: Colors.white,
-          child: Text('Add Lithophane To Cart'),
+        GoodButton(
           onPressed: () => _addImageToCart(),
+          buttonColor: Colors.amber,
+          text: 'ADD LITHOPHANE TO CART',
+          textColor: Colors.white,
         ),
       ],
     );

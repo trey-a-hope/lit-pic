@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/asset_images.dart';
+import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/pages/authentication/sign_up_page.dart';
 import 'package:litpic/services/auth_service.dart';
@@ -79,9 +80,7 @@ class LoginPageState extends State<LoginPage>
                       children: <Widget>[
                         Container(
                           height: _containerHeight,
-                          // color: Colors.green,
                           decoration: BoxDecoration(
-                            
                             image: DecorationImage(
                               image: loginImage,
                               fit: BoxFit.cover,
@@ -135,27 +134,35 @@ class LoginPageState extends State<LoginPage>
                               SizedBox(
                                 height: 20,
                               ),
-                              MaterialButton(
+                              GoodButton(
+                                textColor: Colors.white,
+                                buttonColor: Colors.amber[700],
                                 onPressed: () {
                                   _login();
-                                }, //since this is only a UI app
-                                child: Text(
-                                  'SIGN IN',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontFamily: 'SFUIDisplay',
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                color: Colors.amber[700],
-                                elevation: 0,
-                                minWidth: 400,
-                                height: 50,
-                                textColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
+                                },
+                                text: 'SIGN IN',
                               ),
+                              // MaterialButton(
+                              //   onPressed: () {
+                              //     _login();
+                              //   }, //since this is only a UI app
+                              //   child: Text(
+                              //     'SIGN IN',
+                              //     style: TextStyle(
+                              //       fontSize: 15,
+                              //       fontFamily: 'SFUIDisplay',
+                              //       fontWeight: FontWeight.bold,
+                              //     ),
+                              //   ),
+                              //   color: Colors.amber[700],
+                              //   elevation: 0,
+                              //   minWidth: 400,
+                              //   height: 50,
+                              //   textColor: Colors.white,
+                              //   shape: RoundedRectangleBorder(
+                              //     borderRadius: BorderRadius.circular(10),
+                              //   ),
+                              // ),
                               SizedBox(
                                 height: 20,
                               ),

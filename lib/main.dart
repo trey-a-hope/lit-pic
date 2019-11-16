@@ -23,6 +23,10 @@ final GetIt getIt = GetIt.instance;
 
 
 void main() {
+
+  //Make status bar in Android transparent.
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+
   WidgetsFlutterBinding.ensureInitialized();
 
   //Authentication
