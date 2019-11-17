@@ -6,9 +6,11 @@ import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/pages/authentication/login_page.dart';
-import 'package:litpic/pages/holder.dart';
-import 'package:litpic/pages/home_page_new.dart';
+import 'package:litpic/pages/cart_page_new.dart';
+import 'package:litpic/pages/home_page.dart';
+import 'package:litpic/pages/profile_page_new.dart';
 import 'package:litpic/pages/settings_page_new.dart';
+import 'package:litpic/pages/shop_page_new.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/device_service.dart';
@@ -19,6 +21,7 @@ import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/storage_service.dart';
 import 'package:litpic/services/stripe/card.dart';
 import 'package:litpic/services/stripe/charge.dart';
+import 'package:litpic/services/stripe/coupon.dart';
 import 'package:litpic/services/stripe/customer.dart';
 import 'package:litpic/services/stripe/token.dart';
 import 'package:litpic/services/validater_service.dart';
@@ -67,6 +70,10 @@ void main() {
   //Stripe Customer
   getIt.registerSingleton<StripeCustomer>(
       StripeCustomerImplementation(apiKey: testSecretKey, endpoint: endpoint),
+      signalsReady: true);
+  //Stripe Coupon
+  getIt.registerSingleton<StripeCoupon>(
+      StripeCouponImplementation(apiKey: testSecretKey, endpoint: endpoint),
       signalsReady: true);
   //Stripe Token
   getIt.registerSingleton<StripeToken>(
@@ -171,11 +178,11 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Stack(
-                children: <Widget>[
-                  tabBody,
-                  bottomBar(),
-                ],
-              ),
+          children: <Widget>[
+            tabBody,
+            bottomBar(),
+          ],
+        ),
       ),
     );
   }
@@ -210,7 +217,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                   if (!mounted) return;
                   setState(() {
                     tabBody =
-                        HomePage(animationController: animationController);
+                        ShopPage(animationController: animationController);
                   });
                 });
                 break;
@@ -219,7 +226,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                   if (!mounted) return;
                   setState(() {
                     tabBody =
-                        HomePage(animationController: animationController);
+                        CartPage(animationController: animationController);
                   });
                 });
                 break;
@@ -228,7 +235,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                   if (!mounted) return;
                   setState(() {
                     tabBody =
-                        HomePage(animationController: animationController);
+                        ProfilePage(animationController: animationController);
                   });
                 });
                 break;

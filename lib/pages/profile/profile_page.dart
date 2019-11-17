@@ -154,27 +154,27 @@ class ProfilePageState extends State<ProfilePage> {
                   color: Colors.grey,
                   child: GestureDetector(
                     onTap: () => _showSelectImageDialog(),
-                    child: Column(
-                      children: <Widget>[
-                        _currentUser.imgUrl == null
-                            ? CircleAvatar(
-                                child: Center(
-                                  child: Icon(
-                                    Icons.add_a_photo,
-                                    size: 50,
-                                  ),
-                                ),
-                              )
-                            : CircleAvatar(
-                                child: Image(
-                                  image: CachedNetworkImageProvider(
-                                      _currentUser.imgUrl),
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                        Text('Hello ${_currentUser.customer.name}')
-                      ],
-                    ),
+                    // child: Column(
+                    //   children: <Widget>[
+                    //     _currentUser.imgUrl == null
+                    //         ? CircleAvatar(
+                    //             child: Center(
+                    //               child: Icon(
+                    //                 Icons.add_a_photo,
+                    //                 size: 50,
+                    //               ),
+                    //             ),
+                    //           )
+                    //         : CircleAvatar(
+                    //             child: Image(
+                    //               image: CachedNetworkImageProvider(
+                    //                   _currentUser.imgUrl),
+                    //               fit: BoxFit.contain,
+                    //             ),
+                    //           ),
+                    //     Text('Hello ${_currentUser.customer.name}')
+                    //   ],
+                    // ),
                   )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

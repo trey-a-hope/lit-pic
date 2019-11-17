@@ -1,24 +1,24 @@
-
 import 'package:flutter/material.dart';
+import 'package:litpic/asset_images.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/main.dart';
 
-class MealsListView extends StatefulWidget {
+class RecentCreationsView extends StatefulWidget {
   final AnimationController mainScreenAnimationController;
   final Animation mainScreenAnimation;
 
-  const MealsListView(
+  const RecentCreationsView(
       {Key key, this.mainScreenAnimationController, this.mainScreenAnimation})
       : super(key: key);
   @override
-  _MealsListViewState createState() => _MealsListViewState();
+  _RecentCreationsViewState createState() => _RecentCreationsViewState();
 }
 
-class _MealsListViewState extends State<MealsListView>
+class _RecentCreationsViewState extends State<RecentCreationsView>
     with TickerProviderStateMixin {
   AnimationController animationController;
-  List<MealsListData> mealsListData = MealsListData.tabIconsList;
+  List<LithophanesData> mealsListData = LithophanesData.tabIconsList;
 
   @override
   void initState() {
@@ -45,8 +45,8 @@ class _MealsListViewState extends State<MealsListView>
       builder: (BuildContext context, Widget child) {
         return FadeTransition(
           opacity: widget.mainScreenAnimation,
-          child: new Transform(
-            transform: new Matrix4.translationValues(
+          child: Transform(
+            transform: Matrix4.translationValues(
                 0.0, 30 * (1.0 - widget.mainScreenAnimation.value), 0.0),
             child: Container(
               height: 216,
@@ -67,6 +67,9 @@ class _MealsListViewState extends State<MealsListView>
                   animationController.forward();
 
                   return MealsView(
+                    onTap: () {
+                      LithophanesData s = mealsListData[index];
+                    },
                     mealsListData: mealsListData[index],
                     animation: animation,
                     animationController: animationController,
@@ -82,12 +85,17 @@ class _MealsListViewState extends State<MealsListView>
 }
 
 class MealsView extends StatelessWidget {
-  final MealsListData mealsListData;
+  final LithophanesData mealsListData;
   final AnimationController animationController;
   final Animation animation;
+  final Function onTap;
 
   const MealsView(
-      {Key key, this.mealsListData, this.animationController, this.animation})
+      {Key key,
+      this.mealsListData,
+      this.animationController,
+      this.animation,
+      @required this.onTap})
       : super(key: key);
 
   @override
@@ -97,8 +105,8 @@ class MealsView extends StatelessWidget {
       builder: (BuildContext context, Widget child) {
         return FadeTransition(
           opacity: animation,
-          child: new Transform(
-            transform: new Matrix4.translationValues(
+          child: Transform(
+            transform: Matrix4.translationValues(
                 100 * (1.0 - animation.value), 0.0, 0.0),
             child: SizedBox(
               width: 130,
@@ -140,7 +148,7 @@ class MealsView extends StatelessWidget {
                           children: <Widget>[
                             Text(
                               mealsListData.titleTxt,
-                              textAlign: TextAlign.center,
+                              textAlign: TextAlign.left,
                               style: TextStyle(
                                 fontFamily: LitPicTheme.fontName,
                                 fontWeight: FontWeight.bold,
@@ -191,10 +199,9 @@ class MealsView extends StatelessWidget {
                                         padding: const EdgeInsets.only(
                                             left: 4, bottom: 3),
                                         child: Text(
-                                          'kcal',
+                                          'min',
                                           style: TextStyle(
-                                            fontFamily:
-                                                LitPicTheme.fontName,
+                                            fontFamily: LitPicTheme.fontName,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 10,
                                             letterSpacing: 0.2,
@@ -232,23 +239,24 @@ class MealsView extends StatelessWidget {
                   ),
                   Positioned(
                     top: 0,
-                    left: 0,
-                    child: Container(
-                      width: 84,
-                      height: 84,
-                      decoration: BoxDecoration(
-                        color: LitPicTheme.nearlyWhite.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
                     left: 8,
-                    child: SizedBox(
-                      width: 80,
-                      height: 80,
-                      child: Image.asset(mealsListData.imagePath),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) {
+                            return HeroScreen(data: mealsListData);
+                          }),
+                        );
+                      },
+                      child: SizedBox(
+                        width: 80,
+                        height: 80,
+                        child: Hero(
+                          tag: mealsListData.imagePath,
+                          child: Image.asset(mealsListData.imagePath),
+                        ),
+                      ),
                     ),
                   )
                 ],
@@ -257,6 +265,29 @@ class MealsView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class HeroScreen extends StatelessWidget {
+  final LithophanesData data;
+
+  HeroScreen({@required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        child: Center(
+          child: Hero(
+            tag: data.imagePath,
+            child: Image.asset(data.imagePath),
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }

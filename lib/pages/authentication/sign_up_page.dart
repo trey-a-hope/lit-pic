@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
+import 'package:litpic/asset_images.dart';
+import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/simple_navbar.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/models/database/user.dart';
@@ -27,6 +29,7 @@ class SignUpPageState extends State<SignUpPage>
   bool _autoValidate = false;
   bool _isLoading = false;
   final GetIt getIt = GetIt.I;
+  final double _containerHeight = 350.0;
 
   @override
   void initState() {
@@ -38,7 +41,7 @@ class SignUpPageState extends State<SignUpPage>
       _formKey.currentState.save();
 
       bool confirm = await getIt<ModalService>().showConfirmation(
-          context: context, title: 'Submit', message: 'Are you ready?');
+          context: context, title: 'Submit', message: 'Create my account with the following information.');
       if (confirm) {
         try {
           setState(
@@ -63,7 +66,6 @@ class SignUpPageState extends State<SignUpPage>
 
           User user = User(
               id: null,
-              imgUrl: null,
               isAdmin: false,
               fcmToken: null,
               timestamp: Timestamp.fromDate(DateTime.now()),
@@ -99,259 +101,216 @@ class SignUpPageState extends State<SignUpPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       body: _isLoading
           ? Spinner()
-          : Stack(
+          : ListView(
               children: <Widget>[
-                Container(
-                  color: Colors.blue,
-                  // decoration: BoxDecoration(
-                  //   image: DecorationImage(
-                  //     image: AssetImage('Assets/image1.png'),
-                  //     fit: BoxFit.fitWidth,
-                  //     alignment: Alignment.topCenter
-                  //   )
-                  // ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(top: 270),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.white,
-                  ),
-                  child: Padding(
-                      padding: EdgeInsets.all(23),
-                      child: Form(
-                        key: _formKey,
-                        autovalidate: _autoValidate,
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                                color: Color(0xfff5f5f5),
-                                child: TextFormField(
-                                  validator: getIt<ValidatorService>().isEmpty,
-                                  keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
-                                  controller: _nameController,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'SFUIDisplay'),
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: 'Name',
-                                      prefixIcon: Icon(Icons.face),
-                                      labelStyle: TextStyle(fontSize: 15)),
-                                ),
-                              ),
-                              SizedBox(height: 20,),
-                               Container(
-                                color: Color(0xfff5f5f5),
-                                child: TextFormField(
-                                  validator: getIt<ValidatorService>().email,
-                                  keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.done,
-                                  controller: _emailController,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'SFUIDisplay'),
-                                  decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      labelText: 'Email',
-                                      prefixIcon: Icon(Icons.email),
-                                      labelStyle: TextStyle(fontSize: 15)),
-                                ),
-                              ),
-                                                            SizedBox(height: 20,),
-
-                            Container(
-                              color: Color(0xfff5f5f5),
-                              child: TextFormField(
-                                validator: getIt<ValidatorService>().password,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.done,
-                                controller: _passwordController,
-                                obscureText: true,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'SFUIDisplay'),
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: 'Password',
-                                    prefixIcon: Icon(Icons.lock_outline),
-                                    labelStyle: TextStyle(fontSize: 15)),
-                              ),
+                Stack(
+                  children: <Widget>[
+                    Stack(
+                      children: <Widget>[
+                        Container(
+                          height: _containerHeight,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: loginImage,
+                              fit: BoxFit.cover,
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 20),
-                              child: MaterialButton(
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 60,
+                          right: 23,
+                          child: Text(
+                            'Lit Pic',
+                            style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 40,
+                          right: 23,
+                          child: Text(
+                            'Light up every moment.',
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white),
+                          ),
+                        )
+                      ],
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.only(top: _containerHeight - 30),
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(30)),
+                        color: Colors.white,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(23),
+                        child: Form(
+                          key: _formKey,
+                          autovalidate: _autoValidate,
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: <Widget>[
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                color: Color(0xfff5f5f5),
+                                child: nameFormField(),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                color: Color(0xfff5f5f5),
+                                child: emailFormField(),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                color: Color(0xfff5f5f5),
+                                child: passwordFormField(),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              GoodButton(
+                                textColor: Colors.white,
+                                buttonColor: Colors.amber[700],
                                 onPressed: () {
                                   _signUp();
-                                }, //since this is only a UI app
-                                child: Text(
-                                  'SIGN UP',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontFamily: 'SFUIDisplay',
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                color: Color(0xffff2d55),
-                                elevation: 0,
-                                minWidth: 400,
-                                height: 50,
-                                textColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                              ),
-                            ),
-
-                            Padding(
-                              padding: EdgeInsets.only(top: 30),
-                              child: Center(
-                                  child: InkWell(
-                                onTap: () {
-                                  Navigator.of(context).pop();
                                 },
-                                child: RichText(
-                                  text: TextSpan(children: [
-                                    TextSpan(
+                                text: 'SIGN UP',
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+
+                              //   Padding(
+                              //   padding: EdgeInsets.only(top: 30),
+                              //   child: Center(
+                              //       child: InkWell(
+                              //     onTap: () {
+                              //       Navigator.of(context).pop();
+                              //     },
+                              //     child: RichText(
+                              //       text: TextSpan(children: [
+                              //         TextSpan(
+                              //             text: "Already have an account?",
+                              //             style: TextStyle(
+                              //               fontFamily: 'SFUIDisplay',
+                              //               color: Colors.black,
+                              //               fontSize: 15,
+                              //             )),
+                              //         TextSpan(text: ' '),
+                              //         TextSpan(
+                              //             text: "Sign In",
+                              //             style: TextStyle(
+                              //               fontFamily: 'SFUIDisplay',
+                              //               color: Color(0xffff2d55),
+                              //               fontSize: 15,
+                              //             ))
+                              //       ]),
+                              //     ),
+                              //   )),
+                              // )
+                              Center(
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: RichText(
+                                    text: TextSpan(children: [
+                                      TextSpan(
                                         text: "Already have an account?",
                                         style: TextStyle(
                                           fontFamily: 'SFUIDisplay',
                                           color: Colors.black,
                                           fontSize: 15,
-                                        )),
-                                    TextSpan(text: ' '),
-                                    TextSpan(
+                                        ),
+                                      ),
+                                      TextSpan(text: ' '),
+                                      TextSpan(
                                         text: "Sign In",
                                         style: TextStyle(
                                           fontFamily: 'SFUIDisplay',
-                                          color: Color(0xffff2d55),
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.amber[700],
                                           fontSize: 15,
-                                        ))
-                                  ]),
+                                        ),
+                                      )
+                                    ]),
+                                  ),
                                 ),
-                              )),
-                            )
-                          ],
+                              )
+                            ],
+                          ),
                         ),
-                      )),
+                      ),
+                    )
+                  ],
                 )
               ],
             ),
-      // body: _isLoading
-      //     ? Center(
-      //         child: CircularProgressIndicator(),
-      //       )
-      //     : Stack(
-      //         children: <Widget>[
-      //           SimpleNavbar(
-      //             leftWidget: Icon(MdiIcons.arrowLeft),
-      //             leftTap: () {
-      //               Navigator.of(context).pop();
-      //             },
-      //           ),
-      //           Center(
-      //             child: FractionallySizedBox(
-      //               widthFactor: 0.9,
-      //               child: Container(
-      //                 height: _autoValidate ? 405 : 340,
-      //                 decoration: BoxDecoration(
-      //                   borderRadius: BorderRadius.circular(8),
-      //                   color: Colors.white,
-      //                   boxShadow: [
-      //                     BoxShadow(
-      //                         color: Colors.black12,
-      //                         offset: Offset(0, 6),
-      //                         blurRadius: 6),
-      //                   ],
-      //                 ),
-      //                 child: Padding(
-      //                   padding: EdgeInsets.all(20),
-      //                   child: Form(
-      //                     key: _formKey,
-      //                     autovalidate: _autoValidate,
-      //                     child: Column(
-      //                       children: <Widget>[
-      //                         nameFormField(),
-      //                         SizedBox(height: 30),
-      //                         emailFormField(),
-      //                         SizedBox(height: 30),
-      //                         passwordFormField(),
-      //                         SizedBox(height: 30),
-      //                       ],
-      //                     ),
-      //                   ),
-      //                 ),
-      //               ),
-      //             ),
-      //           ),
-      //           Align(
-      //             alignment: Alignment.bottomCenter,
-      //             child: RaisedButton(
-      //               child: Text('Sign Up'),
-      //               onPressed: () {
-      //                 _signUp();
-      //               },
-      //             ),
-      //           )
-      //         ],
-      //       ),
     );
   }
 
+
+
+
   Widget nameFormField() {
     return TextFormField(
-      controller: _nameController,
+      validator: getIt<ValidatorService>().isEmpty,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.done,
-      maxLengthEnforced: true,
-      // maxLength: MyFormData.nameCharLimit,
-      onFieldSubmitted: (term) {},
-      validator: getIt<ValidatorService>().isEmpty,
-      onSaved: (value) {},
+      controller: _nameController,
+      style: TextStyle(color: Colors.black, fontFamily: 'SFUIDisplay'),
       decoration: InputDecoration(
-        hintText: 'Name',
-        icon: Icon(Icons.face),
-        fillColor: Colors.white,
-      ),
+          border: OutlineInputBorder(),
+          labelText: 'Name',
+          prefixIcon: Icon(Icons.face),
+          labelStyle: TextStyle(fontSize: 15)),
     );
   }
 
   Widget emailFormField() {
     return TextFormField(
-      controller: _emailController,
-      keyboardType: TextInputType.emailAddress,
-      textInputAction: TextInputAction.next,
-      maxLengthEnforced: true,
-      // maxLength: MyFormData.nameCharLimit,
-      onFieldSubmitted: (term) {},
       validator: getIt<ValidatorService>().email,
-      onSaved: (value) {},
+      keyboardType: TextInputType.text,
+      textInputAction: TextInputAction.done,
+      controller: _emailController,
+      style: TextStyle(color: Colors.black, fontFamily: 'SFUIDisplay'),
       decoration: InputDecoration(
-        hintText: 'Email',
-        icon: Icon(Icons.email),
-        fillColor: Colors.white,
-      ),
+          border: OutlineInputBorder(),
+          labelText: 'Email',
+          prefixIcon: Icon(Icons.email),
+          labelStyle: TextStyle(fontSize: 15)),
     );
   }
 
+
   Widget passwordFormField() {
     return TextFormField(
-      controller: _passwordController,
+      validator: getIt<ValidatorService>().password,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
+      controller: _passwordController,
       obscureText: true,
-      onFieldSubmitted: (term) {},
-      validator: getIt<ValidatorService>().isEmpty,
-      onSaved: (value) {},
+      style: TextStyle(color: Colors.black, fontFamily: 'SFUIDisplay'),
       decoration: InputDecoration(
-        hintText: 'Password',
-        icon: Icon(Icons.lock),
-        fillColor: Colors.white,
-      ),
+          border: OutlineInputBorder(),
+          labelText: 'Password',
+          prefixIcon: Icon(Icons.lock_outline),
+          labelStyle: TextStyle(fontSize: 15)),
     );
   }
 }

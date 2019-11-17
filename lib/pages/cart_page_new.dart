@@ -1,24 +1,26 @@
-
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/mealsListView.dart';
 import 'package:litpic/titleView.dart';
 
-class HomePage extends StatefulWidget {
+class CartPage extends StatefulWidget {
   final AnimationController animationController;
 
-  const HomePage({Key key, this.animationController}) : super(key: key);
+  const CartPage({Key key, this.animationController}) : super(key: key);
   @override
-  _HomePageState createState() => _HomePageState();
+  _CartPageState createState() => _CartPageState();
 }
 
-class _HomePageState extends State<HomePage>
+class _CartPageState extends State<CartPage>
     with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = List<Widget>();
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
+
+  final GetIt getIt = GetIt.I;
+  final Color iconColor = Colors.amber[700];
 
   @override
   void initState() {
@@ -53,12 +55,11 @@ class _HomePageState extends State<HomePage>
   }
 
   void addAllListData() {
-    var count = 9;
-
-    listViews.add(
+    var count = 1;
+      listViews.add(
       TitleView(
-        titleTxt: 'Recent Lithophanes',
-        subTxt: 'Details',
+        titleTxt: 'Your cart is empty boss.',
+        subTxt: 'Shop',
         animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,
             curve:
@@ -66,111 +67,6 @@ class _HomePageState extends State<HomePage>
         animationController: widget.animationController,
       ),
     );
-    // listViews.add(
-    //   MediterranesnDietView(
-    //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-    //         parent: widget.animationController,
-    //         curve:
-    //             Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn))),
-    //     animationController: widget.animationController,
-    //   ),
-    // );
-    listViews.add(
-      TitleView(
-        titleTxt: 'Coupons',
-        subTxt: 'Customize',
-        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
-
-    listViews.add(
-      MealsListView(
-        mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController,
-                curve: Interval((1 / count) * 3, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
-      ),
-    );
-
-    listViews.add(
-      TitleView(
-        titleTxt: 'Body measurement',
-        subTxt: 'Today',
-        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
-
-        listViews.add(
-      MealsListView(
-        mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController,
-                curve: Interval((1 / count) * 3, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
-      ),
-    );
-
-    // listViews.add(
-    //   BodyMeasurementView(
-    //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-    //         parent: widget.animationController,
-    //         curve:
-    //             Interval((1 / count) * 5, 1.0, curve: Curves.fastOutSlowIn))),
-    //     animationController: widget.animationController,
-    //   ),
-    // );
-    listViews.add(
-      TitleView(
-        titleTxt: 'Water',
-        subTxt: 'Aqua SmartBottle',
-        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 6, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
-
-
-    listViews.add(
-      MealsListView(
-        mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController,
-                curve: Interval((1 / count) * 3, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
-      ),
-    );
-    // listViews.add(
-    //   WaterView(
-    //     mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
-    //         CurvedAnimation(
-    //             parent: widget.animationController,
-    //             curve: Interval((1 / count) * 7, 1.0,
-    //                 curve: Curves.fastOutSlowIn))),
-    //     mainScreenAnimationController: widget.animationController,
-    //   ),
-    // );
-    // listViews.add(
-    //   GlassView(
-    //       animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-    //           parent: widget.animationController,
-    //           curve:
-    //               Interval((1 / count) * 8, 1.0, curve: Curves.fastOutSlowIn))),
-    //       animationController: widget.animationController),
-    // );
   }
 
   Future<bool> getData() async {
@@ -243,8 +139,8 @@ class _HomePageState extends State<HomePage>
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                          color: LitPicTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
+                          color:
+                              LitPicTheme.grey.withOpacity(0.4 * topBarOpacity),
                           offset: Offset(1.1, 1.1),
                           blurRadius: 10.0),
                     ],
@@ -267,7 +163,7 @@ class _HomePageState extends State<HomePage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "Lit Pic",
+                                  "Shopping Cart",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,

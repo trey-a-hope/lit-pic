@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:litpic/areaListView.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/services/auth_service.dart';
-import 'package:litpic/services/modal_service.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:litpic/titleView.dart';
 
-class SettingsPage extends StatefulWidget {
+class ProfilePage extends StatefulWidget {
   final AnimationController animationController;
 
-  const SettingsPage({Key key, this.animationController}) : super(key: key);
+  const ProfilePage({Key key, this.animationController}) : super(key: key);
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _SettingsPageState extends State<SettingsPage>
+class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
@@ -57,118 +56,48 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   void addAllListData() {
-    //About
-    listViews.add(
-      ListTile(
-        leading: Icon(
-          MdiIcons.bookmark,
-          color: iconColor,
-        ),
-        title: Text(
-          'About',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          'Learn more about the business.',
-        ),
-        trailing: Icon(Icons.chevron_right),
-        onTap: () async {
-          getIt<ModalService>().showAlert(context: context, title: 'About', message: 'TODO');
+        var count = 5;
 
-        },
+
+    // listViews.add(
+    //   WorkoutView(
+    //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    //         parent: widget.animationController,
+    //         curve:
+    //             Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
+    //     animationController: widget.animationController,
+    //   ),
+    // );
+    // listViews.add(
+    //   RunningView(
+    //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    //         parent: widget.animationController,
+    //         curve:
+    //             Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
+    //     animationController: widget.animationController,
+    //   ),
+    // );
+
+    listViews.add(
+      TitleView(
+        titleTxt: 'Welcome, Trey Hope',
+        subTxt: 'more',
+        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: widget.animationController,
+            curve:
+                Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
+        animationController: widget.animationController,
       ),
     );
 
-    //FAQs
     listViews.add(
-      ListTile(
-        leading: Icon(
-          MdiIcons.informationVariant,
-          color: iconColor,
-        ),
-        title: Text(
-          'FAQs',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          'Get answers to common questions.',
-        ),
-        trailing: Icon(Icons.chevron_right),
-        onTap: () async {
-          getIt<ModalService>().showAlert(context: context, title: 'FAQs', message: 'TODO');
-
-        },
-      ),
-    );
-
-//Help & Support
-    listViews.add(
-      ListTile(
-        leading: Icon(
-          MdiIcons.helpNetwork,
-          color: iconColor,
-        ),
-        title: Text(
-          'Help/Support',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          'Need assitance?',
-        ),
-        trailing: Icon(Icons.chevron_right),
-        onTap: () async {
-          getIt<ModalService>().showAlert(context: context, title: 'Help/Support', message: 'TODO');
-        },
-      ),
-    );
-
-    //Delete Account
-    listViews.add(
-      ListTile(
-        leading: Icon(
-          MdiIcons.delete,
-          color: iconColor,
-        ),
-        title: Text(
-          'Delete Account',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          'Remove account from this app.',
-        ),
-        trailing: Icon(Icons.chevron_right),
-        onTap: () async {
-          getIt<ModalService>().showAlert(
-              context: context,
-              title: 'Delete Account',
-              message:
-                  'Contact tr3umphant.designs@gmail.com to remove your account. Thank you.');
-        },
-      ),
-    );
-
-    //Sign Out
-    listViews.add(
-      ListTile(
-        leading: Icon(
-          MdiIcons.logout,
-          color: iconColor,
-        ),
-        title: Text(
-          'Sign Out',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          'Exit account temporarily.',
-        ),
-        trailing: Icon(Icons.chevron_right),
-        onTap: () async {
-          bool confirm = await getIt<ModalService>().showConfirmation(
-              context: context, title: 'Sign Out', message: 'Are you sure?');
-          if (confirm) {
-            await getIt<AuthService>().signOut();
-          }
-        },
+      AreaListView(
+        mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+                parent: widget.animationController,
+                curve: Interval((1 / count) * 5, 1.0,
+                    curve: Curves.fastOutSlowIn))),
+        mainScreenAnimationController: widget.animationController,
       ),
     );
   }
@@ -267,7 +196,7 @@ class _SettingsPageState extends State<SettingsPage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "Settings",
+                                  "Profile",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,

@@ -24,7 +24,7 @@ class LoginPageState extends State<LoginPage>
   bool _autoValidate = false;
   bool _isLoading = false;
   final GetIt getIt = GetIt.I;
-  final double _containerHeight = 300.0;
+  final double _containerHeight = 350.0;
 
   _login() async {
     if (_formKey.currentState.validate()) {
@@ -84,18 +84,27 @@ class LoginPageState extends State<LoginPage>
                             image: DecorationImage(
                               image: loginImage,
                               fit: BoxFit.cover,
-                              // alignment: Alignment.topCenter
                             ),
                           ),
                         ),
                         Positioned(
-                          bottom: 50,
+                          bottom: 60,
                           right: 23,
                           child: Text(
-                            'Light Up',
+                            'Lit Pic',
                             style: TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ),
+                                           Positioned(
+                          bottom: 40,
+                          right: 23,
+                          child: Text(
+                            'Light up every moment.',
+                            style: TextStyle(
+                                fontSize: 20,
                                 color: Colors.white),
                           ),
                         )
@@ -142,27 +151,6 @@ class LoginPageState extends State<LoginPage>
                                 },
                                 text: 'SIGN IN',
                               ),
-                              // MaterialButton(
-                              //   onPressed: () {
-                              //     _login();
-                              //   }, //since this is only a UI app
-                              //   child: Text(
-                              //     'SIGN IN',
-                              //     style: TextStyle(
-                              //       fontSize: 15,
-                              //       fontFamily: 'SFUIDisplay',
-                              //       fontWeight: FontWeight.bold,
-                              //     ),
-                              //   ),
-                              //   color: Colors.amber[700],
-                              //   elevation: 0,
-                              //   minWidth: 400,
-                              //   height: 50,
-                              //   textColor: Colors.white,
-                              //   shape: RoundedRectangleBorder(
-                              //     borderRadius: BorderRadius.circular(10),
-                              //   ),
-                              // ),
                               SizedBox(
                                 height: 20,
                               ),

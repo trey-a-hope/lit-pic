@@ -10,7 +10,6 @@ class User {
   final String fcmToken;
   final Timestamp timestamp;
   final bool isAdmin;
-  final String imgUrl;
 
   Customer customer; //Not saved to database, used strictly on FE.
 
@@ -18,7 +17,6 @@ class User {
       {
       @required this.id,
       @required this.customerID,
-      @required this.imgUrl,
       @required this.fcmToken,
       @required this.timestamp,
       @required this.uid,
@@ -27,7 +25,6 @@ class User {
   factory User.fromDoc({@required DocumentSnapshot doc}) {
     return User(
         id: doc.data['id'],
-        imgUrl: doc.data['imgUrl'],
         fcmToken: doc.data['fcmToken'],
         isAdmin: doc.data['isAdmin'],
         timestamp: doc.data['timestamp'],
@@ -38,7 +35,6 @@ class User {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'imgUrl': imgUrl,
       'fcmToken': fcmToken,
       'isAdmin': isAdmin,
       'timestamp': timestamp,

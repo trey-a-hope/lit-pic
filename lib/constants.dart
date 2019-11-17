@@ -7,7 +7,7 @@ final String livePublishableKey = '?';
 final String endpoint =
     'https://us-central1-hidden-gems-e481d.cloudfunctions.net/';
 
-    class MealsListData {
+class LithophanesData {
   String imagePath;
   String titleTxt;
   String startColor;
@@ -15,7 +15,7 @@ final String endpoint =
   List<String> meals;
   int kacl;
 
-  MealsListData({
+  LithophanesData({
     this.imagePath = '',
     this.titleTxt = '',
     this.startColor = "",
@@ -24,42 +24,42 @@ final String endpoint =
     this.kacl = 0,
   });
 
-  static List<MealsListData> tabIconsList = [
-    MealsListData(
-      imagePath: 'assets/fitness_app/breakfast.png',
-      titleTxt: 'Breakfast',
-      kacl: 525,
-      meals: ["Bread,", "Peanut butter,", "Apple"],
+  static List<LithophanesData> tabIconsList = [
+    LithophanesData(
+      imagePath: 'assets/images/ankhti.png',
+      titleTxt: 'Ankhti & Family',
+      kacl: 45,
+      meals: ["6in x 7in,", "White PLA"],
       startColor: "#FA7D82",
       endColor: "#FFB295",
     ),
-    MealsListData(
-      imagePath: 'assets/fitness_app/lunch.png',
-      titleTxt: 'Lunch',
-      kacl: 602,
-      meals: ["Salmon,", "Mixed veggies,", "Avocado"],
+    LithophanesData(
+      imagePath: 'assets/images/sza.png',
+      titleTxt: 'SZA',
+      kacl: 50,
+      meals: ["8in x 6in,", "White PLA"],
       startColor: "#738AE6",
       endColor: "#5C5EDD",
     ),
-    MealsListData(
-      imagePath: 'assets/fitness_app/snack.png',
-      titleTxt: 'Snack',
-      kacl: 0,
-      meals: ["Recommend:", "800 kcal"],
+
+    LithophanesData(
+      imagePath: 'assets/images/mlk.png',
+      titleTxt: 'MLK',
+      kacl: 42,
+      meals: ["8in x 4.5in,", "Red PLA"],
       startColor: "#FE95B6",
       endColor: "#FF5287",
     ),
-    MealsListData(
-      imagePath: 'assets/fitness_app/dinner.png',
-      titleTxt: 'Dinner',
-      kacl: 0,
-      meals: ["Recommend:", "703 kcal"],
-      startColor: "#6F72CA",
-      endColor: "#1E1466",
-    ),
+    // MealsListData(
+    //   imagePath: 'assets/fitness_app/dinner.png',
+    //   titleTxt: 'Dinner',
+    //   kacl: 0,
+    //   meals: ["Recommend:", "703 kcal"],
+    //   startColor: "#6F72CA",
+    //   endColor: "#1E1466",
+    // ),
   ];
 }
-
 
 class TabIconData {
   // String imagePath;
@@ -98,11 +98,11 @@ class TabIconData {
     ),
     TabIconData(
       unselectedIcon: Icon(
-        Icons.shopping_basket,
+        Icons.image,
         color: Colors.grey,
       ),
       selectedIcon: Icon(
-        Icons.shopping_basket,
+        Icons.image,
         color: Colors.amber,
       ),
       // imagePath: 'assets/fitness_app/tab_2.png',
@@ -115,11 +115,11 @@ class TabIconData {
       // imagePath: 'assets/fitness_app/tab_3.png',
       // selctedImagePath: 'assets/fitness_app/tab_3s.png',
       unselectedIcon: Icon(
-        Icons.image,
+        Icons.shopping_cart,
         color: Colors.grey,
       ),
       selectedIcon: Icon(
-        Icons.image,
+        Icons.shopping_cart,
         color: Colors.amber,
       ),
       index: 2,
