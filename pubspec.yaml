@@ -49,6 +49,7 @@ flutter:
 
   assets:
    - assets/images/
+   - assets/fitness_app/
 
   fonts:
     - family: Montserrat

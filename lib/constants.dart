@@ -1,9 +1,163 @@
+import 'package:flutter/material.dart';
+
 final String testSecretKey = 'sk_test_6s03VnuOvJtDW7a6ygpFdDdM00Jxr17MUX';
 final String testPublishableKey = 'pk_test_E2jn7tAPmhIlGYM2rg1hzQWc00DAPdLu9K';
 final String liveSecretKey = '?';
 final String livePublishableKey = '?';
 final String endpoint =
     'https://us-central1-hidden-gems-e481d.cloudfunctions.net/';
+
+    class MealsListData {
+  String imagePath;
+  String titleTxt;
+  String startColor;
+  String endColor;
+  List<String> meals;
+  int kacl;
+
+  MealsListData({
+    this.imagePath = '',
+    this.titleTxt = '',
+    this.startColor = "",
+    this.endColor = "",
+    this.meals,
+    this.kacl = 0,
+  });
+
+  static List<MealsListData> tabIconsList = [
+    MealsListData(
+      imagePath: 'assets/fitness_app/breakfast.png',
+      titleTxt: 'Breakfast',
+      kacl: 525,
+      meals: ["Bread,", "Peanut butter,", "Apple"],
+      startColor: "#FA7D82",
+      endColor: "#FFB295",
+    ),
+    MealsListData(
+      imagePath: 'assets/fitness_app/lunch.png',
+      titleTxt: 'Lunch',
+      kacl: 602,
+      meals: ["Salmon,", "Mixed veggies,", "Avocado"],
+      startColor: "#738AE6",
+      endColor: "#5C5EDD",
+    ),
+    MealsListData(
+      imagePath: 'assets/fitness_app/snack.png',
+      titleTxt: 'Snack',
+      kacl: 0,
+      meals: ["Recommend:", "800 kcal"],
+      startColor: "#FE95B6",
+      endColor: "#FF5287",
+    ),
+    MealsListData(
+      imagePath: 'assets/fitness_app/dinner.png',
+      titleTxt: 'Dinner',
+      kacl: 0,
+      meals: ["Recommend:", "703 kcal"],
+      startColor: "#6F72CA",
+      endColor: "#1E1466",
+    ),
+  ];
+}
+
+
+class TabIconData {
+  // String imagePath;
+  // String selctedImagePath;
+  Icon unselectedIcon;
+  Icon selectedIcon;
+  bool isSelected;
+  int index;
+  AnimationController animationController;
+
+  TabIconData({
+    // this.imagePath = '',
+    this.index = 0,
+    // this.selctedImagePath = "",
+    this.unselectedIcon,
+    this.selectedIcon,
+    this.isSelected = false,
+    this.animationController,
+  });
+
+  static List<TabIconData> tabIconsList = [
+    TabIconData(
+      unselectedIcon: Icon(
+        Icons.home,
+        color: Colors.grey,
+      ),
+      selectedIcon: Icon(
+        Icons.home,
+        color: Colors.amber,
+      ),
+      // imagePath: 'assets/fitness_app/tab_1.png',
+      // selctedImagePath: 'assets/fitness_app/tab_1s.png',
+      index: 0,
+      isSelected: true,
+      animationController: null,
+    ),
+    TabIconData(
+      unselectedIcon: Icon(
+        Icons.shopping_basket,
+        color: Colors.grey,
+      ),
+      selectedIcon: Icon(
+        Icons.shopping_basket,
+        color: Colors.amber,
+      ),
+      // imagePath: 'assets/fitness_app/tab_2.png',
+      // selctedImagePath: 'assets/fitness_app/tab_2s.png',
+      index: 1,
+      isSelected: false,
+      animationController: null,
+    ),
+    TabIconData(
+      // imagePath: 'assets/fitness_app/tab_3.png',
+      // selctedImagePath: 'assets/fitness_app/tab_3s.png',
+      unselectedIcon: Icon(
+        Icons.image,
+        color: Colors.grey,
+      ),
+      selectedIcon: Icon(
+        Icons.image,
+        color: Colors.amber,
+      ),
+      index: 2,
+      isSelected: false,
+      animationController: null,
+    ),
+    TabIconData(
+      // imagePath: 'assets/fitness_app/tab_4.png',
+      // selctedImagePath: 'assets/fitness_app/tab_4s.png',
+      unselectedIcon: Icon(
+        Icons.face,
+        color: Colors.grey,
+      ),
+      selectedIcon: Icon(
+        Icons.face,
+        color: Colors.amber,
+      ),
+      index: 3,
+      isSelected: false,
+      animationController: null,
+    ),
+    TabIconData(
+      // imagePath: 'assets/fitness_app/tab_4.png',
+      // selctedImagePath: 'assets/fitness_app/tab_4s.png',
+      unselectedIcon: Icon(
+        Icons.settings,
+        color: Colors.grey,
+      ),
+      selectedIcon: Icon(
+        Icons.settings,
+        color: Colors.amber,
+      ),
+      index: 4,
+      isSelected: false,
+      animationController: null,
+    ),
+  ];
+}
 
 final List<String> months = [
   'January',
