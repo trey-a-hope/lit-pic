@@ -121,34 +121,19 @@ class LandingPage extends StatelessWidget {
     return StreamBuilder<FirebaseUser>(
       stream: FirebaseAuth.instance.onAuthStateChanged,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.active) {
-          FirebaseUser user = snapshot.data;
-          return user == null ? LoginPage() : FitnessAppHomeScreen();
-        } else {
-          return Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
+                  FirebaseUser user = snapshot.data;
+          return user == null ? LoginPage() : MainApp();
       },
     );
   }
 }
 
-// import 'package:best_flutter_ui_templates/fitnessApp/models/tabIconData.dart';
-// import 'package:best_flutter_ui_templates/fitnessApp/traning/trainingScreen.dart';
-// import 'package:flutter/material.dart';
-// import 'bottomNavigationView/bottomBarView.dart';
-// import 'fintnessAppTheme.dart';
-// import 'myDiary/myDiaryScreen.dart';
-
-class FitnessAppHomeScreen extends StatefulWidget {
+class MainApp extends StatefulWidget {
   @override
-  _FitnessAppHomeScreenState createState() => _FitnessAppHomeScreenState();
+  _MainAppState createState() => _MainAppState();
 }
 
-class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
+class _MainAppState extends State<MainApp>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
@@ -191,11 +176,6 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
         ),
       ),
     );
-  }
-
-  Future<bool> getData() async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    return true;
   }
 
   Widget bottomBar() {

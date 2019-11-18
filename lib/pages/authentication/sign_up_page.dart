@@ -41,7 +41,9 @@ class SignUpPageState extends State<SignUpPage>
       _formKey.currentState.save();
 
       bool confirm = await getIt<ModalService>().showConfirmation(
-          context: context, title: 'Submit', message: 'Create my account with the following information.');
+          context: context,
+          title: 'Submit',
+          message: 'Create my account with the following information.');
       if (confirm) {
         try {
           setState(
@@ -136,9 +138,7 @@ class SignUpPageState extends State<SignUpPage>
                           right: 23,
                           child: Text(
                             'Light up every moment.',
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white),
+                            style: TextStyle(fontSize: 20, color: Colors.white),
                           ),
                         )
                       ],
@@ -157,6 +157,7 @@ class SignUpPageState extends State<SignUpPage>
                           key: _formKey,
                           autovalidate: _autoValidate,
                           child: ListView(
+                            physics: BouncingScrollPhysics(),
                             shrinkWrap: true,
                             children: <Widget>[
                               SizedBox(
@@ -264,9 +265,6 @@ class SignUpPageState extends State<SignUpPage>
     );
   }
 
-
-
-
   Widget nameFormField() {
     return TextFormField(
       validator: getIt<ValidatorService>().isEmpty,
@@ -296,7 +294,6 @@ class SignUpPageState extends State<SignUpPage>
           labelStyle: TextStyle(fontSize: 15)),
     );
   }
-
 
   Widget passwordFormField() {
     return TextFormField(

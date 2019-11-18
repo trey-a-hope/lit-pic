@@ -124,6 +124,7 @@ class LoginPageState extends State<LoginPage>
                           key: _formKey,
                           autovalidate: _autoValidate,
                           child: ListView(
+                            physics: BouncingScrollPhysics(),
                             shrinkWrap: true,
                             children: <Widget>[
                               SizedBox(
