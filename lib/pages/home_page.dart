@@ -74,6 +74,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.initState();
   }
 
+  @override
+  void dispose(){
+    super.dispose();
+  }
+
   void addAllListData() {
     if (!addAllListDataComplete) {
       addAllListDataComplete = true;
@@ -121,7 +126,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               'https://scontent-ort2-2.cdninstagram.com/vp/c21f18b9242101f4476511108371b153/5E892519/t51.2885-19/s320x320/60980291_2287245398154667_3908855079028916224_n.jpg?_nc_ht=scontent-ort2-2.cdninstagram.com'),
         ),
         image: Image.asset('assets/images/litpic_example.jpg'),
-        subText: "Follow @tr3Designs for 3D Printing!",
+        subText: "Follow @tr3Designs",
         title: 'What is a \"Lit Pic?\"',
         text:
             'A Lit Pic a 3D printed Lithophane, (created by tr3Designs), that you can display anywhere in your home to capture those special moments in your life. Each print comes with a stand and is measured to be between 8in high and 6in wide.',

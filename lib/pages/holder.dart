@@ -6,7 +6,6 @@ import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/profile/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
 import 'package:litpic/pages/shop/cart_page.dart';
-import 'package:litpic/pages/shop/shop_page.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -33,10 +32,10 @@ class HolderState extends State<Holder> {
       color: Colors.red,
       child: HomePage(),
     ),
-    Container(
-      color: Colors.blue,
-      child: ShopPage(),
-    ),
+    // Container(
+    //   color: Colors.blue,
+    //   child: ShopPage(),
+    // ),
     Container(
       color: Colors.purpleAccent,
       child: CartPage(),

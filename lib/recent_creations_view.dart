@@ -67,9 +67,6 @@ class _RecentCreationsViewState extends State<RecentCreationsView>
                   animationController.forward();
 
                   return MealsView(
-                    onTap: () {
-                      LithophanesData s = mealsListData[index];
-                    },
                     mealsListData: mealsListData[index],
                     animation: animation,
                     animationController: animationController,
@@ -88,14 +85,12 @@ class MealsView extends StatelessWidget {
   final LithophanesData mealsListData;
   final AnimationController animationController;
   final Animation animation;
-  final Function onTap;
 
   const MealsView(
       {Key key,
       this.mealsListData,
       this.animationController,
-      this.animation,
-      @required this.onTap})
+      this.animation})
       : super(key: key);
 
   @override

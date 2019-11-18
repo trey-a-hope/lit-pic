@@ -3,28 +3,28 @@ import 'package:flutter/material.dart';
 
 class CartItem {
   final String id;
-  final String productID;
   final String imgUrl;
   final String imgPath;
   final int quantity;
   final String title;
+  final String color;
 
   CartItem(
-      {@required this.productID,
-      @required this.id,
+      {@required this.id,
       @required this.imgUrl,
       @required this.imgPath,
       @required this.title,
-      @required this.quantity});
+      @required this.quantity,
+      @required this.color});
 
   factory CartItem.fromDoc({@required DocumentSnapshot doc}) {
     return CartItem(
         id: doc.data['id'],
         imgUrl: doc.data['imgUrl'],
         imgPath: doc.data['imgPath'],
-        productID: doc.data['productID'],
         quantity: doc.data['quantity'],
-        title: doc.data['title']);
+        title: doc.data['title'],
+        color: doc.data['color']);
   }
 
   Map<String, dynamic> toMap() {
@@ -32,8 +32,8 @@ class CartItem {
       'id': id,
       'imgUrl': imgUrl,
       'imgPath': imgPath,
-      'productID': productID,
       'title': title,
+      'color': color,
       'quantity': quantity
     };
   }

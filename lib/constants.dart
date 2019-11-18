@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:litpic/main.dart';
 
 final String testSecretKey = 'sk_test_6s03VnuOvJtDW7a6ygpFdDdM00Jxr17MUX';
 final String testPublishableKey = 'pk_test_E2jn7tAPmhIlGYM2rg1hzQWc00DAPdLu9K';
@@ -231,3 +232,31 @@ final List<String> unitedStates = [
   "WV",
   "WY"
 ];
+
+final List<ColorName> filamentColors = [
+  ColorName(name: 'White', color: Colors.white),
+  ColorName(name: 'Blue', color: HexColor('#000080')),
+  ColorName(name: 'Black', color: Colors.black),
+  ColorName(name: 'Brown', color: Colors.brown),
+  ColorName(name: 'Green', color: Colors.green[700]),
+  ColorName(name: 'Light Green', color: Colors.lightGreen[400]),
+  ColorName(name: 'Grey', color: Colors.grey),
+  ColorName(name: 'Pink', color: Colors.pink),
+  ColorName(name: 'Purple', color: Colors.purple),
+  ColorName(name: 'Magenta', color: HexColor('#ff00ff')),
+  ColorName(name: 'Orange', color: Colors.orange),
+  ColorName(name: 'Yellow', color: Colors.yellow),
+  ColorName(name: 'Red', color: Colors.red),
+  ColorName(name: 'Light Blue', color: Colors.lightBlue),
+  ColorName(
+    name: 'Gold',
+    color: HexColor('#d4af37'),
+  ),
+];
+
+class ColorName {
+  final String name;
+  final Color color;
+
+  ColorName({@required this.name, @required this.color});
+}

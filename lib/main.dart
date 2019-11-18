@@ -10,7 +10,7 @@ import 'package:litpic/pages/cart_page_new.dart';
 import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/profile_page_new.dart';
 import 'package:litpic/pages/settings_page_new.dart';
-import 'package:litpic/pages/shop_page_new.dart';
+import 'package:litpic/pages/shop_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/device_service.dart';
@@ -27,6 +27,10 @@ import 'package:litpic/services/stripe/token.dart';
 import 'package:litpic/services/validater_service.dart';
 
 final GetIt getIt = GetIt.instance;
+
+class CommonThings {
+  static double width;
+}
 
 void main() {
   //Make status bar in Android transparent.
@@ -112,6 +116,8 @@ class MyApp extends StatelessWidget {
 class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    CommonThings.width = MediaQuery.of(context).size.width;
+
     return StreamBuilder<FirebaseUser>(
       stream: FirebaseAuth.instance.onAuthStateChanged,
       builder: (context, snapshot) {
