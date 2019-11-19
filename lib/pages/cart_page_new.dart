@@ -133,6 +133,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
             ),
           );
         }
+        listViews.add(Divider());
 
         listViews.add(
           Padding(
@@ -189,6 +190,8 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
           ),
         );
 
+        listViews.add(Divider());
+
         listViews.add(
           Padding(
             padding: EdgeInsets.all(10),
@@ -226,12 +229,11 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     return getIt<FormatterService>().money(amount: total);
   }
 
-  Future<bool> fetchCartItems() async {
+  Future<void> fetchCartItems() async {
     cartItems.clear();
     List<DocumentSnapshot> docs = (await Firestore.instance
             .collection('Users')
-            .document(
-                'NnWUARGr7dK9Zx6jxrgH') //TODO: PUT CURRENT USES ID HERE!!!
+            .document(_currentUser.id)
             .collection('Cart Items')
             .getDocuments())
         .documents;
@@ -240,14 +242,13 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
         CartItem.fromDoc(doc: docs[i]),
       );
     }
-
-    return true;
   }
 
   Future<void> load() async {
     prefs = await SharedPreferences.getInstance();
     try {
       _currentUser = await getIt<AuthService>().getCurrentUser();
+      await fetchCartItems();
       return;
     } catch (e) {
       getIt<ModalService>().showAlert(
@@ -292,7 +293,6 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   Widget getMainListViewUI() {
     List<Future> futures = List<Future>();
     futures.add(load());
-    futures.add(fetchCartItems());
     futures.add(fetchMonthlyCoupon());
     futures.add(fetchLithophaneSku());
 
