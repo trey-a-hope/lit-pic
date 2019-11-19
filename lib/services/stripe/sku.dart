@@ -17,7 +17,7 @@ class StripeSkuImplementation extends StripeSku {
 
   @override
   Future<Sku> retrieve({String skuID}) async {
-    Map data = {'apiKey': apiKey, 'couponID': skuID};
+    Map data = {'apiKey': apiKey, 'skuID': skuID};
 
     http.Response response = await http.post(
       endpoint + 'StripeRetrieveSku',

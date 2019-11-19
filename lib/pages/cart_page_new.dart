@@ -8,12 +8,14 @@ import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/models/stripe/coupon.dart';
+import 'package:litpic/models/stripe/sku.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/storage_service.dart';
 import 'package:litpic/services/stripe/coupon.dart';
+import 'package:litpic/services/stripe/sku.dart';
 import 'package:litpic/titleView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,8 +41,9 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   bool addAllListDataComplete = false;
   List<CartItem> cartItems = List<CartItem>();
   int items = 0;
-  double price = 15.00;
+  // double price = 15.00;
   Coupon _coupon;
+  Sku _sku;
 
   bool _isLoading = false;
 
@@ -77,7 +80,6 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       }
     });
     super.initState();
-    load();
   }
 
   void addAllListData() async {
@@ -108,6 +110,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
             Padding(
               padding: EdgeInsets.all(10),
               child: CartItemView(
+                price: _sku.price,
                 delete: () {
                   listViews.clear();
                   _deleteCartItem(cartItem: cartItems[i]);
@@ -208,7 +211,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
 
   String getTotal() {
     double total = 0;
-    total = items * price;
+    total = items * _sku.price;
     prefs.setDouble('itemsTotal', total);
 
     return getIt<FormatterService>().money(amount: total);
@@ -216,7 +219,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
 
   String getCouponTotal() {
     double total = 0;
-    total = items * price;
+    total = items * _sku.price;
     total *= (1 - (_coupon.percentOff / 100));
     // prefs.setDouble('itemsTotal', total);
 
@@ -227,7 +230,8 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     cartItems.clear();
     List<DocumentSnapshot> docs = (await Firestore.instance
             .collection('Users')
-            .document('NnWUARGr7dK9Zx6jxrgH')
+            .document(
+                'NnWUARGr7dK9Zx6jxrgH') //TODO: PUT CURRENT USES ID HERE!!!
             .collection('Cart Items')
             .getDocuments())
         .documents;
@@ -240,22 +244,30 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     return true;
   }
 
-  void load() async {
+  Future<void> load() async {
     prefs = await SharedPreferences.getInstance();
     try {
       _currentUser = await getIt<AuthService>().getCurrentUser();
+      return;
     } catch (e) {
       getIt<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),
       );
+      return;
     }
   }
 
   Future<void> fetchMonthlyCoupon() async {
     final String couponID = await getIt<DBService>().retrieveCouponID();
     _coupon = await getIt<StripeCoupon>().retrieve(couponID: couponID);
+    return;
+  }
+
+  Future<void> fetchLithophaneSku() async {
+    final String skuID = await getIt<DBService>().retrieveSkuID();
+    _sku = await getIt<StripeSku>().retrieve(skuID: skuID);
     return;
   }
 
@@ -279,8 +291,11 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
 
   Widget getMainListViewUI() {
     List<Future> futures = List<Future>();
+    futures.add(load());
     futures.add(fetchCartItems());
     futures.add(fetchMonthlyCoupon());
+    futures.add(fetchLithophaneSku());
+
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {

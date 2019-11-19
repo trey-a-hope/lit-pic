@@ -178,60 +178,58 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
-  Future<bool> load() async {
+  Future<void> load() async {
     try {
       //Load user.
       _currentUser = await getIt<AuthService>().getCurrentUser();
 
-      return true;
+      //Request permission on iOS device.
+      if (Platform.isIOS) {
+        _fcm.requestNotificationPermissions(
+          IosNotificationSettings(),
+        );
+      }
+
+      //Update user's fcm token.
+      final String fcmToken = await _fcm.getToken();
+      if (fcmToken != null) {
+        print(fcmToken);
+        getIt<DBService>()
+            .updateUser(userID: _currentUser.id, data: {'fcmToken': fcmToken});
+      }
+
+      //Configure notifications for several action types.
+      _fcm.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          print("onMessage: $message");
+          getIt<ModalService>().showAlert(
+              context: context,
+              title: message['notification']['title'],
+              message: '');
+        },
+        onLaunch: (Map<String, dynamic> message) async {
+          getIt<ModalService>().showAlert(
+              context: context,
+              title: message['notification']['title'],
+              message: '');
+        },
+        onResume: (Map<String, dynamic> message) async {
+          getIt<ModalService>().showAlert(
+              context: context,
+              title: message['notification']['title'],
+              message: '');
+        },
+      );
+
+      return;
     } catch (e) {
       getIt<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),
       );
-      return false;
+      return;
     }
-  }
-
-  Future<void> setUpFCM() async {
-    //Request permission on iOS device.
-    if (Platform.isIOS) {
-      _fcm.requestNotificationPermissions(
-        IosNotificationSettings(),
-      );
-    }
-
-    //Update user's fcm token.
-    final String fcmToken = await _fcm.getToken();
-    if (fcmToken != null) {
-      print(fcmToken);
-      getIt<DBService>()
-          .updateUser(userID: _currentUser.id, data: {'fcmToken': fcmToken});
-    }
-
-    //Configure notifications for several action types.
-    _fcm.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
-        getIt<ModalService>().showAlert(
-            context: context,
-            title: message['notification']['title'],
-            message: '');
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        getIt<ModalService>().showAlert(
-            context: context,
-            title: message['notification']['title'],
-            message: '');
-      },
-      onResume: (Map<String, dynamic> message) async {
-        getIt<ModalService>().showAlert(
-            context: context,
-            title: message['notification']['title'],
-            message: '');
-      },
-    );
   }
 
   Future<void> fetchMonthlyCoupon() async {
@@ -262,7 +260,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget getMainListViewUI() {
     List<Future> futures = List<Future>();
     futures.add(load());
-    futures.add(setUpFCM());
     futures.add(fetchMonthlyCoupon());
     return FutureBuilder(
       future: Future.wait(futures),

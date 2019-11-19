@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 
 class Sku {
-  final int amountOff;
   final DateTime created;
   final String id;
-  final int percentOff;
-  final String name;
+  final String product;
+  final double price;
+  final DateTime updated;
 
   Sku(
-      {@required this.amountOff,
-      @required this.created,
+      {@required this.created,
       @required this.id,
-      @required this.percentOff,
-      @required this.name});
+      @required this.product,
+      @required this.price,
+      @required this.updated});
 
   factory Sku.fromMap({@required Map map}) {
     return map == null
         ? map
         : Sku(
-            amountOff: map['amount_off'],
             created: DateTime.fromMillisecondsSinceEpoch(map['created'] * 1000),
             id: map['id'],
-            percentOff: map['percent_off'],
-            name: map['name']);
+            product: map['product'],
+            price: map['price'] / 100,
+            updated: DateTime.fromMillisecondsSinceEpoch(map['updated'] * 1000),
+          );
   }
 }

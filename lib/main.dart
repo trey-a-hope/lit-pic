@@ -23,6 +23,7 @@ import 'package:litpic/services/stripe/card.dart';
 import 'package:litpic/services/stripe/charge.dart';
 import 'package:litpic/services/stripe/coupon.dart';
 import 'package:litpic/services/stripe/customer.dart';
+import 'package:litpic/services/stripe/sku.dart';
 import 'package:litpic/services/stripe/token.dart';
 import 'package:litpic/services/validater_service.dart';
 
@@ -79,6 +80,10 @@ void main() {
   getIt.registerSingleton<StripeCoupon>(
       StripeCouponImplementation(apiKey: testSecretKey, endpoint: endpoint),
       signalsReady: true);
+  //Stripe Sku
+  getIt.registerSingleton<StripeSku>(
+      StripeSkuImplementation(apiKey: testSecretKey, endpoint: endpoint),
+      signalsReady: true);
   //Stripe Token
   getIt.registerSingleton<StripeToken>(
       StripeTokenImplementation(apiKey: testSecretKey, endpoint: endpoint),
@@ -121,8 +126,8 @@ class LandingPage extends StatelessWidget {
     return StreamBuilder<FirebaseUser>(
       stream: FirebaseAuth.instance.onAuthStateChanged,
       builder: (context, snapshot) {
-                  FirebaseUser user = snapshot.data;
-          return user == null ? LoginPage() : MainApp();
+        FirebaseUser user = snapshot.data;
+        return user == null ? LoginPage() : MainApp();
       },
     );
   }
@@ -133,8 +138,7 @@ class MainApp extends StatefulWidget {
   _MainAppState createState() => _MainAppState();
 }
 
-class _MainAppState extends State<MainApp>
-    with TickerProviderStateMixin {
+class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   AnimationController animationController;
 
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
@@ -202,8 +206,8 @@ class _MainAppState extends State<MainApp>
                 animationController.reverse().then((data) {
                   if (!mounted) return;
                   setState(() {
-                    tabBody =
-                        MakeLithophanePage(animationController: animationController);
+                    tabBody = MakeLithophanePage(
+                        animationController: animationController);
                   });
                 });
                 break;

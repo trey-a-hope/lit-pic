@@ -29,10 +29,15 @@ abstract class DBService {
   Future<void> deleteCartItem(
       {@required String userID, @required String cartItemID});
   Future<String> retrieveCouponID();
+
+  //Sku
+  Future<String> retrieveSkuID();
 }
 
 class DBServiceImplementation extends DBService {
   final CollectionReference _usersDB = Firestore.instance.collection('Users');
+  final DocumentReference _dataDB =
+      Firestore.instance.collection('Data').document('OCqQBQf9d5GM2sbSrF85');
 
   @override
   Future<void> createUser({User user}) async {
@@ -203,10 +208,11 @@ class DBServiceImplementation extends DBService {
 
   @override
   Future<String> retrieveCouponID() async {
-    return (await Firestore.instance
-            .collection('Data')
-            .document('OCqQBQf9d5GM2sbSrF85')
-            .get())
-        .data['couponID'];
+    return (await _dataDB.get()).data['couponID'];
+  }
+
+  @override
+  Future<String> retrieveSkuID() async {
+    return (await _dataDB.get()).data['skuID'];
   }
 }

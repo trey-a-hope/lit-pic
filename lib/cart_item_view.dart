@@ -13,8 +13,9 @@ class CartItemView extends StatelessWidget {
   final VoidCallback delete;
   final VoidCallback increment;
   final VoidCallback decrement;
+  final double price;
 
-  final double price = 15.00;
+  // final double price = 15.00;
   GetIt getIt = GetIt.I;
 
   CartItemView(
@@ -24,7 +25,8 @@ class CartItemView extends StatelessWidget {
       @required this.animation,
       @required this.increment,
       @required this.decrement,
-      @required this.delete})
+      @required this.delete,
+      @required this.price})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
