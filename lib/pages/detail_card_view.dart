@@ -4,8 +4,7 @@ import 'package:litpic/litpic_theme.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class DetailCardView extends StatelessWidget {
-  final VoidCallback callback;
-  // final HotelListData hotelData;
+  final VoidCallback onTap;
   final AnimationController animationController;
   final Animation animation;
   final Image image;
@@ -16,14 +15,14 @@ class DetailCardView extends StatelessWidget {
 
   const DetailCardView(
       {Key key,
-      this.animationController,
+      @required this.animationController,
       @required this.image,
       @required this.title,
       @required this.text,
       @required this.subText,
       @required this.widget,
-      this.animation,
-      this.callback})
+      @required this.animation,
+      @required this.onTap})
       : super(key: key);
 
   @override
@@ -41,9 +40,7 @@ class DetailCardView extends StatelessWidget {
                   left: 24, right: 24, top: 8, bottom: 16),
               child: InkWell(
                 splashColor: Colors.transparent,
-                onTap: () {
-                  callback();
-                },
+                onTap: onTap,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(16.0)),
@@ -128,26 +125,6 @@ class DetailCardView extends StatelessWidget {
                             ),
                           ],
                         ),
-                        // Positioned(
-                        //   top: 8,
-                        //   right: 8,
-                        //   child: Material(
-                        //     color: Colors.transparent,
-                        //     child: InkWell(
-                        //       borderRadius: BorderRadius.all(
-                        //         Radius.circular(32.0),
-                        //       ),
-                        //       onTap: () {},
-                        //       child: Padding(
-                        //         padding: const EdgeInsets.all(8.0),
-                        //         child: Icon(
-                        //           Icons.favorite_border,
-                        //           color: Colors.black,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // )
                       ],
                     ),
                   ),

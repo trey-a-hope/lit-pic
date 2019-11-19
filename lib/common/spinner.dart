@@ -8,7 +8,6 @@ class Spinner extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            // backgroundColor: Colors.black,
             strokeWidth: 3.0,
           ),
           SizedBox(height: 20),

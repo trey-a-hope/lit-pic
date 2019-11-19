@@ -1,7 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:litpic/cart_item_view.dart';
+import 'package:litpic/common/good_button.dart';
+import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
+import 'package:litpic/models/database/cart_item.dart';
+import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/stripe/coupon.dart';
+import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/services/db_service.dart';
+import 'package:litpic/services/formatter_service.dart';
+import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/services/storage_service.dart';
+import 'package:litpic/services/stripe/coupon.dart';
 import 'package:litpic/titleView.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CartPage extends StatefulWidget {
   final AnimationController animationController;
@@ -11,8 +25,7 @@ class CartPage extends StatefulWidget {
   _CartPageState createState() => _CartPageState();
 }
 
-class _CartPageState extends State<CartPage>
-    with TickerProviderStateMixin {
+class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = List<Widget>();
@@ -21,13 +34,25 @@ class _CartPageState extends State<CartPage>
 
   final GetIt getIt = GetIt.I;
   final Color iconColor = Colors.amber[700];
+  User _currentUser;
+  SharedPreferences prefs;
+  bool addAllListDataComplete = false;
+  List<CartItem> cartItems = List<CartItem>();
+  int items = 0;
+  double price = 15.00;
+  Coupon _coupon;
+
+  bool _isLoading = false;
 
   @override
   void initState() {
-    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
         parent: widget.animationController,
-        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    addAllListData();
+        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn),
+      ),
+    );
+    // addAllListData();
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -52,26 +77,186 @@ class _CartPageState extends State<CartPage>
       }
     });
     super.initState();
+    load();
   }
 
-  void addAllListData() {
-    var count = 1;
-      listViews.add(
-      TitleView(
-        titleTxt: 'Your cart is empty boss.',
-        subTxt: 'Shop',
-        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
+  void addAllListData() async {
+    if (!addAllListDataComplete) {
+      addAllListDataComplete = true;
+
+      var count = 1;
+
+      // listViews.clear();
+
+      if (cartItems.isEmpty) {
+        listViews.add(
+          TitleView(
+            titleTxt: 'Your cart is empty boss.',
+            subTxt: 'Shop',
+            animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                parent: widget.animationController,
+                curve: Interval((1 / count) * 0, 1.0,
+                    curve: Curves.fastOutSlowIn))),
+            animationController: widget.animationController,
+          ),
+        );
+      } else {
+        items = 0;
+        for (int i = 0; i < cartItems.length; i++) {
+          items += cartItems[i].quantity;
+          listViews.add(
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: CartItemView(
+                delete: () {
+                  listViews.clear();
+                  _deleteCartItem(cartItem: cartItems[i]);
+                },
+                cartItem: cartItems[i],
+                animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: widget.animationController,
+                    curve: Interval((1 / count) * 0, 1.0,
+                        curve: Curves.fastOutSlowIn))),
+                animationController: widget.animationController,
+                increment: () {
+                  listViews.clear();
+                  _incrementQuantity(cartItem: cartItems[i]);
+                },
+                decrement: () {
+                  listViews.clear();
+                  _decrementQuantity(cartItem: cartItems[i]);
+                },
+              ),
+            ),
+          );
+        }
+
+        listViews.add(
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'Shipping',
+                ),
+                Text(
+                  'Free',
+                )
+              ],
+            ),
+          ),
+        );
+
+        listViews.add(
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'Total',
+                ),
+                Text(
+                  getTotal(),
+                )
+              ],
+            ),
+          ),
+        );
+
+        listViews.add(
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'Total w/ Coupon',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.green),
+                ),
+                Text(
+                  getCouponTotal() + ' ( ${_coupon.percentOff} % Off )',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.green),
+                )
+              ],
+            ),
+          ),
+        );
+
+        listViews.add(
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: GoodButton(
+              text: 'PROCEED TO CHECKOUT',
+              buttonColor: Colors.amber,
+              onPressed: () {
+                getIt<ModalService>().showAlert(
+                    context: context,
+                    title: 'Proceed To Checkout',
+                    message: 'ToDo');
+              },
+              textColor: Colors.white,
+            ),
+          ),
+        );
+      }
+    }
   }
 
-  Future<bool> getData() async {
-    await Future.delayed(const Duration(milliseconds: 50));
+  String getTotal() {
+    double total = 0;
+    total = items * price;
+    prefs.setDouble('itemsTotal', total);
+
+    return getIt<FormatterService>().money(amount: total);
+  }
+
+  String getCouponTotal() {
+    double total = 0;
+    total = items * price;
+    total *= (1 - (_coupon.percentOff / 100));
+    // prefs.setDouble('itemsTotal', total);
+
+    return getIt<FormatterService>().money(amount: total);
+  }
+
+  Future<bool> fetchCartItems() async {
+    cartItems.clear();
+    List<DocumentSnapshot> docs = (await Firestore.instance
+            .collection('Users')
+            .document('NnWUARGr7dK9Zx6jxrgH')
+            .collection('Cart Items')
+            .getDocuments())
+        .documents;
+    for (int i = 0; i < docs.length; i++) {
+      cartItems.add(
+        CartItem.fromDoc(doc: docs[i]),
+      );
+    }
+
     return true;
+  }
+
+  void load() async {
+    prefs = await SharedPreferences.getInstance();
+    try {
+      _currentUser = await getIt<AuthService>().getCurrentUser();
+    } catch (e) {
+      getIt<ModalService>().showAlert(
+        context: context,
+        title: 'Error',
+        message: e.toString(),
+      );
+    }
+  }
+
+  Future<void> fetchMonthlyCoupon() async {
+    final String couponID = await getIt<DBService>().retrieveCouponID();
+    _coupon = await getIt<StripeCoupon>().retrieve(couponID: couponID);
+    return;
   }
 
   @override
@@ -79,27 +264,30 @@ class _CartPageState extends State<CartPage>
     return Container(
       color: LitPicTheme.background,
       child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(
-          children: <Widget>[
-            getMainListViewUI(),
-            getAppBarUI(),
-            SizedBox(
-              height: MediaQuery.of(context).padding.bottom,
-            )
-          ],
-        ),
-      ),
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            children: <Widget>[
+              getMainListViewUI(),
+              getAppBarUI(),
+              SizedBox(
+                height: MediaQuery.of(context).padding.bottom,
+              )
+            ],
+          )),
     );
   }
 
   Widget getMainListViewUI() {
+    List<Future> futures = List<Future>();
+    futures.add(fetchCartItems());
+    futures.add(fetchMonthlyCoupon());
     return FutureBuilder(
-      future: getData(),
+      future: Future.wait(futures),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return SizedBox();
+          return Spinner();
         } else {
+          addAllListData();
           return ListView.builder(
             controller: scrollController,
             padding: EdgeInsets.only(
@@ -118,6 +306,65 @@ class _CartPageState extends State<CartPage>
         }
       },
     );
+    // return StreamBuilder<QuerySnapshot>(
+    //   stream: Firestore.instance
+    //       .collection('Users')
+    //       .document('NnWUARGr7dK9Zx6jxrgH')
+    //       .collection('Cart Items')
+    //       .snapshots(),
+    //   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+    //     //Reset total on every change.
+    //     if (!snapshot.hasData)
+    //       return Spinner();
+    //     else if (snapshot.hasData && snapshot.data.documents.isEmpty) {
+    //       Future.delayed(Duration.zero, () => setState(() {}));
+
+    //       return Center(
+    //         child: Text('Your shopping cart is empty.'),
+    //       );
+    //     } else {
+    //       widget.animationController.forward();
+
+    //       return ListView(
+    //         // controller: scrollController,
+    //         shrinkWrap: true,
+    //         padding: EdgeInsets.only(
+    //           top: AppBar().preferredSize.height +
+    //               MediaQuery.of(context).padding.top +
+    //               24,
+    //           bottom: 62 + MediaQuery.of(context).padding.bottom,
+    //         ),
+    //         children: snapshot.data.documents.map((DocumentSnapshot doc) {
+    //           CartItem cartItem = CartItem.fromDoc(doc: doc);
+
+    //           Future.delayed(Duration.zero, () => setState(() {}));
+
+    //           return Padding(
+    //             padding: EdgeInsets.all(10),
+    //             child: CartItemView(
+    //               delete: () {
+    //                 // _deleteCartItem(cartItem: cartItems[i]);
+    //               },
+    //               cartItem: cartItem,
+    //               animation: Tween(begin: 0.0, end: 1.0).animate(
+    //                   CurvedAnimation(
+    //                       parent: widget.animationController,
+    //                       curve: Interval((1 / 1) * 0, 1.0,
+    //                           curve: Curves.fastOutSlowIn))),
+    //               animationController: widget.animationController,
+    //               increment: () {
+    //                 // _incrementQuantity(cartItem: cartItems[i]);
+    //               },
+    //               decrement: () {
+    //                 // _decrementQuantity(cartItem: cartItems[i]);
+    //               },
+    //             ),
+    //           );
+    //         }).toList(),
+    //       );
+    //     }
+    //   },
+    // );
   }
 
   Widget getAppBarUI() {
@@ -175,6 +422,12 @@ class _CartPageState extends State<CartPage>
                                 ),
                               ),
                             ),
+                            _isLoading
+                                ? CircularProgressIndicator(
+                                    // backgroundColor: Colors.black,
+                                    strokeWidth: 3.0,
+                                  )
+                                : SizedBox.shrink()
                             // SizedBox(
                             //   height: 38,
                             //   width: 38,
@@ -248,5 +501,86 @@ class _CartPageState extends State<CartPage>
         )
       ],
     );
+  }
+
+  _deleteCartItem({@required CartItem cartItem}) async {
+    bool confirm = await getIt<ModalService>().showConfirmation(
+        context: context,
+        title: 'Remove Item From Cart',
+        message: 'Are you sure.');
+    if (confirm) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      //Remove cart item from database.
+      await getIt<DBService>()
+          .deleteCartItem(userID: _currentUser.id, cartItemID: cartItem.id);
+
+      //Remove image of cart item from storage.
+      await getIt<StorageService>().deleteImage(imgPath: cartItem.imgPath);
+
+      //Refresh cart data.
+      await load();
+
+      //
+      addAllListDataComplete = false;
+
+      //
+      addAllListData();
+
+      //
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  _incrementQuantity({@required CartItem cartItem}) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    await getIt<DBService>().updateCartItem(
+        userID: _currentUser.id,
+        cartItemID: cartItem.id,
+        data: {'quantity': cartItem.quantity + 1});
+
+    //
+    addAllListDataComplete = false;
+
+    //
+    addAllListData();
+
+    //
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  _decrementQuantity({@required CartItem cartItem}) async {
+    if (cartItem.quantity == 1) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    await getIt<DBService>().updateCartItem(
+        userID: _currentUser.id,
+        cartItemID: cartItem.id,
+        data: {'quantity': cartItem.quantity - 1});
+
+    //
+    addAllListDataComplete = false;
+
+    //
+    addAllListData();
+
+    //
+    setState(() {
+      _isLoading = false;
+    });
   }
 }

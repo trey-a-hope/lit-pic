@@ -109,7 +109,7 @@ class MonthlyCouponView extends StatelessWidget {
                                         padding:
                                             const EdgeInsets.only(left: 4.0),
                                         child: Text(
-                                          'Created ${DateFormat(dateFormat).format(coupon.created)}',
+                                          'Valid until end of month.',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontFamily: LitPicTheme.fontName,

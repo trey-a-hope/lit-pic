@@ -28,6 +28,7 @@ abstract class DBService {
       @required Map<String, dynamic> data});
   Future<void> deleteCartItem(
       {@required String userID, @required String cartItemID});
+  Future<String> retrieveCouponID();
 }
 
 class DBServiceImplementation extends DBService {
@@ -198,5 +199,14 @@ class DBServiceImplementation extends DBService {
         e.toString(),
       );
     }
+  }
+
+  @override
+  Future<String> retrieveCouponID() async {
+    return (await Firestore.instance
+            .collection('Data')
+            .document('OCqQBQf9d5GM2sbSrF85')
+            .get())
+        .data['couponID'];
   }
 }

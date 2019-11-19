@@ -6,14 +6,12 @@ class CartItem {
   final String imgUrl;
   final String imgPath;
   final int quantity;
-  final String title;
   final String color;
 
   CartItem(
       {@required this.id,
       @required this.imgUrl,
       @required this.imgPath,
-      @required this.title,
       @required this.quantity,
       @required this.color});
 
@@ -23,7 +21,6 @@ class CartItem {
         imgUrl: doc.data['imgUrl'],
         imgPath: doc.data['imgPath'],
         quantity: doc.data['quantity'],
-        title: doc.data['title'],
         color: doc.data['color']);
   }
 
@@ -32,7 +29,6 @@ class CartItem {
       'id': id,
       'imgUrl': imgUrl,
       'imgPath': imgPath,
-      'title': title,
       'color': color,
       'quantity': quantity
     };

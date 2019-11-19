@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:litpic/asset_images.dart';
+import 'package:litpic/common/hero_screen.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/main.dart';
@@ -25,11 +27,6 @@ class _RecentCreationsViewState extends State<RecentCreationsView>
     animationController = AnimationController(
         duration: Duration(milliseconds: 2000), vsync: this);
     super.initState();
-  }
-
-  Future<bool> getData() async {
-    await Future.delayed(const Duration(milliseconds: 50));
-    return true;
   }
 
   @override
@@ -87,10 +84,7 @@ class MealsView extends StatelessWidget {
   final Animation animation;
 
   const MealsView(
-      {Key key,
-      this.mealsListData,
-      this.animationController,
-      this.animation})
+      {Key key, this.mealsListData, this.animationController, this.animation})
       : super(key: key);
 
   @override
@@ -240,7 +234,8 @@ class MealsView extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) {
-                            return HeroScreen(data: mealsListData);
+                            return HeroScreen(
+                                imgUrl: null, imgPath: mealsListData.imagePath);
                           }),
                         );
                       },
@@ -260,29 +255,6 @@ class MealsView extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class HeroScreen extends StatelessWidget {
-  final LithophanesData data;
-
-  HeroScreen({@required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        child: Center(
-          child: Hero(
-            tag: data.imagePath,
-            child: Image.asset(data.imagePath),
-          ),
-        ),
-        onTap: () {
-          Navigator.pop(context);
-        },
-      ),
     );
   }
 }

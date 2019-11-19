@@ -19,15 +19,15 @@ import 'package:litpic/services/storage_service.dart';
 import 'package:litpic/titleView.dart';
 import 'package:uuid/uuid.dart';
 
-class ShopPage extends StatefulWidget {
+class MakeLithophanePage extends StatefulWidget {
   final AnimationController animationController;
 
-  const ShopPage({Key key, this.animationController}) : super(key: key);
+  const MakeLithophanePage({Key key, this.animationController}) : super(key: key);
   @override
-  _ShopPageState createState() => _ShopPageState();
+  _MakeLithophanePageState createState() => _MakeLithophanePageState();
 }
 
-class _ShopPageState extends State<ShopPage> with TickerProviderStateMixin {
+class _MakeLithophanePageState extends State<MakeLithophanePage> with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = List<Widget>();
@@ -302,7 +302,6 @@ class _ShopPageState extends State<ShopPage> with TickerProviderStateMixin {
             id: null,
             imgUrl: imgUrl,
             imgPath: imgPath,
-            title: 'Lithophane',
             color: _selectedColor.name,
             quantity: quantity),
       );

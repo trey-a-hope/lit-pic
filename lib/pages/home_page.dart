@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -17,6 +18,7 @@ import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/coupon.dart';
 import 'package:litpic/titleView.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   final AnimationController animationController;
@@ -70,12 +72,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         }
       }
     });
-    
+
     super.initState();
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
   }
 
@@ -85,9 +87,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       var count = 6;
 
       listViews.add(DetailCardView(
+        onTap: () async {
+          const url = 'https://en.wikipedia.org/wiki/Lithophane';
+          if (await canLaunch(url)) {
+            await launch(url);
+          } else {
+            throw 'Could not launch $url';
+          }
+        },
         widget: Icon(MdiIcons.informationVariant),
         image: Image.asset('assets/images/lith_example.jpg'),
-        subText: "Lithophane - Wikipedia",
+        subText: "Click here for details.",
         title: 'What is a \"Lithophane?\"',
         text:
             'A lithophane (French: lithophanie) is an etched or molded artwork in very thin translucent porcelain that can only be seen clearly when back lit with a light source. It is a design or scene in intaglio that appears "en grisaille" (in gray) tones.',
@@ -121,12 +131,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       );
 
       listViews.add(DetailCardView(
+        onTap: () async {
+          const url = 'https://www.instagram.com/tr3.designs/?hl=en';
+          if (await canLaunch(url)) {
+            await launch(url);
+          } else {
+            throw 'Could not launch $url';
+          }
+        },
         widget: CircleAvatar(
           backgroundImage: CachedNetworkImageProvider(
               'https://scontent-ort2-2.cdninstagram.com/vp/c21f18b9242101f4476511108371b153/5E892519/t51.2885-19/s320x320/60980291_2287245398154667_3908855079028916224_n.jpg?_nc_ht=scontent-ort2-2.cdninstagram.com'),
         ),
         image: Image.asset('assets/images/litpic_example.jpg'),
-        subText: "Follow @tr3Designs",
+        subText: "Click here to follow.",
         title: 'What is a \"Lit Pic?\"',
         text:
             'A Lit Pic a 3D printed Lithophane, (created by tr3Designs), that you can display anywhere in your home to capture those special moments in your life. Each print comes with a stand and is measured to be between 8in high and 6in wide.',
@@ -165,47 +183,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       //Load user.
       _currentUser = await getIt<AuthService>().getCurrentUser();
 
-      //Request permission on iOS device.
-      if (Platform.isIOS) {
-        _fcm.requestNotificationPermissions(
-          IosNotificationSettings(),
-        );
-      }
-
-      //Update user's fcm token.
-      final String fcmToken = await _fcm.getToken();
-      if (fcmToken != null) {
-        print(fcmToken);
-        getIt<DBService>()
-            .updateUser(userID: _currentUser.id, data: {'fcmToken': fcmToken});
-      }
-
-      //Configure notifications for several action types.
-      _fcm.configure(
-        onMessage: (Map<String, dynamic> message) async {
-          print("onMessage: $message");
-          getIt<ModalService>().showAlert(
-              context: context,
-              title: message['notification']['title'],
-              message: '');
-        },
-        onLaunch: (Map<String, dynamic> message) async {
-          getIt<ModalService>().showAlert(
-              context: context,
-              title: message['notification']['title'],
-              message: '');
-        },
-        onResume: (Map<String, dynamic> message) async {
-          getIt<ModalService>().showAlert(
-              context: context,
-              title: message['notification']['title'],
-              message: '');
-        },
-      );
-
-      //Fetch coupon.
-      _coupon = await getIt<StripeCoupon>().retrieve(couponID: 'gWahe2Ob');
-
       return true;
     } catch (e) {
       getIt<ModalService>().showAlert(
@@ -215,6 +192,52 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       );
       return false;
     }
+  }
+
+  Future<void> setUpFCM() async {
+    //Request permission on iOS device.
+    if (Platform.isIOS) {
+      _fcm.requestNotificationPermissions(
+        IosNotificationSettings(),
+      );
+    }
+
+    //Update user's fcm token.
+    final String fcmToken = await _fcm.getToken();
+    if (fcmToken != null) {
+      print(fcmToken);
+      getIt<DBService>()
+          .updateUser(userID: _currentUser.id, data: {'fcmToken': fcmToken});
+    }
+
+    //Configure notifications for several action types.
+    _fcm.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        getIt<ModalService>().showAlert(
+            context: context,
+            title: message['notification']['title'],
+            message: '');
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        getIt<ModalService>().showAlert(
+            context: context,
+            title: message['notification']['title'],
+            message: '');
+      },
+      onResume: (Map<String, dynamic> message) async {
+        getIt<ModalService>().showAlert(
+            context: context,
+            title: message['notification']['title'],
+            message: '');
+      },
+    );
+  }
+
+  Future<void> fetchMonthlyCoupon() async {
+    final String couponID = await getIt<DBService>().retrieveCouponID();
+    _coupon = await getIt<StripeCoupon>().retrieve(couponID: couponID);
+    return;
   }
 
   @override
@@ -237,8 +260,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget getMainListViewUI() {
+    List<Future> futures = List<Future>();
+    futures.add(load());
+    futures.add(setUpFCM());
+    futures.add(fetchMonthlyCoupon());
     return FutureBuilder(
-      future: load(),
+      future: Future.wait(futures),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Spinner();

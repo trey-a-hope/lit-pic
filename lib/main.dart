@@ -8,9 +8,9 @@ import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/pages/authentication/login_page.dart';
 import 'package:litpic/pages/cart_page_new.dart';
 import 'package:litpic/pages/home_page.dart';
+import 'package:litpic/pages/make_lithophane_page.dart';
 import 'package:litpic/pages/profile_page_new.dart';
 import 'package:litpic/pages/settings_page_new.dart';
-import 'package:litpic/pages/shop_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/device_service.dart';
@@ -203,7 +203,7 @@ class _MainAppState extends State<MainApp>
                   if (!mounted) return;
                   setState(() {
                     tabBody =
-                        ShopPage(animationController: animationController);
+                        MakeLithophanePage(animationController: animationController);
                   });
                 });
                 break;

@@ -57,50 +57,6 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   void addAllListData() {
-    //About
-    listViews.add(
-      ListTile(
-        leading: Icon(
-          MdiIcons.bookmark,
-          color: iconColor,
-        ),
-        title: Text(
-          'About',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          'Learn more about the business.',
-        ),
-        trailing: Icon(Icons.chevron_right),
-        onTap: () async {
-          getIt<ModalService>().showAlert(context: context, title: 'About', message: 'TODO');
-
-        },
-      ),
-    );
-
-    //FAQs
-    listViews.add(
-      ListTile(
-        leading: Icon(
-          MdiIcons.informationVariant,
-          color: iconColor,
-        ),
-        title: Text(
-          'FAQs',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          'Get answers to common questions.',
-        ),
-        trailing: Icon(Icons.chevron_right),
-        onTap: () async {
-          getIt<ModalService>().showAlert(context: context, title: 'FAQs', message: 'TODO');
-
-        },
-      ),
-    );
-
 //Help & Support
     listViews.add(
       ListTile(
@@ -113,11 +69,12 @@ class _SettingsPageState extends State<SettingsPage>
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          'Need assitance?',
+          '24/7 assistance.',
         ),
         trailing: Icon(Icons.chevron_right),
         onTap: () async {
-          getIt<ModalService>().showAlert(context: context, title: 'Help/Support', message: 'TODO');
+          getIt<ModalService>().showAlert(
+              context: context, title: 'Help/Support', message: 'TODO');
         },
       ),
     );
