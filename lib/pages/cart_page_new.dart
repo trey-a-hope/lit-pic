@@ -38,12 +38,21 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   final Color iconColor = Colors.amber[700];
   User _currentUser;
   SharedPreferences prefs;
+  bool loadComplete = false;
   bool addAllListDataComplete = false;
+  bool calculateTotalsComplete = false;
+
+  bool fetchCartItemsComplete = false;
   List<CartItem> cartItems = List<CartItem>();
-  int items = 0;
-  // double price = 15.00;
-  Coupon _coupon;
+  int totalLithophanes = 0;
+  // Coupon _coupon;
   Sku _sku;
+
+  double subTotal = 0.0;
+  double stripeProcessingFee = 0.0;
+  double monthlyDiscount;
+  double total = 0.0;
+  double totalWithCoupon = 0.0;
 
   bool _isLoading = false;
 
@@ -103,9 +112,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
           ),
         );
       } else {
-        items = 0;
         for (int i = 0; i < cartItems.length; i++) {
-          items += cartItems[i].quantity;
           listViews.add(
             Padding(
               padding: EdgeInsets.all(10),
@@ -159,10 +166,10 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  'Total',
+                  'Sub total',
                 ),
                 Text(
-                  getTotal(),
+                  getIt<FormatterService>().money(amount: subTotal),
                 )
               ],
             ),
@@ -175,13 +182,61 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
+                Column(
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text('Processing fee'),
+                    Text(
+                      '2.9% + \$0.30 per transaction',
+                      style: TextStyle(color: Colors.grey),
+                    )
+                  ],
+                ),
                 Text(
-                  'Total w/ Coupon',
+                  '+${getIt<FormatterService>().money(amount: stripeProcessingFee)}',
+                )
+              ],
+            ),
+          ),
+        );
+
+        // listViews.add(
+        //   Padding(
+        //     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //       children: <Widget>[
+        //         Column(
+        //           // mainAxisAlignment: MainAxisAlignment.start,
+        //           crossAxisAlignment: CrossAxisAlignment.start,
+        //           children: <Widget>[
+        //             Text('Monthly discount (${_coupon.percentOff}% Off)'),
+        //           ],
+        //         ),
+        //         Text(
+        //           '-${getIt<FormatterService>().money(amount: monthlyDiscount)}',
+        //         )
+        //       ],
+        //     ),
+        //   ),
+        // );
+
+        listViews.add(Divider());
+
+        listViews.add(
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'Order Total',
                   style: TextStyle(
                       fontWeight: FontWeight.bold, color: Colors.green),
                 ),
                 Text(
-                  getCouponTotal() + ' ( ${_coupon.percentOff} % Off )',
+                  getIt<FormatterService>().money(amount: total),
                   style: TextStyle(
                       fontWeight: FontWeight.bold, color: Colors.green),
                 )
@@ -212,59 +267,134 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     }
   }
 
-  String getTotal() {
-    double total = 0;
-    total = items * _sku.price;
-    prefs.setDouble('itemsTotal', total);
-
-    return getIt<FormatterService>().money(amount: total);
+  double getSubTotal() {
+    return totalLithophanes * _sku.price;
   }
 
-  String getCouponTotal() {
-    double total = 0;
-    total = items * _sku.price;
-    total *= (1 - (_coupon.percentOff / 100));
-    // prefs.setDouble('itemsTotal', total);
-
-    return getIt<FormatterService>().money(amount: total);
+  double getStripeProcessingFee() {
+    double subTotal = getSubTotal();
+    return (subTotal * 0.029) + 0.3;
   }
+
+  // double getMonthlyDiscount() {
+  //   double total = getTotal();
+  //   return (total * (_coupon.percentOff / 100));
+  // }
+
+  double getTotal() {
+    double subTotal = getSubTotal();
+    double stripeProcessingFee = getStripeProcessingFee();
+    return subTotal + stripeProcessingFee;
+  }
+
+  // double getTotalWithCoupon() {
+  //   double total = getTotal();
+  //   return total * (1 - (_coupon.percentOff / 100));
+  // }
+
+  // String getTotal() {
+  //   // prefs.setDouble('itemsTotal', total);
+
+  //   //Stripe Processing Fee: 2.9% + .30 for every transaction.
+  //   double feeSubTotal = (getSubTotal() * 0.029) + 0.3;
+
+  //   return getIt<FormatterService>().money(amount: feeSubTotal);
+  // }
+
+  // String getSubTotal() {
+  //   double subTotal = 0;
+  //   subTotal = items * _sku.price;
+  //   // prefs.setDouble('itemsTotal', total);
+
+  //   return getIt<FormatterService>().money(amount: subTotal);
+  // }
+
+  // String getCouponTotal() {
+  //   double total = 0;
+  //   total = items * _sku.price;
+  //   total *= (1 - (_coupon.percentOff / 100));
+  //   // prefs.setDouble('itemsTotal', total);
+
+  //   return getIt<FormatterService>().money(amount: total);
+  // }
+
+  // String getProcessingFeeTotal() {
+  //   double subTotal = 0;
+  //   subTotal = items * _sku.price;
+  //   // prefs.setDouble('itemsTotal', total);
+  //   //Stripe Processing Fee: 2.9% + .30 for every transaction.
+  //   double feeSubTotal = (subTotal * 0.029) + 0.3;
+
+  //   return getIt<FormatterService>().money(amount: feeSubTotal);
+  // }
 
   Future<void> fetchCartItems() async {
-    cartItems.clear();
-    List<DocumentSnapshot> docs = (await Firestore.instance
-            .collection('Users')
-            .document(_currentUser.id)
-            .collection('Cart Items')
-            .getDocuments())
-        .documents;
-    for (int i = 0; i < docs.length; i++) {
-      cartItems.add(
-        CartItem.fromDoc(doc: docs[i]),
-      );
+    if (!fetchCartItemsComplete) {
+      //Mark flag to prevent from multiple calls to this function.
+      // setState((){}) called due to scaffold bar animation.
+      fetchCartItemsComplete = true;
+
+      //Clear list to prevent for duplicates later.
+      cartItems.clear();
+
+      //Restart total lithophanes count.
+      totalLithophanes = 0;
+
+      //Fetch cart item documents.
+      List<DocumentSnapshot> docs = (await Firestore.instance
+              .collection('Users')
+              .document(_currentUser.id)
+              .collection('Cart Items')
+              .getDocuments())
+          .documents;
+
+      //Add cart items to list.
+      for (int i = 0; i < docs.length; i++) {
+        cartItems.add(
+          CartItem.fromDoc(doc: docs[i]),
+        );
+
+        //Calculate total number of lithophanes for this order.
+        totalLithophanes += cartItems[i].quantity;
+      }
+    }
+  }
+
+  calculateTotals() {
+    if (!calculateTotalsComplete) {
+      calculateTotalsComplete = true;
+      subTotal = getSubTotal();
+      stripeProcessingFee = getStripeProcessingFee();
+      // monthlyDiscount = getMonthlyDiscount();
+      total = getTotal();
+      // totalWithCoupon = getTotalWithCoupon();
     }
   }
 
   Future<void> load() async {
-    prefs = await SharedPreferences.getInstance();
-    try {
-      _currentUser = await getIt<AuthService>().getCurrentUser();
-      await fetchCartItems();
-      return;
-    } catch (e) {
-      getIt<ModalService>().showAlert(
-        context: context,
-        title: 'Error',
-        message: e.toString(),
-      );
-      return;
+    if (!loadComplete) {
+      loadComplete = true;
+      prefs = await SharedPreferences.getInstance();
+      try {
+        _currentUser = await getIt<AuthService>().getCurrentUser();
+        await fetchCartItems();
+        return;
+      } catch (e) {
+        getIt<ModalService>().showAlert(
+          context: context,
+          title: 'Error',
+          message: e.toString(),
+        );
+        return;
+      }
     }
   }
 
-  Future<void> fetchMonthlyCoupon() async {
-    final String couponID = await getIt<DBService>().retrieveCouponID();
-    _coupon = await getIt<StripeCoupon>().retrieve(couponID: couponID);
-    return;
-  }
+  // Future<void> fetchMonthlyCoupon() async {
+  //   final String couponID = await getIt<DBService>().retrieveCouponID();
+  //   _coupon = await getIt<StripeCoupon>().retrieve(couponID: couponID);
+  //   return;
+  // }
 
   Future<void> fetchLithophaneSku() async {
     final String skuID = await getIt<DBService>().retrieveSkuID();
@@ -293,7 +423,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   Widget getMainListViewUI() {
     List<Future> futures = List<Future>();
     futures.add(load());
-    futures.add(fetchMonthlyCoupon());
+    // futures.add(fetchMonthlyCoupon());
     futures.add(fetchLithophaneSku());
 
     return FutureBuilder(
@@ -302,6 +432,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
         if (!snapshot.hasData) {
           return Spinner();
         } else {
+          calculateTotals();
           addAllListData();
           return ListView.builder(
             controller: scrollController,
@@ -321,65 +452,6 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
         }
       },
     );
-    // return StreamBuilder<QuerySnapshot>(
-    //   stream: Firestore.instance
-    //       .collection('Users')
-    //       .document('NnWUARGr7dK9Zx6jxrgH')
-    //       .collection('Cart Items')
-    //       .snapshots(),
-    //   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-    //     //Reset total on every change.
-    //     if (!snapshot.hasData)
-    //       return Spinner();
-    //     else if (snapshot.hasData && snapshot.data.documents.isEmpty) {
-    //       Future.delayed(Duration.zero, () => setState(() {}));
-
-    //       return Center(
-    //         child: Text('Your shopping cart is empty.'),
-    //       );
-    //     } else {
-    //       widget.animationController.forward();
-
-    //       return ListView(
-    //         // controller: scrollController,
-    //         shrinkWrap: true,
-    //         padding: EdgeInsets.only(
-    //           top: AppBar().preferredSize.height +
-    //               MediaQuery.of(context).padding.top +
-    //               24,
-    //           bottom: 62 + MediaQuery.of(context).padding.bottom,
-    //         ),
-    //         children: snapshot.data.documents.map((DocumentSnapshot doc) {
-    //           CartItem cartItem = CartItem.fromDoc(doc: doc);
-
-    //           Future.delayed(Duration.zero, () => setState(() {}));
-
-    //           return Padding(
-    //             padding: EdgeInsets.all(10),
-    //             child: CartItemView(
-    //               delete: () {
-    //                 // _deleteCartItem(cartItem: cartItems[i]);
-    //               },
-    //               cartItem: cartItem,
-    //               animation: Tween(begin: 0.0, end: 1.0).animate(
-    //                   CurvedAnimation(
-    //                       parent: widget.animationController,
-    //                       curve: Interval((1 / 1) * 0, 1.0,
-    //                           curve: Curves.fastOutSlowIn))),
-    //               animationController: widget.animationController,
-    //               increment: () {
-    //                 // _incrementQuantity(cartItem: cartItems[i]);
-    //               },
-    //               decrement: () {
-    //                 // _decrementQuantity(cartItem: cartItems[i]);
-    //               },
-    //             ),
-    //           );
-    //         }).toList(),
-    //       );
-    //     }
-    //   },
-    // );
   }
 
   Widget getAppBarUI() {
@@ -443,67 +515,6 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                                     strokeWidth: 3.0,
                                   )
                                 : SizedBox.shrink()
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_left,
-                            //         color: LitPicTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                            // Padding(
-                            //   padding: const EdgeInsets.only(
-                            //     left: 8,
-                            //     right: 8,
-                            //   ),
-                            //   child: Row(
-                            //     children: <Widget>[
-                            //       Padding(
-                            //         padding: const EdgeInsets.only(right: 8),
-                            //         child: Icon(
-                            //           Icons.calendar_today,
-                            //           color: LitPicTheme.grey,
-                            //           size: 18,
-                            //         ),
-                            //       ),
-                            //       Text(
-                            //         "15 May",
-                            //         textAlign: TextAlign.left,
-                            //         style: TextStyle(
-                            //           fontFamily: LitPicTheme.fontName,
-                            //           fontWeight: FontWeight.normal,
-                            //           fontSize: 18,
-                            //           letterSpacing: -0.2,
-                            //           color: LitPicTheme.darkerText,
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_right,
-                            //         color: LitPicTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       )
@@ -536,12 +547,15 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       await getIt<StorageService>().deleteImage(imgPath: cartItem.imgPath);
 
       //Refresh cart data.
-      await load();
+      fetchCartItemsComplete = false;
+      await fetchCartItems();
 
-      //
+      //Rerun total calculations.
+      calculateTotalsComplete = false;
+      calculateTotals();
+
+      //Re add views with new data.
       addAllListDataComplete = false;
-
-      //
       addAllListData();
 
       //
@@ -561,10 +575,16 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
         cartItemID: cartItem.id,
         data: {'quantity': cartItem.quantity + 1});
 
-    //
-    addAllListDataComplete = false;
+    //Refresh cart data.
+    fetchCartItemsComplete = false;
+    await fetchCartItems();
 
-    //
+    //Rerun total calculations.
+    calculateTotalsComplete = false;
+    calculateTotals();
+
+    //Re add views with new data.
+    addAllListDataComplete = false;
     addAllListData();
 
     //
@@ -587,10 +607,16 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
         cartItemID: cartItem.id,
         data: {'quantity': cartItem.quantity - 1});
 
-    //
-    addAllListDataComplete = false;
+    //Refresh cart data.
+    fetchCartItemsComplete = false;
+    await fetchCartItems();
 
-    //
+    //Rerun total calculations.
+    calculateTotalsComplete = false;
+    calculateTotals();
+
+    //Re add views with new data.
+    addAllListDataComplete = false;
     addAllListData();
 
     //
@@ -599,3 +625,5 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     });
   }
 }
+
+//Future.delayed(Duration.zero, () => setState(() {}));

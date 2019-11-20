@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final GetIt getIt = GetIt.I;
   User _currentUser;
   final FirebaseMessaging _fcm = FirebaseMessaging();
-  Coupon _coupon;
+  // Coupon _coupon;
   bool addAllListDataComplete = false;
 
   @override
@@ -154,27 +154,27 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController,
       ));
-      listViews.add(
-        TitleView(
-          titleTxt: 'Monthly Coupon',
-          subTxt: 'Customize',
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: widget.animationController,
-              curve:
-                  Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-          animationController: widget.animationController,
-        ),
-      );
-      listViews.add(
-        MonthlyCouponView(
-          coupon: _coupon,
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: widget.animationController,
-              curve:
-                  Interval((1 / count) * 5, 1.0, curve: Curves.fastOutSlowIn))),
-          animationController: widget.animationController,
-        ),
-      );
+      // listViews.add(
+      //   TitleView(
+      //     titleTxt: 'Monthly Coupon',
+      //     subTxt: 'Customize',
+      //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+      //         parent: widget.animationController,
+      //         curve:
+      //             Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
+      //     animationController: widget.animationController,
+      //   ),
+      // );
+      // listViews.add(
+      //   MonthlyCouponView(
+      //     coupon: _coupon,
+      //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+      //         parent: widget.animationController,
+      //         curve:
+      //             Interval((1 / count) * 5, 1.0, curve: Curves.fastOutSlowIn))),
+      //     animationController: widget.animationController,
+      //   ),
+      // );
     }
   }
 
@@ -232,11 +232,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> fetchMonthlyCoupon() async {
-    final String couponID = await getIt<DBService>().retrieveCouponID();
-    _coupon = await getIt<StripeCoupon>().retrieve(couponID: couponID);
-    return;
-  }
+  // Future<void> fetchMonthlyCoupon() async {
+  //   final String couponID = await getIt<DBService>().retrieveCouponID();
+  //   _coupon = await getIt<StripeCoupon>().retrieve(couponID: couponID);
+  //   return;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -260,7 +260,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget getMainListViewUI() {
     List<Future> futures = List<Future>();
     futures.add(load());
-    futures.add(fetchMonthlyCoupon());
+    // futures.add(fetchMonthlyCoupon());
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {

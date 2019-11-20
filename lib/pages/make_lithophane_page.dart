@@ -11,23 +11,28 @@ import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/main.dart';
 import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/stripe/sku.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
+import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/image_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/storage_service.dart';
+import 'package:litpic/services/stripe/sku.dart';
 import 'package:litpic/titleView.dart';
 import 'package:uuid/uuid.dart';
 
 class MakeLithophanePage extends StatefulWidget {
   final AnimationController animationController;
 
-  const MakeLithophanePage({Key key, this.animationController}) : super(key: key);
+  const MakeLithophanePage({Key key, this.animationController})
+      : super(key: key);
   @override
   _MakeLithophanePageState createState() => _MakeLithophanePageState();
 }
 
-class _MakeLithophanePageState extends State<MakeLithophanePage> with TickerProviderStateMixin {
+class _MakeLithophanePageState extends State<MakeLithophanePage>
+    with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = List<Widget>();
@@ -39,13 +44,14 @@ class _MakeLithophanePageState extends State<MakeLithophanePage> with TickerProv
   File _image;
   bool _isLoading = false;
   User _currentUser;
+  Sku _sku;
 
   @override
   void initState() {
     topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
         parent: widget.animationController,
         curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    addAllListData();
+    // addAllListData();
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -102,10 +108,10 @@ class _MakeLithophanePageState extends State<MakeLithophanePage> with TickerProv
     listViews.add(
       _isLoading
           ? LinearProgressIndicator(
-                backgroundColor: Colors.blue[200],
-                valueColor: AlwaysStoppedAnimation(Colors.blue),
-              )
-            : SizedBox.shrink(),
+              backgroundColor: Colors.blue[200],
+              valueColor: AlwaysStoppedAnimation(Colors.blue),
+            )
+          : SizedBox.shrink(),
     );
 
     listViews.add(
@@ -190,7 +196,8 @@ class _MakeLithophanePageState extends State<MakeLithophanePage> with TickerProv
             _addImageToCart();
           },
           buttonColor: _selectedColor.color,
-          text: 'ADD LITHOPHANE TO CART',
+          text:
+              'ADD LITHOPHANE TO CART - ${getIt<FormatterService>().money(amount: _sku.price * quantity)}',
           textColor: (_selectedColor.color == Colors.white ||
                   _selectedColor.color == Colors.yellow)
               ? Colors.black
@@ -200,10 +207,7 @@ class _MakeLithophanePageState extends State<MakeLithophanePage> with TickerProv
     );
   }
 
-  Future<bool> getData() async {
-    await Future.delayed(const Duration(milliseconds: 50));
-    return true;
-  }
+
 
   _showSelectImageDialog() {
     return Platform.isIOS ? _iOSBottomSheet() : _androidDialog();
@@ -408,6 +412,12 @@ class _MakeLithophanePageState extends State<MakeLithophanePage> with TickerProv
     }
   }
 
+  Future<void> fetchLithophaneSku() async {
+    final String skuID = await getIt<DBService>().retrieveSkuID();
+    _sku = await getIt<StripeSku>().retrieve(skuID: skuID);
+    return;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -428,8 +438,11 @@ class _MakeLithophanePageState extends State<MakeLithophanePage> with TickerProv
   }
 
   Widget getMainListViewUI() {
+    List<Future> futures = List<Future>();
+    futures.add(load());
+    futures.add(fetchLithophaneSku());
     return FutureBuilder(
-      future: load(),
+      future: Future.wait(futures),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Spinner();
@@ -542,11 +555,11 @@ class _MakeLithophanePageState extends State<MakeLithophanePage> with TickerProv
             color: colorName.color,
             shape: BoxShape.circle,
             boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: LitPicTheme.nearlyDarkBlue.withOpacity(0.4),
-                offset: Offset(4.0, 4.0),
-                blurRadius: 8.0),
-          ],
+              BoxShadow(
+                  color: LitPicTheme.nearlyDarkBlue.withOpacity(0.4),
+                  offset: Offset(4.0, 4.0),
+                  blurRadius: 8.0),
+            ],
           ),
         ),
       ),

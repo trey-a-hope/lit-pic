@@ -14,8 +14,6 @@ class CartItemView extends StatelessWidget {
   final VoidCallback increment;
   final VoidCallback decrement;
   final double price;
-
-  // final double price = 15.00;
   GetIt getIt = GetIt.I;
 
   CartItemView(
@@ -41,7 +39,7 @@ class CartItemView extends StatelessWidget {
             child: InkWell(
               splashColor: Colors.transparent,
               child: SizedBox(
-                height: 140,
+                height: 170,
                 child: Stack(
                   children: <Widget>[
                     Container(
@@ -60,7 +58,7 @@ class CartItemView extends StatelessWidget {
                               child: Row(
                                 children: <Widget>[
                                   SizedBox(
-                                    width: 48 + 24.0,
+                                    width: 72,
                                   ),
                                   Expanded(
                                     child: Container(
@@ -69,20 +67,25 @@ class CartItemView extends StatelessWidget {
                                           Padding(
                                             padding:
                                                 const EdgeInsets.only(top: 16),
-                                            child: Text(
-                                              '3D Printed Lithophane',
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16,
-                                                letterSpacing: 0.27,
-                                                color: LitPicTheme.darkerText,
-                                              ),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  '3D Printed Lithophane',
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16,
+                                                    letterSpacing: 0.27,
+                                                    color:
+                                                        LitPicTheme.darkerText,
+                                                  ),
+                                                )
+                                              ],
                                             ),
                                           ),
-                                          Expanded(
-                                            child: SizedBox(),
-                                          ),
+                                          // Expanded(
+                                          //   child: SizedBox(),
+                                          // ),
                                           Padding(
                                             padding: const EdgeInsets.only(
                                                 right: 16, bottom: 8),
@@ -108,7 +111,7 @@ class CartItemView extends StatelessWidget {
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                bottom: 16, right: 16),
+                                                bottom: 8, right: 16),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -131,58 +134,50 @@ class CartItemView extends StatelessWidget {
                                                         LitPicTheme.nearlyBlue,
                                                   ),
                                                 ),
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        LitPicTheme.nearlyBlue,
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                8.0)),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            4.0),
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        IconButton(
-                                                          onPressed: increment,
-                                                          icon: Icon(
-                                                            Icons.add,
-                                                            color: LitPicTheme
-                                                                .nearlyWhite,
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        IconButton(
-                                                          onPressed: decrement,
-                                                          icon: Icon(
-                                                            Icons.remove,
-                                                            color: LitPicTheme
-                                                                .nearlyWhite,
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        IconButton(
-                                                          onPressed: delete,
-                                                          icon: Icon(
-                                                            Icons.delete,
-                                                            color: LitPicTheme
-                                                                .nearlyWhite,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                )
                                               ],
                                             ),
                                           ),
+                                          Container(
+                                            width: 200,
+                                            decoration: BoxDecoration(
+                                              color: LitPicTheme.nearlyBlue,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(8.0)),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: <Widget>[
+                                                  IconButton(
+                                                    onPressed: increment,
+                                                    icon: Icon(
+                                                      Icons.add,
+                                                      color: LitPicTheme
+                                                          .nearlyWhite,
+                                                    ),
+                                                  ),
+                                                  IconButton(
+                                                    onPressed: decrement,
+                                                    icon: Icon(
+                                                      Icons.remove,
+                                                      color: LitPicTheme
+                                                          .nearlyWhite,
+                                                    ),
+                                                  ),
+                                                  IconButton(
+                                                    onPressed: delete,
+                                                    icon: Icon(
+                                                      Icons.delete,
+                                                      color: LitPicTheme
+                                                          .nearlyWhite,
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          )
                                         ],
                                       ),
                                     ),
@@ -195,6 +190,7 @@ class CartItemView extends StatelessWidget {
                       ),
                     ),
                     Container(
+                      height: 140,
                       child: Padding(
                         padding: const EdgeInsets.only(
                             top: 24, bottom: 24, left: 16),
