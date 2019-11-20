@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/profile_buttons_view.dart';
+import 'package:litpic/pages/data_box_view.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
+import 'package:litpic/services/validater_service.dart';
 import 'package:litpic/titleView.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class ProfilePage extends StatefulWidget {
-  final AnimationController animationController;
-
-  const ProfilePage({Key key, this.animationController}) : super(key: key);
+class EditBasicInfoPage extends StatefulWidget {
+  const EditBasicInfoPage({Key key}) : super(key: key);
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _EditBasicInfoPageState createState() => _EditBasicInfoPageState();
 }
 
-class _ProfilePageState extends State<ProfilePage>
+class _EditBasicInfoPageState extends State<EditBasicInfoPage>
     with TickerProviderStateMixin {
+  AnimationController animationController;
+
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = List<Widget>();
@@ -32,12 +35,24 @@ class _ProfilePageState extends State<ProfilePage>
 
   bool addAllListDataComplete = false;
 
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+  bool _autoValidate = false;
+
+  bool _isLoading = false;
+
   @override
   void initState() {
-    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-        parent: widget.animationController,
-        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    // addAllListData();
+    animationController =
+        AnimationController(duration: Duration(milliseconds: 600), vsync: this);
+    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn),
+      ),
+    );
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -69,46 +84,43 @@ class _ProfilePageState extends State<ProfilePage>
       addAllListDataComplete = true;
       var count = 5;
 
-      // listViews.add(
-      //   WorkoutView(
-      //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      //         parent: widget.animationController,
-      //         curve:
-      //             Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-      //     animationController: widget.animationController,
-      //   ),
-      // );
-      // listViews.add(
-      //   RunningView(
-      //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      //         parent: widget.animationController,
-      //         curve:
-      //             Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
-      //     animationController: widget.animationController,
-      //   ),
-      // );
+      listViews.add(
+        _isLoading
+            ? LinearProgressIndicator(
+                backgroundColor: Colors.blue[200],
+                valueColor: AlwaysStoppedAnimation(Colors.blue),
+              )
+            : SizedBox.shrink(),
+      );
 
       listViews.add(
-        TitleView(
-          showExtra: false,
-          titleTxt: 'Welcome, ${_currentUser.customer.name}',
-          subTxt: 'more',
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: widget.animationController,
-              curve:
-                  Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
-          animationController: widget.animationController,
+        Form(
+          key: _formKey,
+          autovalidate: _autoValidate,
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: nameFormField(),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: emailFormField(),
+              ),
+            ],
+          ),
         ),
       );
 
       listViews.add(
-        ProfileButtonsView(
-          mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
-                  parent: widget.animationController,
-                  curve: Interval((1 / count) * 5, 1.0,
-                      curve: Curves.fastOutSlowIn))),
-          mainScreenAnimationController: widget.animationController,
+        Padding(
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+          child: GoodButton(
+            buttonColor: Colors.amber,
+            textColor: Colors.white,
+            onPressed: _save,
+            text: 'SAVE',
+          ),
         ),
       );
     }
@@ -121,6 +133,9 @@ class _ProfilePageState extends State<ProfilePage>
       _currentUser.customer = await getIt<StripeCustomer>()
           .retrieve(customerID: _currentUser.customerID);
 
+      _nameController.text = _currentUser.customer.name;
+      _emailController.text = _currentUser.customer.email;
+
       return;
     } catch (e) {
       getIt<ModalService>().showAlert(
@@ -129,6 +144,67 @@ class _ProfilePageState extends State<ProfilePage>
         message: e.toString(),
       );
       return;
+    }
+  }
+
+  _save() async {
+    if (_formKey.currentState.validate()) {
+      bool confirm = await getIt<ModalService>().showConfirmation(
+          context: context, title: 'Submit', message: 'Are you sure?');
+
+      if (confirm) {
+        _formKey.currentState.save();
+        try {
+          setState(
+            () {
+              _isLoading = true;
+            },
+          );
+
+          final String updatedEmail = _emailController.text;
+          final String updatedName = _nameController.text;
+
+          //Attempt to update email first.
+          await getIt<AuthService>().updateEmail(email: updatedEmail);
+
+          //Update email.
+          await getIt<StripeCustomer>().updateEmail(
+              customerID: _currentUser.customerID, email: updatedEmail);
+
+          //Update name.
+          await getIt<StripeCustomer>().updateName(
+              customerID: _currentUser.customerID, name: updatedName);
+
+          setState(
+            () {
+              _isLoading = false;
+            },
+          );
+          
+          getIt<ModalService>().showAlert(
+            context: context,
+            title: 'Success',
+            message: 'Basic Info Updated',
+          );
+        } catch (e) {
+          setState(
+            () {
+              _isLoading = false;
+            },
+          );
+          getIt<ModalService>().showAlert(
+            context: context,
+            title: 'Error',
+            message: e.toString(),
+          );
+        }
+      } else {
+        setState(
+          () {
+            _autoValidate = true;
+          },
+        );
+      }
     }
   }
 
@@ -172,7 +248,7 @@ class _ProfilePageState extends State<ProfilePage>
             itemCount: listViews.length,
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
-              widget.animationController.forward();
+              animationController.forward();
               return listViews[index];
             },
           );
@@ -185,12 +261,12 @@ class _ProfilePageState extends State<ProfilePage>
     return Column(
       children: <Widget>[
         AnimatedBuilder(
-          animation: widget.animationController,
+          animation: animationController,
           builder: (BuildContext context, Widget child) {
             return FadeTransition(
               opacity: topBarAnimation,
-              child: Transform(
-                transform: Matrix4.translationValues(
+              child: new Transform(
+                transform: new Matrix4.translationValues(
                     0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
                 child: Container(
                   decoration: BoxDecoration(
@@ -220,11 +296,17 @@ class _ProfilePageState extends State<ProfilePage>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
+                            IconButton(
+                              icon: Icon(MdiIcons.chevronLeft),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "Profile",
+                                  'Edit Basic Info',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,
@@ -236,67 +318,6 @@ class _ProfilePageState extends State<ProfilePage>
                                 ),
                               ),
                             ),
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_left,
-                            //         color: LitPicTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                            // Padding(
-                            //   padding: const EdgeInsets.only(
-                            //     left: 8,
-                            //     right: 8,
-                            //   ),
-                            //   child: Row(
-                            //     children: <Widget>[
-                            //       Padding(
-                            //         padding: const EdgeInsets.only(right: 8),
-                            //         child: Icon(
-                            //           Icons.calendar_today,
-                            //           color: LitPicTheme.grey,
-                            //           size: 18,
-                            //         ),
-                            //       ),
-                            //       Text(
-                            //         "15 May",
-                            //         textAlign: TextAlign.left,
-                            //         style: TextStyle(
-                            //           fontFamily: LitPicTheme.fontName,
-                            //           fontWeight: FontWeight.normal,
-                            //           fontSize: 18,
-                            //           letterSpacing: -0.2,
-                            //           color: LitPicTheme.darkerText,
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_right,
-                            //         color: LitPicTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       )
@@ -308,6 +329,36 @@ class _ProfilePageState extends State<ProfilePage>
           },
         )
       ],
+    );
+  }
+
+  Widget nameFormField() {
+    return TextFormField(
+      validator: getIt<ValidatorService>().isEmpty,
+      keyboardType: TextInputType.text,
+      textInputAction: TextInputAction.done,
+      controller: _nameController,
+      style: TextStyle(color: Colors.black, fontFamily: 'SFUIDisplay'),
+      decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: 'Name',
+          prefixIcon: Icon(Icons.face),
+          labelStyle: TextStyle(fontSize: 15)),
+    );
+  }
+
+  Widget emailFormField() {
+    return TextFormField(
+      validator: getIt<ValidatorService>().email,
+      keyboardType: TextInputType.text,
+      textInputAction: TextInputAction.done,
+      controller: _emailController,
+      style: TextStyle(color: Colors.black, fontFamily: 'SFUIDisplay'),
+      decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: 'Email',
+          prefixIcon: Icon(Icons.email),
+          labelStyle: TextStyle(fontSize: 15)),
     );
   }
 }

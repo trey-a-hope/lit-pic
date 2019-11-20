@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/asset_images.dart';
 import 'package:litpic/common/good_button.dart';
-import 'package:litpic/common/simple_navbar.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/services/auth_service.dart';
@@ -12,7 +11,6 @@ import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
 import 'package:litpic/services/validater_service.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SignUpPage extends StatefulWidget {
   @override

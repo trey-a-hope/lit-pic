@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/main.dart';
 import 'dart:math' as math;
 
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
@@ -57,27 +58,27 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   void addAllListData() {
-//Help & Support
-    listViews.add(
-      ListTile(
-        leading: Icon(
-          MdiIcons.helpNetwork,
-          color: iconColor,
-        ),
-        title: Text(
-          'Help/Support',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          '24/7 assistance.',
-        ),
-        trailing: Icon(Icons.chevron_right),
-        onTap: () async {
-          getIt<ModalService>().showAlert(
-              context: context, title: 'Help/Support', message: 'TODO');
-        },
-      ),
-    );
+    //Help & Support
+    // listViews.add(
+    //   ListTile(
+    //     leading: Icon(
+    //       MdiIcons.helpNetwork,
+    //       color: iconColor,
+    //     ),
+    //     title: Text(
+    //       'Help/Support',
+    //       style: TextStyle(fontWeight: FontWeight.bold),
+    //     ),
+    //     subtitle: Text(
+    //       '24/7 assistance.',
+    //     ),
+    //     trailing: Icon(Icons.chevron_right),
+    //     onTap: () async {
+    //       getIt<ModalService>().showAlert(
+    //           context: context, title: 'Help/Support', message: 'TODO');
+    //     },
+    //   ),
+    // );
 
     //Delete Account
     listViews.add(
@@ -159,7 +160,7 @@ class _SettingsPageState extends State<SettingsPage>
       future: getData(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return SizedBox();
+          return Spinner();
         } else {
           return ListView.builder(
             controller: scrollController,

@@ -32,6 +32,9 @@ abstract class DBService {
 
   //Sku
   Future<String> retrieveSkuID();
+
+    //Sku
+  Future<String> retrieveYouTubeVideoID();
 }
 
 class DBServiceImplementation extends DBService {
@@ -214,5 +217,11 @@ class DBServiceImplementation extends DBService {
   @override
   Future<String> retrieveSkuID() async {
     return (await _dataDB.get()).data['skuID'];
+  }
+
+  @override
+  Future<String> retrieveYouTubeVideoID() async{
+    return (await _dataDB.get()).data['youtubeVideoID'];
+
   }
 }

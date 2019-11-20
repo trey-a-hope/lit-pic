@@ -5,7 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/pages/authentication/login_page.dart';
+import 'package:litpic/pages/auth/login_page.dart';
 import 'package:litpic/pages/cart_page_new.dart';
 import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/make_lithophane_page.dart';

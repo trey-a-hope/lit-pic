@@ -19,7 +19,7 @@ import 'package:litpic/services/stripe/coupon.dart';
 import 'package:litpic/titleView.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:youtube_player/youtube_player.dart';
 
 class HomePage extends StatefulWidget {
   final AnimationController animationController;
@@ -34,13 +34,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = List<Widget>();
-  var scrollController = ScrollController();
+  ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
   final GetIt getIt = GetIt.I;
   User _currentUser;
   final FirebaseMessaging _fcm = FirebaseMessaging();
   // Coupon _coupon;
   bool addAllListDataComplete = false;
+  String youtubeVideoID;
 
   @override
   void initState() {
@@ -135,6 +136,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
       listViews.add(
         TitleView(
+          showExtra: false,
           titleTxt: 'Watch how it\'s done',
           subTxt: 'Details',
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
@@ -145,44 +147,50 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
       );
 
-      YoutubePlayerController youtubePlayerController = YoutubePlayerController(
-        initialVideoId: 'iLnmTe5Q2Qw',
-        flags: YoutubePlayerFlags(
-          autoPlay: true,
-          mute: false,
-        ),
-      );
+      // YoutubePlayerController youtubePlayerController = YoutubePlayerController(
+      //   initialVideoId: youtubeVideoID,
+      //   flags: YoutubePlayerFlags(
+      //     autoPlay: true,
+      //     mute: false,
+      //   ),
+      // );
+      // listViews.add(
+      //   Padding(
+      //     padding: EdgeInsets.all(20),
+      //     child: YoutubePlayer(
+      //       controller: youtubePlayerController,
+      //       showVideoProgressIndicator: true,
+      //       progressIndicatorColor: Colors.amber,
+      //       progressColors: ProgressBarColors(
+      //         playedColor: Colors.amber,
+      //         handleColor: Colors.amberAccent,
+      //       ),
+      //       onReady: () {
+      //         youtubePlayerController.play();
+      //       },
+      //     ),
+      //   ),
+      // );
+
       listViews.add(
         Padding(
           padding: EdgeInsets.all(20),
           child: YoutubePlayer(
-            controller: youtubePlayerController,
-            showVideoProgressIndicator: true,
-            progressIndicatorColor: Colors.amber,
-            progressColors: ProgressBarColors(
-              playedColor: Colors.amber,
-              handleColor: Colors.amberAccent,
-            ),
-            onReady: () {
-              youtubePlayerController.play();
-            },
+            context: context,
+            source: "nPt8bK2gbaU",
+            quality: YoutubeQuality.HD,
+            // callbackController is (optional).
+            // use it to control player on your own.
+            // callbackController: (controller) {
+            //   _videoController = controller;
+            // },
           ),
-          // child: YoutubePlayer(
-          //   context: context,
-          //   source: "vVa8SFKwqZY",
-          //   quality: YoutubeQuality.HD,
-          //   showThumbnail: true,
-          //   showVideoProgressbar: true,
-          //   hideShareButton: false,
-          //   // callbackController is (optional).
-          //   // use it to control player on your own.
-          //   // playerMode: YoutubePlayerMode.DEFAULT,
-          // ),
         ),
       );
 
       listViews.add(
         TitleView(
+          showExtra: false,
           titleTxt: 'Recent creations',
           subTxt: 'Details',
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
@@ -284,11 +292,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
-  // Future<void> fetchMonthlyCoupon() async {
-  //   final String couponID = await getIt<DBService>().retrieveCouponID();
-  //   _coupon = await getIt<StripeCoupon>().retrieve(couponID: couponID);
-  //   return;
-  // }
+  Future<void> fetchYouTubeVideoID() async {
+    youtubeVideoID = await getIt<DBService>().retrieveYouTubeVideoID();
+    return;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -312,7 +319,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget getMainListViewUI() {
     List<Future> futures = List<Future>();
     futures.add(load());
-    // futures.add(fetchMonthlyCoupon());
+    futures.add(fetchYouTubeVideoID());
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {

@@ -3,13 +3,10 @@ import 'package:get_it/get_it.dart';
 import 'package:litpic/asset_images.dart';
 import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
-import 'package:litpic/pages/authentication/sign_up_page.dart';
+import 'package:litpic/pages/auth/sign_up_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/common/simple_navbar.dart';
 import 'package:litpic/services/validater_service.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-
 class LoginPage extends StatefulWidget {
   @override
   State createState() => LoginPageState();

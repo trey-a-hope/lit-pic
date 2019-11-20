@@ -102,6 +102,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       if (cartItems.isEmpty) {
         listViews.add(
           TitleView(
+            showExtra: false,
             titleTxt: 'Your cart is empty boss.',
             subTxt: 'Shop',
             animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
@@ -224,6 +225,8 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
 
         listViews.add(Divider());
 
+        TextStyle orderTotalStyle = TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.green, fontSize: 20);
         listViews.add(
           Padding(
             padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -232,13 +235,11 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
               children: <Widget>[
                 Text(
                   'Order Total',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.green),
+                  style: orderTotalStyle,
                 ),
                 Text(
                   getIt<FormatterService>().money(amount: total),
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.green),
+                  style: orderTotalStyle,
                 )
               ],
             ),

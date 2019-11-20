@@ -122,6 +122,7 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
 
     listViews.add(
       TitleView(
+        showExtra: false,
         titleTxt: 'Choose Quantity',
         subTxt: 'Details',
         animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
@@ -162,6 +163,7 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
 
     listViews.add(
       TitleView(
+        showExtra: false,
         titleTxt: 'Choose Color',
         subTxt: 'Details',
         animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
