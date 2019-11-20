@@ -182,6 +182,8 @@ PODS:
   - TOCropViewController (2.5.2)
   - url_launcher (0.0.1):
     - Flutter
+  - youtube_player (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
@@ -201,6 +203,7 @@ DEPENDENCIES:
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
+  - youtube_player (from `.symlinks/plugins/youtube_player/ios`)
 
 SPEC REPOS:
   trunk:
@@ -265,6 +268,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
   url_launcher:
     :path: ".symlinks/plugins/url_launcher/ios"
+  youtube_player:
+    :path: ".symlinks/plugins/youtube_player/ios"
 
 SPEC CHECKSUMS:
   BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
@@ -309,6 +314,7 @@ SPEC CHECKSUMS:
   sqflite: ff1d9da63c06588cc8d1faf7256d741f16989d5a
   TOCropViewController: e9da34f484aedd4e5d5a8ab230ba217cfe16c729
   url_launcher: a1c0cc845906122c4784c542523d8cacbded5626
+  youtube_player: 66aa84ca8819ad8ef7305299c2ee31ccf42121a1
 
 PODFILE CHECKSUM: b6a0a141693093b304368d08511b46cf3d1d0ac5
 

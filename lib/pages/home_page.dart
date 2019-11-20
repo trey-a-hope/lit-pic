@@ -19,6 +19,7 @@ import 'package:litpic/services/stripe/coupon.dart';
 import 'package:litpic/titleView.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class HomePage extends StatefulWidget {
   final AnimationController animationController;
@@ -86,50 +87,27 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       addAllListDataComplete = true;
       var count = 6;
 
-      listViews.add(DetailCardView(
-        onTap: () async {
-          const url = 'https://en.wikipedia.org/wiki/Lithophane';
-          if (await canLaunch(url)) {
-            await launch(url);
-          } else {
-            throw 'Could not launch $url';
-          }
-        },
-        widget: Icon(MdiIcons.informationVariant),
-        image: Image.asset('assets/images/lith_example.jpg'),
-        subText: "Click here for details.",
-        title: 'What is a \"Lithophane?\"',
-        text:
-            'A lithophane (French: lithophanie) is an etched or molded artwork in very thin translucent porcelain that can only be seen clearly when back lit with a light source. It is a design or scene in intaglio that appears "en grisaille" (in gray) tones.',
-        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ));
-
-      listViews.add(
-        TitleView(
-          titleTxt: 'Recent Creations',
-          subTxt: 'Details',
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: widget.animationController,
-              curve:
-                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-          animationController: widget.animationController,
-        ),
-      );
-      listViews.add(
-        RecentCreationsView(
-          mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
-                  parent: widget.animationController,
-                  curve: Interval((1 / count) * 3, 1.0,
-                      curve: Curves.fastOutSlowIn))),
-          mainScreenAnimationController: widget.animationController,
-        ),
-      );
-
+      // listViews.add(DetailCardView(
+      //   onTap: () async {
+      //     const url = 'https://en.wikipedia.org/wiki/Lithophane';
+      //     if (await canLaunch(url)) {
+      //       await launch(url);
+      //     } else {
+      //       throw 'Could not launch $url';
+      //     }
+      //   },
+      //   widget: Icon(MdiIcons.informationVariant),
+      //   image: Image.asset('assets/images/lith_example.jpg'),
+      //   subText: "Click here for details.",
+      //   title: 'What is a \"Lithophane?\"',
+      //   text:
+      //       'A lithophane (French: lithophanie) is an etched or molded artwork in very thin translucent porcelain that can only be seen clearly when back lit with a light source. It is a design or scene in intaglio that appears "en grisaille" (in gray) tones.',
+      //   animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+      //       parent: widget.animationController,
+      //       curve:
+      //           Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+      //   animationController: widget.animationController,
+      // ));
       listViews.add(DetailCardView(
         onTap: () async {
           const url = 'https://www.instagram.com/tr3.designs/?hl=en';
@@ -154,6 +132,80 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController,
       ));
+
+      listViews.add(
+        TitleView(
+          titleTxt: 'Watch how it\'s done',
+          subTxt: 'Details',
+          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: widget.animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: widget.animationController,
+        ),
+      );
+
+      YoutubePlayerController youtubePlayerController = YoutubePlayerController(
+        initialVideoId: 'iLnmTe5Q2Qw',
+        flags: YoutubePlayerFlags(
+          autoPlay: true,
+          mute: false,
+        ),
+      );
+      listViews.add(
+        Padding(
+          padding: EdgeInsets.all(20),
+          child: YoutubePlayer(
+            controller: youtubePlayerController,
+            showVideoProgressIndicator: true,
+            progressIndicatorColor: Colors.amber,
+            progressColors: ProgressBarColors(
+              playedColor: Colors.amber,
+              handleColor: Colors.amberAccent,
+            ),
+            onReady: () {
+              youtubePlayerController.play();
+            },
+          ),
+          // child: YoutubePlayer(
+          //   context: context,
+          //   source: "vVa8SFKwqZY",
+          //   quality: YoutubeQuality.HD,
+          //   showThumbnail: true,
+          //   showVideoProgressbar: true,
+          //   hideShareButton: false,
+          //   // callbackController is (optional).
+          //   // use it to control player on your own.
+          //   // playerMode: YoutubePlayerMode.DEFAULT,
+          // ),
+        ),
+      );
+
+      listViews.add(
+        TitleView(
+          titleTxt: 'Recent creations',
+          subTxt: 'Details',
+          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: widget.animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: widget.animationController,
+        ),
+      );
+      listViews.add(
+        Padding(
+          padding: EdgeInsets.only(top: 20),
+          child: RecentCreationsView(
+            mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
+                CurvedAnimation(
+                    parent: widget.animationController,
+                    curve: Interval((1 / count) * 3, 1.0,
+                        curve: Curves.fastOutSlowIn))),
+            mainScreenAnimationController: widget.animationController,
+          ),
+        ),
+      );
+
       // listViews.add(
       //   TitleView(
       //     titleTxt: 'Monthly Coupon',

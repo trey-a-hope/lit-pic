@@ -149,10 +149,10 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  'Shipping',
+                  'Sub total',
                 ),
                 Text(
-                  'Free',
+                  getIt<FormatterService>().money(amount: subTotal),
                 )
               ],
             ),
@@ -166,10 +166,10 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  'Sub total',
+                  'Shipping',
                 ),
                 Text(
-                  getIt<FormatterService>().money(amount: subTotal),
+                  getIt<FormatterService>().money(amount: 0),
                 )
               ],
             ),
