@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:litpic/asset_images.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/pages/edit_basic_info_page.dart';
-import 'package:litpic/pages/edit_shipping_info_page.dart';
+import 'package:litpic/models/stripe/order.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/services/stripe/card.dart';
 import 'package:litpic/services/stripe/customer.dart';
-import 'package:litpic/views/data_box_view.dart';
-import 'package:litpic/views/title_view.dart';
+import 'package:litpic/services/stripe/order.dart';
+import 'package:litpic/services/stripe/token.dart';
+import 'package:litpic/services/validater_service.dart';
+import 'package:litpic/views/credit_card_view.dart';
+import 'package:litpic/views/order_view.dart';
+import 'package:litpic/views/round_button_view.dart';
+import 'package:litpic/views/text_form_field_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class ProfilePersonalInfoPage extends StatefulWidget {
-  const ProfilePersonalInfoPage({Key key}) : super(key: key);
+class AddCardPage extends StatefulWidget {
+  const AddCardPage({Key key}) : super(key: key);
   @override
-  _ProfilePersonalInfoPageState createState() =>
-      _ProfilePersonalInfoPageState();
+  _AddCardPageState createState() => _AddCardPageState();
 }
 
-class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
+class _AddCardPageState extends State<AddCardPage>
     with TickerProviderStateMixin {
   AnimationController animationController;
   Animation<double> topBarAnimation;
@@ -35,14 +40,25 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
 
   bool addAllListDataComplete = false;
 
+  bool _isLoading = false;
+
+  final TextEditingController _cardNumberController = TextEditingController();
+  final TextEditingController _expirationController = TextEditingController();
+  final TextEditingController _cvcController = TextEditingController();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _autoValidate = false;
+
   @override
   void initState() {
     animationController =
         AnimationController(duration: Duration(milliseconds: 600), vsync: this);
-    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
         parent: animationController,
-        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    // addAllListData();
+        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn),
+      ),
+    );
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -74,48 +90,80 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
       addAllListDataComplete = true;
       var count = 5;
 
+      listViews.add(Padding(
+        padding: EdgeInsets.all(20),
+        child: creditCard,
+      ));
+
       listViews.add(
-        TitleView(
-          showExtraOnTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) {
-                return EditBasicInfoPage();
-              }),
-            );
-          },
-          showExtra: true,
-          titleTxt: 'Basic',
-          subTxt: 'Edit',
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: animationController,
-              curve:
-                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-          animationController: animationController,
+        Form(
+          key: _formKey,
+          autovalidate: _autoValidate,
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: TextFormFieldView(
+                  textEditingController: _cardNumberController,
+                  validator: getIt<ValidatorService>().cardNumber,
+                  labelText: 'Card Number',
+                  iconData: MdiIcons.creditCard,
+                  animation: Tween(begin: 0.0, end: 1.0).animate(
+                      CurvedAnimation(
+                          parent: animationController,
+                          curve: Interval((1 / count) * 0, 1.0,
+                              curve: Curves.fastOutSlowIn))),
+                  animationController: animationController,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: TextFormFieldView(
+                  textEditingController: _expirationController,
+                  validator: getIt<ValidatorService>().cardExpiration,
+                  labelText: 'Expiration',
+                  iconData: Icons.date_range,
+                  animation: Tween(begin: 0.0, end: 1.0).animate(
+                      CurvedAnimation(
+                          parent: animationController,
+                          curve: Interval((1 / count) * 2, 1.0,
+                              curve: Curves.fastOutSlowIn))),
+                  animationController: animationController,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: TextFormFieldView(
+                  textEditingController: _cvcController,
+                  validator: getIt<ValidatorService>().cardCVC,
+                  labelText: 'CVC',
+                  iconData: MdiIcons.security,
+                  animation: Tween(begin: 0.0, end: 1.0).animate(
+                      CurvedAnimation(
+                          parent: animationController,
+                          curve: Interval((1 / count) * 4, 1.0,
+                              curve: Curves.fastOutSlowIn))),
+                  animationController: animationController,
+                ),
+              ),
+            ],
+          ),
         ),
       );
 
       listViews.add(
         Padding(
-          padding: EdgeInsets.all(10),
-          child: DataBoxView(
-            dataBoxChildren: [
-              DataBoxChild(
-                  iconData: Icons.face,
-                  text: 'Name',
-                  subtext: _currentUser.customer.name,
-                  color: Colors.red),
-              DataBoxChild(
-                  iconData: Icons.email,
-                  text: 'Email',
-                  subtext: _currentUser.customer.email,
-                  color: Colors.red),
-            ],
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+          child: RoundButtonView(
+            buttonColor: Colors.green,
+            textColor: Colors.white,
+            onPressed: _addTestCardInfo,
+            text: 'ADD TEST CARD (DEMO ONLY)',
             animation: Tween(begin: 0.0, end: 1.0).animate(
               CurvedAnimation(
                 parent: animationController,
                 curve:
-                    Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn),
+                    Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn),
               ),
             ),
             animationController: animationController,
@@ -124,57 +172,18 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
       );
 
       listViews.add(
-        TitleView(
-          showExtraOnTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) {
-                return EditShippingInfoPage();
-              }),
-            );
-          },
-          showExtra: true,
-          titleTxt: 'Shipping',
-          subTxt: 'Edit',
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: animationController,
-              curve:
-                  Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-          animationController: animationController,
-        ),
-      );
-
-      listViews.add(
         Padding(
-          padding: EdgeInsets.all(10),
-          child: DataBoxView(
-            dataBoxChildren: [
-              DataBoxChild(
-                  iconData: Icons.location_on,
-                  text: 'Address',
-                  subtext: _currentUser.customer.address.line1,
-                  color: Colors.amber),
-              DataBoxChild(
-                  iconData: Icons.location_city,
-                  text: 'City',
-                  subtext: _currentUser.customer.address.city,
-                  color: Colors.amber),
-              DataBoxChild(
-                  iconData: Icons.my_location,
-                  text: 'State',
-                  subtext: _currentUser.customer.address.state,
-                  color: Colors.amber),
-              DataBoxChild(
-                  iconData: Icons.contact_mail,
-                  text: 'ZIP',
-                  subtext: _currentUser.customer.address.postalCode,
-                  color: Colors.amber)
-            ],
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+          child: RoundButtonView(
+            buttonColor: Colors.amber,
+            textColor: Colors.white,
+            onPressed: _submitCard,
+            text: 'SAVE',
             animation: Tween(begin: 0.0, end: 1.0).animate(
               CurvedAnimation(
                 parent: animationController,
                 curve:
-                    Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn),
+                    Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn),
               ),
             ),
             animationController: animationController,
@@ -186,7 +195,7 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
 
   Future<void> loadCustomerInfo() async {
     try {
-      //Load user.
+      //Load user and orders.
       _currentUser = await getIt<AuthService>().getCurrentUser();
       _currentUser.customer = await getIt<StripeCustomer>()
           .retrieve(customerID: _currentUser.customerID);
@@ -200,6 +209,72 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
       );
       return;
     }
+  }
+
+  void _submitCard() async {
+    final FormState form = _formKey.currentState;
+    if (!form.validate()) {
+      _autoValidate = true;
+    } else {
+      bool confirm = await getIt<ModalService>().showConfirmation(
+          context: context, title: 'Add Card', message: 'Are you sure?');
+      if (confirm) {
+        setState(
+          () {
+            _isLoading = true;
+          },
+        );
+
+        String number = _cardNumberController.text;
+        String expMonth = _expirationController.text.substring(0, 2);
+        String expYear = _expirationController.text.substring(2, 4);
+        String cvc = _cvcController.text;
+
+        try {
+          String token = await getIt<StripeToken>().create(
+              number: number, expMonth: expMonth, expYear: expYear, cvc: cvc);
+
+          await getIt<StripeCard>()
+              .create(customerID: _currentUser.customerID, token: token);
+
+          print(token);
+
+          setState(
+            () {
+              _isLoading = false;
+            },
+          );
+          _clearForm();
+          getIt<ModalService>().showAlert(
+              context: context,
+              title: 'Success',
+              message: 'Card added successfully.');
+        } catch (e) {
+          setState(
+            () {
+              _isLoading = false;
+            },
+          );
+          getIt<ModalService>().showAlert(
+              context: context,
+              title: 'Error',
+              message: 'Could not save card at this time.');
+        }
+      }
+    }
+  }
+
+  void _addTestCardInfo() {
+    _cardNumberController.text = '4242424242424242';
+    _expirationController.text = '0621';
+    _cvcController.text = '323';
+    _autoValidate = true;
+  }
+
+  void _clearForm() {
+    _cardNumberController.clear();
+    _expirationController.clear();
+    _cvcController.clear();
   }
 
   @override
@@ -300,7 +375,7 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "Personal Info",
+                                  'Add Card',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,
@@ -312,67 +387,11 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
                                 ),
                               ),
                             ),
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_left,
-                            //         color: LitPicTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                            // Padding(
-                            //   padding: const EdgeInsets.only(
-                            //     left: 8,
-                            //     right: 8,
-                            //   ),
-                            //   child: Row(
-                            //     children: <Widget>[
-                            //       Padding(
-                            //         padding: const EdgeInsets.only(right: 8),
-                            //         child: Icon(
-                            //           Icons.calendar_today,
-                            //           color: LitPicTheme.grey,
-                            //           size: 18,
-                            //         ),
-                            //       ),
-                            //       Text(
-                            //         "15 May",
-                            //         textAlign: TextAlign.left,
-                            //         style: TextStyle(
-                            //           fontFamily: LitPicTheme.fontName,
-                            //           fontWeight: FontWeight.normal,
-                            //           fontSize: 18,
-                            //           letterSpacing: -0.2,
-                            //           color: LitPicTheme.darkerText,
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_right,
-                            //         color: LitPicTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
+                            _isLoading
+                                ? CircularProgressIndicator(
+                                    strokeWidth: 3.0,
+                                  )
+                                : SizedBox.shrink()
                           ],
                         ),
                       )

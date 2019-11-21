@@ -69,25 +69,6 @@ class _ProfilePageState extends State<ProfilePage>
       addAllListDataComplete = true;
       var count = 5;
 
-      // listViews.add(
-      //   WorkoutView(
-      //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      //         parent: widget.animationController,
-      //         curve:
-      //             Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-      //     animationController: widget.animationController,
-      //   ),
-      // );
-      // listViews.add(
-      //   RunningView(
-      //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      //         parent: widget.animationController,
-      //         curve:
-      //             Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
-      //     animationController: widget.animationController,
-      //   ),
-      // );
-
       listViews.add(
         TitleView(
           showExtra: false,
@@ -240,67 +221,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 ),
                               ),
                             ),
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_left,
-                            //         color: LitPicTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                            // Padding(
-                            //   padding: const EdgeInsets.only(
-                            //     left: 8,
-                            //     right: 8,
-                            //   ),
-                            //   child: Row(
-                            //     children: <Widget>[
-                            //       Padding(
-                            //         padding: const EdgeInsets.only(right: 8),
-                            //         child: Icon(
-                            //           Icons.calendar_today,
-                            //           color: LitPicTheme.grey,
-                            //           size: 18,
-                            //         ),
-                            //       ),
-                            //       Text(
-                            //         "15 May",
-                            //         textAlign: TextAlign.left,
-                            //         style: TextStyle(
-                            //           fontFamily: LitPicTheme.fontName,
-                            //           fontWeight: FontWeight.normal,
-                            //           fontSize: 18,
-                            //           letterSpacing: -0.2,
-                            //           color: LitPicTheme.darkerText,
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_right,
-                            //         color: LitPicTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
+                           
                           ],
                         ),
                       )

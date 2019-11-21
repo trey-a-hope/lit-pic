@@ -7,10 +7,10 @@ import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/pages/detail_card_view.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/views/detail_card_view.dart';
 import 'package:litpic/views/recent_creations_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -150,7 +150,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           padding: EdgeInsets.all(20),
           child: YoutubePlayer(
             context: context,
-            source: "nPt8bK2gbaU",
+            source: youtubeVideoID,
             quality: YoutubeQuality.HD,
             // callbackController is (optional).
             // use it to control player on your own.

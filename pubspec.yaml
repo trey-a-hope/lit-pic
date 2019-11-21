@@ -23,6 +23,7 @@ dependencies:
   firebase_storage: ^3.0.6
   flutter_custom_clippers: ^1.0.4
   flutter_money_formatter: ^0.8.3
+  flutter_statusbarcolor: ^0.2.3
   get_it: ^3.0.1
   http: ^0.12.0+1 
   package_info: ^0.4.0+6

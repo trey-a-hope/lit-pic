@@ -200,28 +200,6 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
             ),
           ),
         );
-
-        // listViews.add(
-        //   Padding(
-        //     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-        //     child: Row(
-        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //       children: <Widget>[
-        //         Column(
-        //           // mainAxisAlignment: MainAxisAlignment.start,
-        //           crossAxisAlignment: CrossAxisAlignment.start,
-        //           children: <Widget>[
-        //             Text('Monthly discount (${_coupon.percentOff}% Off)'),
-        //           ],
-        //         ),
-        //         Text(
-        //           '-${getIt<FormatterService>().money(amount: monthlyDiscount)}',
-        //         )
-        //       ],
-        //     ),
-        //   ),
-        // );
-
         listViews.add(Divider());
 
         TextStyle orderTotalStyle = TextStyle(
