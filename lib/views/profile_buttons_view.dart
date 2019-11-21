@@ -3,6 +3,8 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:litpic/common/hero_screen.dart';
 import 'package:litpic/litpic_theme.dart';
+import 'package:litpic/pages/my_complete_orders_page.dart';
+import 'package:litpic/pages/my_open_orders_page.dart';
 import 'package:litpic/pages/profile/personal_info_page.dart';
 import 'package:litpic/pages/profile_personal_info_page.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -42,7 +44,11 @@ class _ProfileButtonsViewState extends State<ProfileButtonsView>
     profileBoxModels = [
       ProfileBoxModel(
           title: 'Personal Info',
-          iconData: MdiIcons.face,
+          icon: Icon(
+            MdiIcons.face,
+            color: Colors.amber,
+            size: 40,
+          ),
           onTap: () {
             Navigator.push(
               context,
@@ -52,11 +58,42 @@ class _ProfileButtonsViewState extends State<ProfileButtonsView>
             );
           }),
       ProfileBoxModel(
-          title: 'Saved Cards', iconData: MdiIcons.creditCard, onTap: () {}),
+          title: 'Saved Cards',
+          icon: Icon(
+            MdiIcons.creditCard,
+            color: Colors.blue,
+            size: 40,
+          ),
+          onTap: () {}),
       ProfileBoxModel(
-          title: 'Open Orders', iconData: MdiIcons.mailboxOpen, onTap: () {}),
+          title: 'Open Orders',
+          icon: Icon(
+            MdiIcons.mailboxOpen,
+            color: Colors.purple,
+            size: 40,
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) {
+                return MyOpenOrdersPage();
+              }),
+            );
+          }),
       ProfileBoxModel(
-          title: 'Complete Orders', iconData: MdiIcons.mailboxUp, onTap: () {}),
+          title: 'Complete Orders',
+          icon: Icon(
+            MdiIcons.mailboxUp,
+            color: Colors.green,
+            size: 40,
+          ),          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) {
+                return MyCompleteOrdersPage();
+              }),
+            );
+          }),
     ];
 
     return AnimatedBuilder(
@@ -165,11 +202,12 @@ class ProfileBoxView extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            Icon(
-                              profileBoxModel.iconData,
-                              color: Colors.grey,
-                              size: 40,
-                            ),
+                            profileBoxModel.icon,
+                            // Icon(
+                            //   profileBoxModel.iconData,
+                            //   color: Colors.grey,
+                            //   size: 40,
+                            // ),
                             SizedBox(
                               height: 10,
                             ),
@@ -190,8 +228,8 @@ class ProfileBoxView extends StatelessWidget {
 class ProfileBoxModel {
   final String title;
   final VoidCallback onTap;
-  final IconData iconData;
+  final Icon icon;
 
   ProfileBoxModel(
-      {@required this.title, @required this.onTap, @required this.iconData});
+      {@required this.title, @required this.onTap, @required this.icon});
 }

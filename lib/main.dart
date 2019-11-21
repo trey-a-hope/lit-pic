@@ -23,6 +23,7 @@ import 'package:litpic/services/stripe/card.dart';
 import 'package:litpic/services/stripe/charge.dart';
 import 'package:litpic/services/stripe/coupon.dart';
 import 'package:litpic/services/stripe/customer.dart';
+import 'package:litpic/services/stripe/order.dart';
 import 'package:litpic/services/stripe/sku.dart';
 import 'package:litpic/services/stripe/token.dart';
 import 'package:litpic/services/validater_service.dart';
@@ -79,6 +80,10 @@ void main() {
   //Stripe Coupon
   getIt.registerSingleton<StripeCoupon>(
       StripeCouponImplementation(apiKey: testSecretKey, endpoint: endpoint),
+      signalsReady: true);
+  //Stripe Order
+  getIt.registerSingleton<StripeOrder>(
+      StripeOrderImplementation(apiKey: testSecretKey, endpoint: endpoint),
       signalsReady: true);
   //Stripe Sku
   getIt.registerSingleton<StripeSku>(

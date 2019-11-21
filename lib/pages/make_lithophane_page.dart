@@ -19,7 +19,8 @@ import 'package:litpic/services/image_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/storage_service.dart';
 import 'package:litpic/services/stripe/sku.dart';
-import 'package:litpic/titleView.dart';
+import 'package:litpic/views/round_button_view.dart';
+import 'package:litpic/views/title_view.dart';
 import 'package:uuid/uuid.dart';
 
 class MakeLithophanePage extends StatefulWidget {
@@ -192,8 +193,8 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
 
     listViews.add(
       Padding(
-        padding: EdgeInsets.all(15),
-        child: GoodButton(
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+        child: RoundButtonView(
           onPressed: () {
             _addImageToCart();
           },
@@ -204,12 +205,15 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
                   _selectedColor.color == Colors.yellow)
               ? Colors.black
               : Colors.white,
+          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: widget.animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: widget.animationController,
         ),
       ),
     );
   }
-
-
 
   _showSelectImageDialog() {
     return Platform.isIOS ? _iOSBottomSheet() : _androidDialog();

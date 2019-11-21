@@ -9,7 +9,8 @@ import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
 import 'package:litpic/services/validater_service.dart';
-import 'package:litpic/titleView.dart';
+import 'package:litpic/views/round_button_view.dart';
+import 'package:litpic/views/text_form_field_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class EditBasicInfoPage extends StatefulWidget {
@@ -101,11 +102,33 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(20),
-                child: nameFormField(),
+                child: TextFormFieldView(
+                  labelText: 'Name',
+                  validator: getIt<ValidatorService>().isEmpty,
+                  textEditingController: _nameController,
+                  iconData: Icons.face,
+                  animation: Tween(begin: 0.0, end: 1.0).animate(
+                      CurvedAnimation(
+                          parent: animationController,
+                          curve: Interval((1 / count) * 0, 1.0,
+                              curve: Curves.fastOutSlowIn))),
+                  animationController: animationController,
+                ),
               ),
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: emailFormField(),
+                child: TextFormFieldView(
+                  labelText: 'Email',
+                  validator: getIt<ValidatorService>().email,
+                  textEditingController: _emailController,
+                  iconData: Icons.email,
+                  animation: Tween(begin: 0.0, end: 1.0).animate(
+                      CurvedAnimation(
+                          parent: animationController,
+                          curve: Interval((1 / count) * 1, 1.0,
+                              curve: Curves.fastOutSlowIn))),
+                  animationController: animationController,
+                ),
               ),
             ],
           ),
@@ -115,11 +138,19 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
       listViews.add(
         Padding(
           padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-          child: GoodButton(
+          child: RoundButtonView(
             buttonColor: Colors.amber,
             textColor: Colors.white,
             onPressed: _save,
             text: 'SAVE',
+            animation: Tween(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                parent: animationController,
+                curve:
+                    Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn),
+              ),
+            ),
+            animationController: animationController,
           ),
         ),
       );
@@ -180,7 +211,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
               _isLoading = false;
             },
           );
-          
+
           getIt<ModalService>().showAlert(
             context: context,
             title: 'Success',
@@ -329,36 +360,6 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
           },
         )
       ],
-    );
-  }
-
-  Widget nameFormField() {
-    return TextFormField(
-      validator: getIt<ValidatorService>().isEmpty,
-      keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.done,
-      controller: _nameController,
-      style: TextStyle(color: Colors.black, fontFamily: 'SFUIDisplay'),
-      decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Name',
-          prefixIcon: Icon(Icons.face),
-          labelStyle: TextStyle(fontSize: 15)),
-    );
-  }
-
-  Widget emailFormField() {
-    return TextFormField(
-      validator: getIt<ValidatorService>().email,
-      keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.done,
-      controller: _emailController,
-      style: TextStyle(color: Colors.black, fontFamily: 'SFUIDisplay'),
-      decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Email',
-          prefixIcon: Icon(Icons.email),
-          labelStyle: TextStyle(fontSize: 15)),
     );
   }
 }

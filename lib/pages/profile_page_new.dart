@@ -3,11 +3,11 @@ import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/profile_buttons_view.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
-import 'package:litpic/titleView.dart';
+import 'package:litpic/views/profile_buttons_view.dart';
+import 'package:litpic/views/title_view.dart';
 
 class ProfilePage extends StatefulWidget {
   final AnimationController animationController;

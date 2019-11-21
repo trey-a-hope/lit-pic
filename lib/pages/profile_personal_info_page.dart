@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
@@ -10,7 +9,7 @@ import 'package:litpic/pages/edit_shipping_info_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
-import 'package:litpic/titleView.dart';
+import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class ProfilePersonalInfoPage extends StatefulWidget {
@@ -116,7 +115,7 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
               CurvedAnimation(
                 parent: animationController,
                 curve:
-                    Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
+                    Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn),
               ),
             ),
             animationController: animationController,
@@ -140,7 +139,7 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
-                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+                  Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
           animationController: animationController,
         ),
       );
@@ -175,7 +174,7 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
               CurvedAnimation(
                 parent: animationController,
                 curve:
-                    Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
+                    Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn),
               ),
             ),
             animationController: animationController,

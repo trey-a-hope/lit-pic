@@ -1,23 +1,18 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/coupon.dart';
 import 'package:litpic/pages/detail_card_view.dart';
-import 'package:litpic/pages/monthly_coupon_view.dart';
-import 'package:litpic/recent_creations_view.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/coupon.dart';
-import 'package:litpic/titleView.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:litpic/views/recent_creations_view.dart';
+import 'package:litpic/views/title_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player/youtube_player.dart';
 
@@ -87,28 +82,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     if (!addAllListDataComplete) {
       addAllListDataComplete = true;
       var count = 6;
-
-      // listViews.add(DetailCardView(
-      //   onTap: () async {
-      //     const url = 'https://en.wikipedia.org/wiki/Lithophane';
-      //     if (await canLaunch(url)) {
-      //       await launch(url);
-      //     } else {
-      //       throw 'Could not launch $url';
-      //     }
-      //   },
-      //   widget: Icon(MdiIcons.informationVariant),
-      //   image: Image.asset('assets/images/lith_example.jpg'),
-      //   subText: "Click here for details.",
-      //   title: 'What is a \"Lithophane?\"',
-      //   text:
-      //       'A lithophane (French: lithophanie) is an etched or molded artwork in very thin translucent porcelain that can only be seen clearly when back lit with a light source. It is a design or scene in intaglio that appears "en grisaille" (in gray) tones.',
-      //   animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      //       parent: widget.animationController,
-      //       curve:
-      //           Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-      //   animationController: widget.animationController,
-      // ));
       listViews.add(DetailCardView(
         onTap: () async {
           const url = 'https://www.instagram.com/tr3.designs/?hl=en';

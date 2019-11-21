@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/stripe/order.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/customer.dart';
-import 'package:litpic/services/validater_service.dart';
-import 'package:litpic/views/round_button_view.dart';
-import 'package:litpic/views/text_form_field_view.dart';
+import 'package:litpic/services/stripe/order.dart';
+import 'package:litpic/views/order_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class EditShippingInfoPage extends StatefulWidget {
-  const EditShippingInfoPage({Key key}) : super(key: key);
+class MyOpenOrdersPage extends StatefulWidget {
+  const MyOpenOrdersPage({Key key}) : super(key: key);
   @override
-  _EditShippingInfoPageState createState() => _EditShippingInfoPageState();
+  _MyOpenOrdersPageState createState() => _MyOpenOrdersPageState();
 }
 
-class _EditShippingInfoPageState extends State<EditShippingInfoPage>
+class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
@@ -32,16 +30,9 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
   final Color iconColor = Colors.amber[700];
 
   User _currentUser;
+  List<Order> orders = List<Order>();
 
   bool addAllListDataComplete = false;
-
-  final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _stateController = TextEditingController();
-  final TextEditingController _zipController = TextEditingController();
-
-  final _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
 
   bool _isLoading = false;
 
@@ -49,10 +40,12 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
   void initState() {
     animationController =
         AnimationController(duration: Duration(milliseconds: 600), vsync: this);
-    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
         parent: animationController,
-        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    // addAllListData();
+        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn),
+      ),
+    );
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -85,106 +78,39 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
       var count = 5;
 
       listViews.add(
-        Form(
-          key: _formKey,
-          autovalidate: _autoValidate,
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: TextFormFieldView(
-                  labelText: 'Address',
-                  validator: getIt<ValidatorService>().isEmpty,
-                  textEditingController: _addressController,
-                  iconData: Icons.location_on,
-                  animation: Tween(begin: 0.0, end: 1.0).animate(
-                      CurvedAnimation(
-                          parent: animationController,
-                          curve: Interval((1 / count) * 0, 1.0,
-                              curve: Curves.fastOutSlowIn))),
-                  animationController: animationController,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: TextFormFieldView(
-                  labelText: 'City',
-                  validator: getIt<ValidatorService>().isEmpty,
-                  textEditingController: _cityController,
-                  iconData: Icons.location_city,
-                  animation: Tween(begin: 0.0, end: 1.0).animate(
-                      CurvedAnimation(
-                          parent: animationController,
-                          curve: Interval((1 / count) * 1, 1.0,
-                              curve: Curves.fastOutSlowIn))),
-                  animationController: animationController,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: TextFormFieldView(
-                  labelText: 'State',
-                  validator: getIt<ValidatorService>().state,
-                  textEditingController: _cityController,
-                  iconData: Icons.my_location,
-                  animation: Tween(begin: 0.0, end: 1.0).animate(
-                      CurvedAnimation(
-                          parent: animationController,
-                          curve: Interval((1 / count) * 2, 1.0,
-                              curve: Curves.fastOutSlowIn))),
-                  animationController: animationController,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: TextFormFieldView(
-                  labelText: 'ZIP',
-                  validator: getIt<ValidatorService>().zip,
-                  textEditingController: _zipController,
-                  iconData: Icons.contact_mail,
-                  animation: Tween(begin: 0.0, end: 1.0).animate(
-                      CurvedAnimation(
-                          parent: animationController,
-                          curve: Interval((1 / count) * 3, 1.0,
-                              curve: Curves.fastOutSlowIn))),
-                  animationController: animationController,
-                ),
-              ),
-            ],
-          ),
-        ),
+        _isLoading
+            ? LinearProgressIndicator(
+                backgroundColor: Colors.blue[200],
+                valueColor: AlwaysStoppedAnimation(Colors.blue),
+              )
+            : SizedBox.shrink(),
       );
 
-      listViews.add(
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-          child: RoundButtonView(
-            buttonColor: Colors.amber,
-            textColor: Colors.white,
-            onPressed: _save,
-            text: 'SAVE',
+      for (int i = 0; i < orders.length; i++) {
+        listViews.add(
+          OrderView(
+            onTap: () {
+              getIt<ModalService>().showAlert(
+                  context: context, title: 'Open Order', message: 'ToDo');
+            },
+            order: orders[i],
             animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                 parent: animationController,
-                curve: Interval((1 / count) * 4, 1.0,
+                curve: Interval((1 / count) * 0, 1.0,
                     curve: Curves.fastOutSlowIn))),
             animationController: animationController,
           ),
-        ),
-      );
+        );
+      }
     }
   }
 
   Future<void> loadCustomerInfo() async {
     try {
-      //Load user.
+      //Load user and orders.
       _currentUser = await getIt<AuthService>().getCurrentUser();
-      _currentUser.customer = await getIt<StripeCustomer>()
-          .retrieve(customerID: _currentUser.customerID);
-
-      _addressController.text = _currentUser.customer.address.line1;
-      _cityController.text = _currentUser.customer.address.city;
-      _stateController.text = _currentUser.customer.address.state;
-      _zipController.text = _currentUser.customer.address.postalCode;
+      orders = await getIt<StripeOrder>()
+          .list(customerID: _currentUser.customerID, status: 'paid');
 
       return;
     } catch (e) {
@@ -194,61 +120,6 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
         message: e.toString(),
       );
       return;
-    }
-  }
-
-  _save() async {
-    if (_formKey.currentState.validate()) {
-      bool confirm = await getIt<ModalService>().showConfirmation(
-          context: context, title: 'Submit', message: 'Are you sure?');
-      if (confirm) {
-        _formKey.currentState.save();
-
-        try {
-          setState(
-            () {
-              _isLoading = true;
-            },
-          );
-
-          //Update address info.
-          await getIt<StripeCustomer>().updateAddress(
-              customerID: _currentUser.customerID,
-              line1: _addressController.text,
-              city: _cityController.text,
-              state: _stateController.text,
-              postalCode: _zipController.text,
-              country: 'USA');
-
-          setState(
-            () {
-              _isLoading = false;
-            },
-          );
-          getIt<ModalService>().showAlert(
-            context: context,
-            title: 'Success',
-            message: 'Shipping Info Updated',
-          );
-        } catch (e) {
-          setState(
-            () {
-              _isLoading = false;
-            },
-          );
-          getIt<ModalService>().showAlert(
-            context: context,
-            title: 'Error',
-            message: e.toString(),
-          );
-        }
-      } else {
-        setState(
-          () {
-            _autoValidate = true;
-          },
-        );
-      }
     }
   }
 
@@ -350,7 +221,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Edit Shipping Info',
+                                  'Open Orders',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,

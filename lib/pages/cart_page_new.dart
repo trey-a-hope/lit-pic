@@ -1,22 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:litpic/cart_item_view.dart';
 import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/coupon.dart';
 import 'package:litpic/models/stripe/sku.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/storage_service.dart';
-import 'package:litpic/services/stripe/coupon.dart';
 import 'package:litpic/services/stripe/sku.dart';
-import 'package:litpic/titleView.dart';
+import 'package:litpic/views/cart_item_view.dart';
+import 'package:litpic/views/round_button_view.dart';
+import 'package:litpic/views/title_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CartPage extends StatefulWidget {
@@ -226,7 +225,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
         listViews.add(Divider());
 
         TextStyle orderTotalStyle = TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.green, fontSize: 20);
+            fontWeight: FontWeight.bold, color: Colors.green, fontSize: 20);
         listViews.add(
           Padding(
             padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -250,8 +249,8 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
 
         listViews.add(
           Padding(
-            padding: EdgeInsets.all(10),
-            child: GoodButton(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: RoundButtonView(
               text: 'PROCEED TO CHECKOUT',
               buttonColor: Colors.amber,
               onPressed: () {
@@ -261,6 +260,14 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                     message: 'ToDo');
               },
               textColor: Colors.white,
+              animation: Tween(begin: 0.0, end: 1.0).animate(
+                CurvedAnimation(
+                  parent: widget.animationController,
+                  curve: Interval((1 / count) * 0, 1.0,
+                      curve: Curves.fastOutSlowIn),
+                ),
+              ),
+              animationController: widget.animationController,
             ),
           ),
         );
@@ -277,62 +284,18 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     return (subTotal * 0.029) + 0.3;
   }
 
-  // double getMonthlyDiscount() {
-  //   double total = getTotal();
-  //   return (total * (_coupon.percentOff / 100));
-  // }
-
   double getTotal() {
     double subTotal = getSubTotal();
     double stripeProcessingFee = getStripeProcessingFee();
     return subTotal + stripeProcessingFee;
   }
 
-  // double getTotalWithCoupon() {
-  //   double total = getTotal();
-  //   return total * (1 - (_coupon.percentOff / 100));
-  // }
-
-  // String getTotal() {
-  //   // prefs.setDouble('itemsTotal', total);
-
-  //   //Stripe Processing Fee: 2.9% + .30 for every transaction.
-  //   double feeSubTotal = (getSubTotal() * 0.029) + 0.3;
-
-  //   return getIt<FormatterService>().money(amount: feeSubTotal);
-  // }
-
-  // String getSubTotal() {
-  //   double subTotal = 0;
-  //   subTotal = items * _sku.price;
-  //   // prefs.setDouble('itemsTotal', total);
-
-  //   return getIt<FormatterService>().money(amount: subTotal);
-  // }
-
-  // String getCouponTotal() {
-  //   double total = 0;
-  //   total = items * _sku.price;
-  //   total *= (1 - (_coupon.percentOff / 100));
-  //   // prefs.setDouble('itemsTotal', total);
-
-  //   return getIt<FormatterService>().money(amount: total);
-  // }
-
-  // String getProcessingFeeTotal() {
-  //   double subTotal = 0;
-  //   subTotal = items * _sku.price;
-  //   // prefs.setDouble('itemsTotal', total);
-  //   //Stripe Processing Fee: 2.9% + .30 for every transaction.
-  //   double feeSubTotal = (subTotal * 0.029) + 0.3;
-
-  //   return getIt<FormatterService>().money(amount: feeSubTotal);
-  // }
-
   Future<void> fetchCartItems() async {
     if (!fetchCartItemsComplete) {
-      //Mark flag to prevent from multiple calls to this function.
-      // setState((){}) called due to scaffold bar animation.
+      /*
+        Mark flag to prevent from multiple calls to this function.
+        setState((){}) called due to scaffold bar animation.
+      */
       fetchCartItemsComplete = true;
 
       //Clear list to prevent for duplicates later.

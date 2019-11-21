@@ -14,7 +14,7 @@ class CartItemView extends StatelessWidget {
   final VoidCallback increment;
   final VoidCallback decrement;
   final double price;
-  GetIt getIt = GetIt.I;
+  final GetIt getIt = GetIt.I;
 
   CartItemView(
       {Key key,

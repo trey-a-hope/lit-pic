@@ -4,6 +4,7 @@ import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/views/list_tile_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -58,6 +59,7 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   void addAllListData() {
+    int count = 2;
     //Help & Support
     // listViews.add(
     //   ListTile(
@@ -82,19 +84,20 @@ class _SettingsPageState extends State<SettingsPage>
 
     //Delete Account
     listViews.add(
-      ListTile(
-        leading: Icon(
+      ListTileView(
+        animationController: widget.animationController,
+        animation: Tween(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
+            parent: widget.animationController,
+            curve: Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
+          ),
+        ),
+        icon: Icon(
           MdiIcons.delete,
           color: iconColor,
         ),
-        title: Text(
-          'Delete Account',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          'Remove account from this app.',
-        ),
-        trailing: Icon(Icons.chevron_right),
+        title: 'Delete Account',
+        subTitle: 'Remove account from this app.',
         onTap: () async {
           getIt<ModalService>().showAlert(
               context: context,
@@ -104,22 +107,22 @@ class _SettingsPageState extends State<SettingsPage>
         },
       ),
     );
-
     //Sign Out
     listViews.add(
-      ListTile(
-        leading: Icon(
+      ListTileView(
+        animationController: widget.animationController,
+        animation: Tween(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
+            parent: widget.animationController,
+            curve: Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn),
+          ),
+        ),
+        icon: Icon(
           MdiIcons.logout,
           color: iconColor,
         ),
-        title: Text(
-          'Sign Out',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          'Exit account temporarily.',
-        ),
-        trailing: Icon(Icons.chevron_right),
+        title: 'Sign Out',
+        subTitle: 'Exit account temporarily.',
         onTap: () async {
           bool confirm = await getIt<ModalService>().showConfirmation(
               context: context, title: 'Sign Out', message: 'Are you sure?');
