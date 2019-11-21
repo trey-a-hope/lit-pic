@@ -32,7 +32,9 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
   final Color iconColor = Colors.amber[700];
 
   User _currentUser;
+  bool _isLoading = false;
 
+  bool loadCustomerInfoComplete = false;
   bool addAllListDataComplete = false;
 
   @override
@@ -185,20 +187,23 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
   }
 
   Future<void> loadCustomerInfo() async {
-    try {
-      //Load user.
-      _currentUser = await getIt<AuthService>().getCurrentUser();
-      _currentUser.customer = await getIt<StripeCustomer>()
-          .retrieve(customerID: _currentUser.customerID);
+    if (!loadCustomerInfoComplete) {
+      loadCustomerInfoComplete = true;
+      try {
+        //Load user.
+        _currentUser = await getIt<AuthService>().getCurrentUser();
+        _currentUser.customer = await getIt<StripeCustomer>()
+            .retrieve(customerID: _currentUser.customerID);
 
-      return;
-    } catch (e) {
-      getIt<ModalService>().showAlert(
-        context: context,
-        title: 'Error',
-        message: e.toString(),
-      );
-      return;
+        return;
+      } catch (e) {
+        getIt<ModalService>().showAlert(
+          context: context,
+          title: 'Error',
+          message: e.toString(),
+        );
+        return;
+      }
     }
   }
 
@@ -207,6 +212,28 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
     return Container(
       color: LitPicTheme.background,
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+            elevation: 0.0,
+            child: Icon(Icons.refresh),
+            backgroundColor: Color(0xFFE57373),
+            onPressed: () async {
+              setState(() {
+                _isLoading = true;
+                listViews.clear();
+              });
+
+              //Re add views with new data.
+              loadCustomerInfoComplete = false;
+              await loadCustomerInfo();
+
+              //Re add views with new data.
+              addAllListDataComplete = false;
+              addAllListData();
+
+              setState(() {
+                _isLoading = false;
+              });
+            }),
         backgroundColor: Colors.transparent,
         body: Stack(
           children: <Widget>[

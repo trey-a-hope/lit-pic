@@ -235,6 +235,28 @@ class _SavedCardsPageState extends State<SavedCardsPage>
     return Container(
       color: LitPicTheme.background,
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+            elevation: 0.0,
+            child: Icon(Icons.refresh),
+            backgroundColor: Color(0xFFE57373),
+            onPressed: () async {
+              setState(() {
+                _isLoading = true;
+                listViews.clear();
+              });
+
+              //Re add views with new data.
+              loadCustomerInfoComplete = false;
+              await loadCustomerInfo();
+
+              //Re add views with new data.
+              addAllListDataComplete = false;
+              addAllListData();
+
+              setState(() {
+                _isLoading = false;
+              });
+            }),
         backgroundColor: Colors.transparent,
         body: Stack(
           children: <Widget>[
@@ -345,27 +367,12 @@ class _SavedCardsPageState extends State<SavedCardsPage>
                                     strokeWidth: 3.0,
                                   )
                                 : SizedBox.shrink(),
-                            IconButton(
-                              icon: Icon(Icons.refresh),
-                              onPressed: () async {
-                                setState(() {
-                                  _isLoading = true;
-                                  listViews.clear();
-                                });
+                            // IconButton(
+                            //   icon: Icon(Icons.refresh),
+                            //   onPressed: () async {
 
-                                //Re add views with new data.
-                                loadCustomerInfoComplete = false;
-                                await loadCustomerInfo();
-
-                                //Re add views with new data.
-                                addAllListDataComplete = false;
-                                addAllListData();
-
-                                setState(() {
-                                  _isLoading = false;
-                                });
-                              },
-                            ),
+                            //   },
+                            // ),
                             IconButton(
                               icon: Icon(Icons.add),
                               onPressed: () {
