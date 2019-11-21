@@ -35,7 +35,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
   User _currentUser;
 
   bool addAllListDataComplete = false;
-
+  bool loadCustomerInfoComplete = false;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
@@ -158,23 +158,27 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
   }
 
   Future<void> loadCustomerInfo() async {
-    try {
-      //Load user.
-      _currentUser = await getIt<AuthService>().getCurrentUser();
-      _currentUser.customer = await getIt<StripeCustomer>()
-          .retrieve(customerID: _currentUser.customerID);
+    if (!loadCustomerInfoComplete) {
+      loadCustomerInfoComplete = true;
 
-      _nameController.text = _currentUser.customer.name;
-      _emailController.text = _currentUser.customer.email;
+      try {
+        //Load user.
+        _currentUser = await getIt<AuthService>().getCurrentUser();
+        _currentUser.customer = await getIt<StripeCustomer>()
+            .retrieve(customerID: _currentUser.customerID);
 
-      return;
-    } catch (e) {
-      getIt<ModalService>().showAlert(
-        context: context,
-        title: 'Error',
-        message: e.toString(),
-      );
-      return;
+        _nameController.text = _currentUser.customer.name;
+        _emailController.text = _currentUser.customer.email;
+
+        return;
+      } catch (e) {
+        getIt<ModalService>().showAlert(
+          context: context,
+          title: 'Error',
+          message: e.toString(),
+        );
+        return;
+      }
     }
   }
 

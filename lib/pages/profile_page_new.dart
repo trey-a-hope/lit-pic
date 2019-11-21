@@ -31,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage>
   User _currentUser;
 
   bool addAllListDataComplete = false;
-
+  bool loadCustomerInfoComplete = false;
   @override
   void initState() {
     topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
@@ -115,20 +115,24 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   Future<void> loadCustomerInfo() async {
-    try {
-      //Load user.
-      _currentUser = await getIt<AuthService>().getCurrentUser();
-      _currentUser.customer = await getIt<StripeCustomer>()
-          .retrieve(customerID: _currentUser.customerID);
+    if (!loadCustomerInfoComplete) {
+      loadCustomerInfoComplete = true;
 
-      return;
-    } catch (e) {
-      getIt<ModalService>().showAlert(
-        context: context,
-        title: 'Error',
-        message: e.toString(),
-      );
-      return;
+      try {
+        //Load user.
+        _currentUser = await getIt<AuthService>().getCurrentUser();
+        _currentUser.customer = await getIt<StripeCustomer>()
+            .retrieve(customerID: _currentUser.customerID);
+
+        return;
+      } catch (e) {
+        getIt<ModalService>().showAlert(
+          context: context,
+          title: 'Error',
+          message: e.toString(),
+        );
+        return;
+      }
     }
   }
 

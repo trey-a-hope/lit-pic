@@ -34,6 +34,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
   User _currentUser;
 
   bool addAllListDataComplete = false;
+  bool loadCustomerInfoComplete = false;
 
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
@@ -125,7 +126,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
                 child: TextFormFieldView(
                   labelText: 'State',
                   validator: getIt<ValidatorService>().state,
-                  textEditingController: _cityController,
+                  textEditingController: _stateController,
                   iconData: Icons.my_location,
                   animation: Tween(begin: 0.0, end: 1.0).animate(
                       CurvedAnimation(
@@ -175,25 +176,29 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
   }
 
   Future<void> loadCustomerInfo() async {
-    try {
-      //Load user.
-      _currentUser = await getIt<AuthService>().getCurrentUser();
-      _currentUser.customer = await getIt<StripeCustomer>()
-          .retrieve(customerID: _currentUser.customerID);
+    if (!loadCustomerInfoComplete) {
+      loadCustomerInfoComplete = true;
 
-      _addressController.text = _currentUser.customer.address.line1;
-      _cityController.text = _currentUser.customer.address.city;
-      _stateController.text = _currentUser.customer.address.state;
-      _zipController.text = _currentUser.customer.address.postalCode;
+      try {
+        //Load user.
+        _currentUser = await getIt<AuthService>().getCurrentUser();
+        _currentUser.customer = await getIt<StripeCustomer>()
+            .retrieve(customerID: _currentUser.customerID);
 
-      return;
-    } catch (e) {
-      getIt<ModalService>().showAlert(
-        context: context,
-        title: 'Error',
-        message: e.toString(),
-      );
-      return;
+        _addressController.text = _currentUser.customer.address.line1;
+        _cityController.text = _currentUser.customer.address.city;
+        _stateController.text = _currentUser.customer.address.state;
+        _zipController.text = _currentUser.customer.address.postalCode;
+
+        return;
+      } catch (e) {
+        getIt<ModalService>().showAlert(
+          context: context,
+          title: 'Error',
+          message: e.toString(),
+        );
+        return;
+      }
     }
   }
 
