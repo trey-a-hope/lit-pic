@@ -107,18 +107,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         animationController: widget.animationController,
       ));
 
-      listViews.add(
-        TitleView(
-          showExtra: false,
-          titleTxt: 'Watch how it\'s done',
-          subTxt: 'Details',
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: widget.animationController,
-              curve:
-                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-          animationController: widget.animationController,
-        ),
-      );
+      // listViews.add(
+      //   TitleView(
+      //     showExtra: false,
+      //     titleTxt: 'Watch how it\'s done',
+      //     subTxt: 'Details',
+      //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+      //         parent: widget.animationController,
+      //         curve:
+      //             Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+      //     animationController: widget.animationController,
+      //   ),
+      // );
 
       // YoutubePlayerController youtubePlayerController = YoutubePlayerController(
       //   initialVideoId: youtubeVideoID,
@@ -145,21 +145,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       //   ),
       // );
 
-      listViews.add(
-        Padding(
-          padding: EdgeInsets.all(20),
-          child: YoutubePlayer(
-            context: context,
-            source: youtubeVideoID,
-            quality: YoutubeQuality.HD,
-            // callbackController is (optional).
-            // use it to control player on your own.
-            // callbackController: (controller) {
-            //   _videoController = controller;
-            // },
-          ),
-        ),
-      );
+      // listViews.add(
+      //   Padding(
+      //     padding: EdgeInsets.all(20),
+      //     child: YoutubePlayer(
+      //       context: context,
+      //       source: youtubeVideoID,
+      //       quality: YoutubeQuality.HD,
+      //       // callbackController is (optional).
+      //       // use it to control player on your own.
+      //       // callbackController: (controller) {
+      //       //   _videoController = controller;
+      //       // },
+      //     ),
+      //   ),
+      // );
 
       listViews.add(
         TitleView(

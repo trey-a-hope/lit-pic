@@ -1,12 +1,9 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import 'package:litpic/common/hero_screen.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/pages/my_complete_orders_page.dart';
 import 'package:litpic/pages/my_open_orders_page.dart';
 import 'package:litpic/pages/saved_cards_page.dart';
-import 'package:litpic/pages/profile/personal_info_page.dart';
 import 'package:litpic/pages/profile_personal_info_page.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 

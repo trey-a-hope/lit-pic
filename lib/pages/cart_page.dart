@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/models/stripe/sku.dart';
+import 'package:litpic/pages/choose_shipping_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/formatter_service.dart';
@@ -44,6 +44,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   bool fetchCartItemsComplete = false;
   List<CartItem> cartItems = List<CartItem>();
   int totalLithophanes = 0;
+  final double shippingFee = 0.0;
   // Coupon _coupon;
   Sku _sku;
 
@@ -151,9 +152,8 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                 Text(
                   'Sub total',
                 ),
-                Text(
-                  getIt<FormatterService>().money(amount: subTotal),
-                )
+                Text(getIt<FormatterService>().money(amount: subTotal),
+                    style: TextStyle(fontWeight: FontWeight.bold))
               ],
             ),
           ),
@@ -168,9 +168,8 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                 Text(
                   'Shipping',
                 ),
-                Text(
-                  getIt<FormatterService>().money(amount: 0),
-                )
+                Text(getIt<FormatterService>().money(amount: shippingFee),
+                    style: TextStyle(fontWeight: FontWeight.bold))
               ],
             ),
           ),
@@ -194,8 +193,8 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                   ],
                 ),
                 Text(
-                  '+${getIt<FormatterService>().money(amount: stripeProcessingFee)}',
-                )
+                    '+${getIt<FormatterService>().money(amount: stripeProcessingFee)}',
+                    style: TextStyle(fontWeight: FontWeight.bold))
               ],
             ),
           ),
@@ -232,10 +231,18 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
               text: 'PROCEED TO CHECKOUT',
               buttonColor: Colors.amber,
               onPressed: () {
-                getIt<ModalService>().showAlert(
-                    context: context,
-                    title: 'Proceed To Checkout',
-                    message: 'ToDo');
+                prefs.setDouble('subTotal', subTotal);
+                prefs.setDouble('stripeProcessingFee', stripeProcessingFee);
+                prefs.setDouble('shippingFee', shippingFee);
+                prefs.setDouble('total', total);
+                prefs.setInt('totalLithophanes', totalLithophanes);
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) {
+                    return ChooseShippingPage();
+                  }),
+                );
               },
               textColor: Colors.white,
               animation: Tween(begin: 0.0, end: 1.0).animate(
@@ -349,6 +356,31 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     return Container(
       color: LitPicTheme.background,
       child: Scaffold(
+          floatingActionButton: Padding(
+            padding: EdgeInsets.only(bottom: 50),
+            child: FloatingActionButton(
+                elevation: 0.0,
+                child: Icon(Icons.refresh),
+                backgroundColor: Color(0xFFE57373),
+                onPressed: () async {
+                  setState(() {
+                    _isLoading = true;
+                    listViews.clear();
+                  });
+
+                  //Re add views with new data.
+                  loadComplete = false;
+                  await load();
+
+                  //Re add views with new data.
+                  addAllListDataComplete = false;
+                  addAllListData();
+
+                  setState(() {
+                    _isLoading = false;
+                  });
+                }),
+          ),
           backgroundColor: Colors.transparent,
           body: Stack(
             children: <Widget>[
@@ -439,7 +471,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "Shopping Cart",
+                                  "Shopping Carts",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,

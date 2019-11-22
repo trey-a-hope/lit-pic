@@ -339,6 +339,11 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
                                 ),
                               ),
                             ),
+                            _isLoading
+                                ? CircularProgressIndicator(
+                                    strokeWidth: 3.0,
+                                  )
+                                : SizedBox.shrink(),
                             // SizedBox(
                             //   height: 38,
                             //   width: 38,

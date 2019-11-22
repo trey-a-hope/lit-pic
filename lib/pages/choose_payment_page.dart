@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:litpic/asset_images.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/stripe/credit_card.dart';
+import 'package:litpic/pages/choose_final_page.dart';
+import 'package:litpic/pages/saved_cards_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/card.dart';
 import 'package:litpic/services/stripe/customer.dart';
-import 'package:litpic/services/stripe/token.dart';
-import 'package:litpic/services/validater_service.dart';
+import 'package:litpic/views/credit_card_view.dart';
+import 'package:litpic/views/pay_flow_diagram_view.dart';
 import 'package:litpic/views/round_button_view.dart';
-import 'package:litpic/views/text_form_field_view.dart';
+import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class AddCardPage extends StatefulWidget {
-  const AddCardPage({Key key}) : super(key: key);
+class ChoosePaymentPage extends StatefulWidget {
+  const ChoosePaymentPage({Key key}) : super(key: key);
   @override
-  _AddCardPageState createState() => _AddCardPageState();
+  _ChoosePaymentPageState createState() => _ChoosePaymentPageState();
 }
 
-class _AddCardPageState extends State<AddCardPage>
+class _ChoosePaymentPageState extends State<ChoosePaymentPage>
     with TickerProviderStateMixin {
   AnimationController animationController;
+
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = List<Widget>();
@@ -30,20 +32,13 @@ class _AddCardPageState extends State<AddCardPage>
   double topBarOpacity = 0.0;
 
   final GetIt getIt = GetIt.I;
-  final Color iconColor = Colors.amber[700];
 
   User _currentUser;
 
+  bool loadCustomerInfoComplete = false;
   bool addAllListDataComplete = false;
 
   bool _isLoading = false;
-
-  final TextEditingController _cardNumberController = TextEditingController();
-  final TextEditingController _expirationController = TextEditingController();
-  final TextEditingController _cvcController = TextEditingController();
-
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
 
   @override
   void initState() {
@@ -86,191 +81,134 @@ class _AddCardPageState extends State<AddCardPage>
       addAllListDataComplete = true;
       var count = 5;
 
-      listViews.add(Padding(
-        padding: EdgeInsets.all(20),
-        child: creditCard,
-      ));
-
-      listViews.add(
-        Form(
-          key: _formKey,
-          autovalidate: _autoValidate,
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: TextFormFieldView(
-                  textEditingController: _cardNumberController,
-                  validator: getIt<ValidatorService>().cardNumber,
-                  labelText: 'Card Number',
-                  iconData: MdiIcons.creditCard,
-                  animation: Tween(begin: 0.0, end: 1.0).animate(
-                      CurvedAnimation(
-                          parent: animationController,
-                          curve: Interval((1 / count) * 0, 1.0,
-                              curve: Curves.fastOutSlowIn))),
-                  animationController: animationController,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: TextFormFieldView(
-                  textEditingController: _expirationController,
-                  validator: getIt<ValidatorService>().cardExpiration,
-                  labelText: 'Expiration',
-                  iconData: Icons.date_range,
-                  animation: Tween(begin: 0.0, end: 1.0).animate(
-                      CurvedAnimation(
-                          parent: animationController,
-                          curve: Interval((1 / count) * 2, 1.0,
-                              curve: Curves.fastOutSlowIn))),
-                  animationController: animationController,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: TextFormFieldView(
-                  textEditingController: _cvcController,
-                  validator: getIt<ValidatorService>().cardCVC,
-                  labelText: 'CVC',
-                  iconData: MdiIcons.security,
-                  animation: Tween(begin: 0.0, end: 1.0).animate(
-                      CurvedAnimation(
-                          parent: animationController,
-                          curve: Interval((1 / count) * 4, 1.0,
-                              curve: Curves.fastOutSlowIn))),
-                  animationController: animationController,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-
       listViews.add(
         Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-          child: RoundButtonView(
-            buttonColor: Colors.green,
-            textColor: Colors.white,
-            onPressed: _addTestCardInfo,
-            text: 'ADD TEST CARD (DEMO ONLY)',
-            animation: Tween(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
+          padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
+          child: PayFlowDiagramView(
+            paymentComplete: false,
+            shippingComplete: true,
+            submitComplete: false,
+            animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                 parent: animationController,
-                curve:
-                    Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn),
-              ),
-            ),
+                curve: Interval((1 / count) * 0, 1.0,
+                    curve: Curves.fastOutSlowIn))),
             animationController: animationController,
           ),
         ),
       );
 
       listViews.add(
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-          child: RoundButtonView(
-            buttonColor: Colors.amber,
-            textColor: Colors.white,
-            onPressed: _submitCard,
-            text: 'SAVE',
-            animation: Tween(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
-                parent: animationController,
-                curve:
-                    Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn),
-              ),
-            ),
-            animationController: animationController,
-          ),
-        ),
-      );
-    }
-  }
-
-  Future<void> loadCustomerInfo() async {
-    try {
-      //Load user and orders.
-      _currentUser = await getIt<AuthService>().getCurrentUser();
-      _currentUser.customer = await getIt<StripeCustomer>()
-          .retrieve(customerID: _currentUser.customerID);
-
-      return;
-    } catch (e) {
-      getIt<ModalService>().showAlert(
-        context: context,
-        title: 'Error',
-        message: e.toString(),
-      );
-      return;
-    }
-  }
-
-  void _submitCard() async {
-    final FormState form = _formKey.currentState;
-    if (!form.validate()) {
-      _autoValidate = true;
-    } else {
-      bool confirm = await getIt<ModalService>().showConfirmation(
-          context: context, title: 'Add Card', message: 'Are you sure?');
-      if (confirm) {
-        setState(
-          () {
-            _isLoading = true;
+        TitleView(
+          showExtraOnTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) {
+                return SavedCardsPage();
+              }),
+            );
           },
+          showExtra: true,
+          titleTxt: 'Default Card',
+          subTxt: 'Edit',
+          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: animationController,
+        ),
+      );
+
+      if (_currentUser.customer.sources.isEmpty) {
+        listViews.add(
+          TitleView(
+            titleTxt: 'No Saved Cards',
+            animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                parent: animationController,
+                curve: Interval((1 / count) * 0, 1.0,
+                    curve: Curves.fastOutSlowIn))),
+            animationController: animationController,
+            showExtra: false,
+            subTxt: '',
+          ),
         );
-
-        String number = _cardNumberController.text;
-        String expMonth = _expirationController.text.substring(0, 2);
-        String expYear = _expirationController.text.substring(2, 4);
-        String cvc = _cvcController.text;
-
-        try {
-          String token = await getIt<StripeToken>().create(
-              number: number, expMonth: expMonth, expYear: expYear, cvc: cvc);
-
-          await getIt<StripeCard>()
-              .create(customerID: _currentUser.customerID, token: token);
-
-          print(token);
-
-          setState(
-            () {
-              _isLoading = false;
+      } else {
+        CreditCard creditCard = _currentUser.customer.card;
+        listViews.add(
+          CreditCardView(
+            deleteCard: () async {
+              getIt<ModalService>().showAlert(
+                  context: context,
+                  title: 'Error',
+                  message: 'Click edit to make changes to this card.');
             },
-          );
-          _clearForm();
-          getIt<ModalService>().showAlert(
-              context: context,
-              title: 'Success',
-              message: 'Card added successfully.');
-        } catch (e) {
-          setState(
-            () {
-              _isLoading = false;
+            makeDefaultCard: () async {
+              getIt<ModalService>().showAlert(
+                  context: context,
+                  title: 'Error',
+                  message: 'Click edit to make changes to this card.');
             },
-          );
-          getIt<ModalService>().showAlert(
-              context: context,
-              title: 'Error',
-              message: 'Could not save card at this time.');
-        }
+            isDefault: true,
+            creditCard: creditCard,
+            animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                parent: animationController,
+                curve: Interval((1 / count) * 0, 1.0,
+                    curve: Curves.fastOutSlowIn))),
+            animationController: animationController,
+          ),
+        );
+      }
+
+      if (_currentUser.customer.sources.isNotEmpty) {
+        listViews.add(
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: RoundButtonView(
+              buttonColor: Colors.amber,
+              text: 'FINALIZE ORDER',
+              textColor: Colors.white,
+              animation: Tween(begin: 0.0, end: 1.0).animate(
+                CurvedAnimation(
+                  parent: animationController,
+                  curve: Interval((1 / count) * 3, 1.0,
+                      curve: Curves.fastOutSlowIn),
+                ),
+              ),
+              animationController: animationController,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) {
+                    return ChooseFinalPage();
+                  }),
+                );
+              },
+            ),
+          ),
+        );
       }
     }
   }
 
-  void _addTestCardInfo() {
-    _cardNumberController.text = '4242424242424242';
-    _expirationController.text = '0621';
-    _cvcController.text = '323';
-    _autoValidate = true;
-  }
+  Future<void> loadCustomerInfo() async {
+    if (!loadCustomerInfoComplete) {
+      loadCustomerInfoComplete = true;
 
-  void _clearForm() {
-    _cardNumberController.clear();
-    _expirationController.clear();
-    _cvcController.clear();
+      try {
+        //Load user and orders.
+        _currentUser = await getIt<AuthService>().getCurrentUser();
+        _currentUser.customer = await getIt<StripeCustomer>()
+            .retrieve(customerID: _currentUser.customerID);
+
+        return;
+      } catch (e) {
+        getIt<ModalService>().showAlert(
+          context: context,
+          title: 'Error',
+          message: e.toString(),
+        );
+        return;
+      }
+    }
   }
 
   @override
@@ -278,6 +216,28 @@ class _AddCardPageState extends State<AddCardPage>
     return Container(
       color: LitPicTheme.background,
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+            elevation: 0.0,
+            child: Icon(Icons.refresh),
+            backgroundColor: Color(0xFFE57373),
+            onPressed: () async {
+              setState(() {
+                _isLoading = true;
+                listViews.clear();
+              });
+
+              //Re add views with new data.
+              loadCustomerInfoComplete = false;
+              await loadCustomerInfo();
+
+              //Re add views with new data.
+              addAllListDataComplete = false;
+              addAllListData();
+
+              setState(() {
+                _isLoading = false;
+              });
+            }),
         backgroundColor: Colors.transparent,
         body: Stack(
           children: <Widget>[
@@ -371,7 +331,7 @@ class _AddCardPageState extends State<AddCardPage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Add Card',
+                                  'Choose Payment',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,
@@ -387,7 +347,7 @@ class _AddCardPageState extends State<AddCardPage>
                                 ? CircularProgressIndicator(
                                     strokeWidth: 3.0,
                                   )
-                                : SizedBox.shrink()
+                                : SizedBox.shrink(),
                           ],
                         ),
                       )

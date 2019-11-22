@@ -178,7 +178,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
       loadCustomerInfoComplete = false;
       await loadCustomerInfo();
 
-      Future.delayed(Duration(seconds: 1)); //Wait for stripe to update data.
+      await Future.delayed(Duration(seconds: 1)); //Wait for stripe to update data.
 
       //Re add views with new data.
       addAllListDataComplete = false;
@@ -211,7 +211,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
       loadCustomerInfoComplete = false;
       await loadCustomerInfo();
 
-      Future.delayed(Duration(seconds: 1)); //Wait for stripe to update data.
+      await Future.delayed(Duration(seconds: 1)); //Wait for stripe to update data.
 
       //Re add views with new data.
       addAllListDataComplete = false;
@@ -367,12 +367,6 @@ class _SavedCardsPageState extends State<SavedCardsPage>
                                     strokeWidth: 3.0,
                                   )
                                 : SizedBox.shrink(),
-                            // IconButton(
-                            //   icon: Icon(Icons.refresh),
-                            //   onPressed: () async {
-
-                            //   },
-                            // ),
                             IconButton(
                               icon: Icon(Icons.add),
                               onPressed: () {
