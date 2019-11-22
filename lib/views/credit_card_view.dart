@@ -92,7 +92,7 @@ class CreditCardView extends StatelessWidget {
                                                   MainAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  'Expires ${months[creditCard.expMonth]} ${creditCard.expYear}',
+                                                  'Expires ${months[creditCard.expMonth - 1]} ${creditCard.expYear}',
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.grey
