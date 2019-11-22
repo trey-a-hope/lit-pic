@@ -228,28 +228,6 @@ class _ChooseShippingPageState extends State<ChooseShippingPage>
     return Container(
       color: LitPicTheme.background,
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-            elevation: 0.0,
-            child: Icon(Icons.refresh),
-            backgroundColor: Color(0xFFE57373),
-            onPressed: () async {
-              setState(() {
-                _isLoading = true;
-                listViews.clear();
-              });
-
-              //Re add views with new data.
-              loadCustomerInfoComplete = false;
-              await loadCustomerInfo();
-
-              //Re add views with new data.
-              addAllListDataComplete = false;
-              addAllListData();
-
-              setState(() {
-                _isLoading = false;
-              });
-            }),
         backgroundColor: Colors.transparent,
         body: Stack(
           children: <Widget>[
@@ -359,7 +337,27 @@ class _ChooseShippingPageState extends State<ChooseShippingPage>
                                 ? CircularProgressIndicator(
                                     strokeWidth: 3.0,
                                   )
-                                : SizedBox.shrink(),
+                                : IconButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        _isLoading = true;
+                                        listViews.clear();
+                                      });
+
+                                      //Re add views with new data.
+                                      loadCustomerInfoComplete = false;
+                                      await loadCustomerInfo();
+
+                                      //Re add views with new data.
+                                      addAllListDataComplete = false;
+                                      addAllListData();
+
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    },
+                                    icon: Icon(Icons.refresh),
+                                  ),
                           ],
                         ),
                       )

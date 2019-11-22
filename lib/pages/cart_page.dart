@@ -356,31 +356,6 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     return Container(
       color: LitPicTheme.background,
       child: Scaffold(
-          floatingActionButton: Padding(
-            padding: EdgeInsets.only(bottom: 50),
-            child: FloatingActionButton(
-                elevation: 0.0,
-                child: Icon(Icons.refresh),
-                backgroundColor: Color(0xFFE57373),
-                onPressed: () async {
-                  setState(() {
-                    _isLoading = true;
-                    listViews.clear();
-                  });
-
-                  //Re add views with new data.
-                  loadComplete = false;
-                  await load();
-
-                  //Re add views with new data.
-                  addAllListDataComplete = false;
-                  addAllListData();
-
-                  setState(() {
-                    _isLoading = false;
-                  });
-                }),
-          ),
           backgroundColor: Colors.transparent,
           body: Stack(
             children: <Widget>[
@@ -471,7 +446,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "Shopping Carts",
+                                  "Shopping Cart",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,
@@ -488,7 +463,27 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                                     // backgroundColor: Colors.black,
                                     strokeWidth: 3.0,
                                   )
-                                : SizedBox.shrink()
+                                : IconButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        _isLoading = true;
+                                        listViews.clear();
+                                      });
+
+                                      //Re add views with new data.
+                                      loadComplete = false;
+                                      await load();
+
+                                      //Re add views with new data.
+                                      addAllListDataComplete = false;
+                                      addAllListData();
+
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    },
+                                    icon: Icon(Icons.refresh),
+                                  )
                           ],
                         ),
                       )

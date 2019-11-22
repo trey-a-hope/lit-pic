@@ -97,7 +97,7 @@ class _CheckoutSuccessPageState extends State<CheckoutSuccessPage>
             listViews.add(
         Padding(
           padding: EdgeInsets.only(top: 20),
-          child: Text('We\'re getting started on you order now.', textAlign: TextAlign.center,),
+          child: Text('We\'re getting started on your order now.', textAlign: TextAlign.center,),
         ),
       );
 

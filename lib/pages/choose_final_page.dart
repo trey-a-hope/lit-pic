@@ -160,7 +160,7 @@ class _ChooseFinalPageState extends State<ChooseFinalPage>
                 'Shipping To',
               ),
               Text(
-                '${_currentUser.customer.address.line1}, ${_currentUser.customer.address.city}\n ${_currentUser.customer.address.state} ${_currentUser.customer.address.postalCode}',
+                '${_currentUser.customer.address.line1}\n${_currentUser.customer.address.city}, ${_currentUser.customer.address.state} ${_currentUser.customer.address.postalCode}',
                 textAlign: TextAlign.end,
                 style: TextStyle(fontWeight: FontWeight.bold),
               )

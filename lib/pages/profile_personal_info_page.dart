@@ -212,28 +212,6 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
     return Container(
       color: LitPicTheme.background,
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-            elevation: 0.0,
-            child: Icon(Icons.refresh),
-            backgroundColor: Color(0xFFE57373),
-            onPressed: () async {
-              setState(() {
-                _isLoading = true;
-                listViews.clear();
-              });
-
-              //Re add views with new data.
-              loadCustomerInfoComplete = false;
-              await loadCustomerInfo();
-
-              //Re add views with new data.
-              addAllListDataComplete = false;
-              addAllListData();
-
-              setState(() {
-                _isLoading = false;
-              });
-            }),
         backgroundColor: Colors.transparent,
         body: Stack(
           children: <Widget>[
@@ -343,68 +321,27 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
                                 ? CircularProgressIndicator(
                                     strokeWidth: 3.0,
                                   )
-                                : SizedBox.shrink(),
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_left,
-                            //         color: LitPicTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                            // Padding(
-                            //   padding: const EdgeInsets.only(
-                            //     left: 8,
-                            //     right: 8,
-                            //   ),
-                            //   child: Row(
-                            //     children: <Widget>[
-                            //       Padding(
-                            //         padding: const EdgeInsets.only(right: 8),
-                            //         child: Icon(
-                            //           Icons.calendar_today,
-                            //           color: LitPicTheme.grey,
-                            //           size: 18,
-                            //         ),
-                            //       ),
-                            //       Text(
-                            //         "15 May",
-                            //         textAlign: TextAlign.left,
-                            //         style: TextStyle(
-                            //           fontFamily: LitPicTheme.fontName,
-                            //           fontWeight: FontWeight.normal,
-                            //           fontSize: 18,
-                            //           letterSpacing: -0.2,
-                            //           color: LitPicTheme.darkerText,
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_right,
-                            //         color: LitPicTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
+                                : IconButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        _isLoading = true;
+                                        listViews.clear();
+                                      });
+
+                                      //Re add views with new data.
+                                      loadCustomerInfoComplete = false;
+                                      await loadCustomerInfo();
+
+                                      //Re add views with new data.
+                                      addAllListDataComplete = false;
+                                      addAllListData();
+
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    },
+                                    icon: Icon(Icons.refresh),
+                                  ),
                           ],
                         ),
                       )
