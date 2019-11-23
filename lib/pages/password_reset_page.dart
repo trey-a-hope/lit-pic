@@ -4,23 +4,20 @@ import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/models/stripe/order.dart';
-import 'package:litpic/pages/order_details_page.dart';
 import 'package:litpic/services/auth_service.dart';
-import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/order.dart';
-import 'package:litpic/views/list_tile_view.dart';
-import 'package:litpic/views/order_view.dart';
-import 'package:litpic/views/title_view.dart';
+import 'package:litpic/services/validater_service.dart';
+import 'package:litpic/views/round_button_view.dart';
+import 'package:litpic/views/text_form_field_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class MyCompleteOrdersPage extends StatefulWidget {
-  const MyCompleteOrdersPage({Key key}) : super(key: key);
+class PasswordResetPage extends StatefulWidget {
+  const PasswordResetPage({Key key}) : super(key: key);
   @override
-  _MyCompleteOrdersPageState createState() => _MyCompleteOrdersPageState();
+  _PasswordResetPageState createState() => _PasswordResetPageState();
 }
 
-class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
+class _PasswordResetPageState extends State<PasswordResetPage>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
@@ -39,6 +36,11 @@ class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
   bool addAllListDataComplete = false;
 
   bool _isLoading = false;
+
+  final TextEditingController _emailController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+  bool _autoValidate = false;
 
   @override
   void initState() {
@@ -81,66 +83,99 @@ class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
       addAllListDataComplete = true;
       var count = 5;
 
-      if (orders.isEmpty) {
-        listViews.add(
-          TitleView(
-            showExtra: false,
-            titleTxt: 'No complete orders.',
-            subTxt: '',
-            animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-                parent: animationController,
-                curve: Interval((1 / count) * 0, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-            animationController: animationController,
-          ),
-        );
-      } else {
-        for (int i = 0; i < orders.length; i++) {
-          Order order = orders[i];
-          listViews.add(
-            ListTileView(
-              icon: Icon(
-                MdiIcons.creditCardMarker,
-                color: Colors.green,
-              ),
-              subTitle: 'ID: ${order.id}',
-              title:
-                  '${order.quantity} ${order.description}(s) - ${getIt<FormatterService>().money(amount: order.amount)}',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => OrderDetailsPage(order: order),
-                  ),
-                );
-              },
-              animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+      listViews.add(
+        Form(
+          key: _formKey,
+          autovalidate: _autoValidate,
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: TextFormFieldView(
+              animation: Tween(begin: 0.0, end: 1.0).animate(
+                CurvedAnimation(
                   parent: animationController,
-                  curve: Interval((1 / count) * 0, 1.0,
-                      curve: Curves.fastOutSlowIn))),
+                  curve: Interval((1 / count) * 2, 1.0,
+                      curve: Curves.fastOutSlowIn),
+                ),
+              ),
               animationController: animationController,
+              labelText: 'Email',
+              textEditingController: _emailController,
+              iconData: Icons.email,
+              validator: getIt<ValidatorService>().email,
             ),
-          );
-        }
-      }
+          ),
+        ),
+      );
+
+      listViews.add(Padding(
+        padding: EdgeInsets.all(20),
+        child: RoundButtonView(
+          textColor: Colors.white,
+          text: 'SUBMIT',
+          buttonColor: Colors.amber,
+          onPressed: () {
+            submit();
+          },
+          animation: Tween(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn),
+            ),
+          ),
+          animationController: animationController,
+        ),
+      ));
     }
   }
 
-  Future<void> loadCustomerInfo() async {
-    try {
-      //Load user and orders.
-      _currentUser = await getIt<AuthService>().getCurrentUser();
-      orders = await getIt<StripeOrder>()
-          .list(customerID: _currentUser.customerID, status: 'fulfilled');
+  void submit() async {
+    if (_formKey.currentState.validate()) {
+      bool confirm = await getIt<ModalService>().showConfirmation(
+          context: context, title: 'Submit', message: 'A link to reset your password will be sent to ${_emailController.text}');
 
-      return;
-    } catch (e) {
-      getIt<ModalService>().showAlert(
-        context: context,
-        title: 'Error',
-        message: e.toString(),
-      );
-      return;
+      if (confirm) {
+        _formKey.currentState.save();
+        try {
+          setState(
+            () {
+              _isLoading = true;
+            },
+          );
+
+          getIt<AuthService>()
+              .sendPasswordResetEmail(email: _emailController.text);
+
+          setState(
+            () {
+              _isLoading = false;
+            },
+          );
+
+          getIt<ModalService>().showAlert(
+            context: context,
+            title: 'Success',
+            message: 'Check your email.',
+          );
+        } catch (e) {
+          setState(
+            () {
+              _isLoading = false;
+            },
+          );
+          getIt<ModalService>().showAlert(
+            context: context,
+            title: 'Error',
+            message: e.toString(),
+          );
+        }
+      } else {
+        setState(
+          () {
+            _autoValidate = true;
+          },
+        );
+      }
     }
   }
 
@@ -165,7 +200,11 @@ class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
 
   Widget getMainListViewUI() {
     List<Future> futures = List<Future>();
-    futures.add(loadCustomerInfo());
+    futures.add(
+      Future.delayed(
+        Duration(seconds: 0),
+      ),
+    );
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {
@@ -242,7 +281,7 @@ class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Complete Orders',
+                                  'Password Reset',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,

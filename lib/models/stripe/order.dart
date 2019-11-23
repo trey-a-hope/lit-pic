@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:litpic/models/stripe/customer.dart';
+import 'package:litpic/models/stripe/address.dart';
+import 'package:litpic/models/stripe/shipping.dart';
 
 class Order {
   final DateTime created;
@@ -10,7 +11,7 @@ class Order {
   final int quantity;
   final String carrier;
   final String trackingNumber;
-  final Address address;
+  final Shipping shipping;
 
   Order(
       {@required this.created,
@@ -21,13 +22,15 @@ class Order {
       @required this.quantity,
       @required this.carrier,
       @required this.trackingNumber,
-      @required this.address});
+      @required this.shipping});
 
   factory Order.fromMap({@required Map map}) {
     return map == null
         ? map
         : Order(
-            address: Address.fromMap(map: map['shipping']['address']),
+            shipping: Shipping(
+                name: map['shipping']['name'],
+                address: Address.fromMap(map: map['shipping']['address'])),
             description: map['items'][0]['description'],
             quantity: map['items'][0]['quantity'],
             created: DateTime.fromMillisecondsSinceEpoch(map['created'] * 1000),

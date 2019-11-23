@@ -185,10 +185,10 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
         _currentUser.customer = await getIt<StripeCustomer>()
             .retrieve(customerID: _currentUser.customerID);
 
-        _addressController.text = _currentUser.customer.address.line1;
-        _cityController.text = _currentUser.customer.address.city;
-        _stateController.text = _currentUser.customer.address.state;
-        _zipController.text = _currentUser.customer.address.postalCode;
+        _addressController.text = _currentUser.customer.shipping.address.line1;
+        _cityController.text = _currentUser.customer.shipping.address.city;
+        _stateController.text = _currentUser.customer.shipping.address.state;
+        _zipController.text = _currentUser.customer.shipping.address.postalCode;
 
         return;
       } catch (e) {

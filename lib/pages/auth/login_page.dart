@@ -4,9 +4,11 @@ import 'package:litpic/asset_images.dart';
 import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/pages/auth/sign_up_page.dart';
+import 'package:litpic/pages/password_reset_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/validater_service.dart';
+
 class LoginPage extends StatefulWidget {
   @override
   State createState() => LoginPageState();
@@ -95,14 +97,12 @@ class LoginPageState extends State<LoginPage>
                                 color: Colors.white),
                           ),
                         ),
-                                           Positioned(
+                        Positioned(
                           bottom: 40,
                           right: 23,
                           child: Text(
                             'Light up every moment.',
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white),
+                            style: TextStyle(fontSize: 20, color: Colors.white),
                           ),
                         )
                       ],
@@ -155,10 +155,13 @@ class LoginPageState extends State<LoginPage>
                               Center(
                                 child: InkWell(
                                   onTap: () {
-                                    getIt<ModalService>().showAlert(
-                                        context: context,
-                                        title: 'Forgot Password',
-                                        message: 'Todo');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            PasswordResetPage(),
+                                      ),
+                                    );
                                   },
                                   child: Text(
                                     'Forgot your password?',

@@ -143,7 +143,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
                 'Shipping To',
               ),
               Text(
-                '${_currentUser.customer.address.line1}\n${_currentUser.customer.address.city}, ${_currentUser.customer.address.state} ${_currentUser.customer.address.postalCode}',
+                '${_currentUser.customer.shipping.address.line1}\n${_currentUser.customer.shipping.address.city}, ${_currentUser.customer.shipping.address.state} ${_currentUser.customer.shipping.address.postalCode}',
                 textAlign: TextAlign.end,
                 style: TextStyle(fontWeight: FontWeight.bold),
               )
@@ -353,13 +353,13 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
 
         //Create order.
         final String orderID = await getIt<StripeOrder>().create(
-            line1: _currentUser.customer.address.line1,
-            name: _currentUser.customer.name,
+            line1: _currentUser.customer.shipping.address.line1,
+            name: _currentUser.customer.shipping.name,
             email: _currentUser.customer.email,
-            city: _currentUser.customer.address.city,
-            state: _currentUser.customer.address.state,
-            postalCode: _currentUser.customer.address.postalCode,
-            country: _currentUser.customer.address.country,
+            city: _currentUser.customer.shipping.address.city,
+            state: _currentUser.customer.shipping.address.state,
+            postalCode: _currentUser.customer.shipping.address.postalCode,
+            country: _currentUser.customer.shipping.address.country,
             customerID: _currentUser.customerID,
             sku: _sku,
             cartItems: cartItems);

@@ -11,6 +11,7 @@ import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/order.dart';
 import 'package:litpic/views/list_tile_view.dart';
 import 'package:litpic/views/order_view.dart';
+import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class MyOpenOrdersPage extends StatefulWidget {
@@ -89,25 +90,12 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
             : SizedBox.shrink(),
       );
 
-      for (int i = 0; i < orders.length; i++) {
-        Order order = orders[i];
+      if (orders.isEmpty) {
         listViews.add(
-          ListTileView(
-            icon: Icon(
-              MdiIcons.creditCardClock,
-              color: Colors.purple,
-            ),
-            subTitle: 'ID: ${order.id}',
-            title:
-                '${order.quantity} ${order.description}(s) - ${getIt<FormatterService>().money(amount: order.amount)}',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => OrderDetailsPage(order: order),
-                ),
-              );
-            },
+          TitleView(
+            showExtra: false,
+            titleTxt: 'No open orders.',
+            subTxt: '',
             animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                 parent: animationController,
                 curve: Interval((1 / count) * 0, 1.0,
@@ -115,6 +103,34 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
             animationController: animationController,
           ),
         );
+      } else {
+        for (int i = 0; i < orders.length; i++) {
+          Order order = orders[i];
+          listViews.add(
+            ListTileView(
+              icon: Icon(
+                MdiIcons.creditCardClock,
+                color: Colors.purple,
+              ),
+              subTitle: 'ID: ${order.id}',
+              title:
+                  '${order.quantity} ${order.description}(s) - ${getIt<FormatterService>().money(amount: order.amount)}',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OrderDetailsPage(order: order),
+                  ),
+                );
+              },
+              animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                  parent: animationController,
+                  curve: Interval((1 / count) * 0, 1.0,
+                      curve: Curves.fastOutSlowIn))),
+              animationController: animationController,
+            ),
+          );
+        }
       }
     }
   }

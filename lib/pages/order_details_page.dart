@@ -129,7 +129,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'Shipping Address',
-          subTxt: order.address.line1,
+          subTxt: order.shipping.address.line1,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -143,7 +143,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'Shipping City',
-          subTxt: order.address.city,
+          subTxt: order.shipping.address.city,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -157,7 +157,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'Shipping State',
-          subTxt: order.address.state,
+          subTxt: order.shipping.address.state,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -171,7 +171,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'Shipping ZIP',
-          subTxt: order.address.postalCode,
+          subTxt: order.shipping.address.postalCode,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:

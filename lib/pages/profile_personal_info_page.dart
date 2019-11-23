@@ -154,22 +154,22 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
               DataBoxChild(
                   iconData: Icons.location_on,
                   text: 'Address',
-                  subtext: _currentUser.customer.address.line1,
+                  subtext: _currentUser.customer.shipping.address.line1,
                   color: Colors.amber),
               DataBoxChild(
                   iconData: Icons.location_city,
                   text: 'City',
-                  subtext: _currentUser.customer.address.city,
+                  subtext: _currentUser.customer.shipping.address.city,
                   color: Colors.amber),
               DataBoxChild(
                   iconData: Icons.my_location,
                   text: 'State',
-                  subtext: _currentUser.customer.address.state,
+                  subtext: _currentUser.customer.shipping.address.state,
                   color: Colors.amber),
               DataBoxChild(
                   iconData: Icons.contact_mail,
                   text: 'ZIP',
-                  subtext: _currentUser.customer.address.postalCode,
+                  subtext: _currentUser.customer.shipping.address.postalCode,
                   color: Colors.amber)
             ],
             animation: Tween(begin: 0.0, end: 1.0).animate(

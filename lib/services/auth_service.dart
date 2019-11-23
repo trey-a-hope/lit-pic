@@ -14,9 +14,10 @@ abstract class AuthService {
   Future<AuthResult> createUserWithEmailAndPassword(
       {@required String email, @required String password});
   Future<void> updatePassword({@required String password});
-    Future<void> updateEmail({@required String email});
+  Future<void> updateEmail({@required String email});
 
   Future<void> deleteUser({@required String userID});
+  Future<void> sendPasswordResetEmail({@required String email});
 }
 
 class AuthServiceImplementation extends AuthService {
@@ -64,6 +65,16 @@ class AuthServiceImplementation extends AuthService {
     try {
       return (await _auth.createUserWithEmailAndPassword(
           email: email, password: password));
+    } catch (e) {
+      throw PlatformException(message: e.message, code: e.code);
+    }
+  }
+
+  @override
+  Future<void> sendPasswordResetEmail({@required String email}) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return;
     } catch (e) {
       throw PlatformException(message: e.message, code: e.code);
     }

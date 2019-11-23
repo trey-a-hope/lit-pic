@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:litpic/models/stripe/address.dart';
 import 'package:litpic/models/stripe/credit_card.dart';
 import 'dart:convert' show json;
 
 import 'package:litpic/models/stripe/customer.dart';
+import 'package:litpic/models/stripe/shipping.dart';
 
 abstract class StripeCustomer {
   Future<String> create(
@@ -110,7 +112,10 @@ class StripeCustomerImplementation extends StripeCustomer {
           defaultSource: customerMap['default_source'],
           card: card,
           name: customerMap['name'],
-          address: Address.fromMap(map: addressMap),
+          shipping: Shipping(
+            name: customerMap['name'],
+            address: Address.fromMap(map: addressMap),
+          ),
           sources: sources);
     } catch (e) {
       throw Exception();
@@ -208,7 +213,8 @@ class StripeCustomerImplementation extends StripeCustomer {
   }
 
   @override
-  Future<void> updateDefaultSource({String customerID, String defaultSource}) async {
+  Future<void> updateDefaultSource(
+      {String customerID, String defaultSource}) async {
     Map data = {
       'apiKey': apiKey,
       'customerID': customerID,
