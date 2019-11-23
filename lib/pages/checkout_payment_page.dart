@@ -3,24 +3,25 @@ import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/pages/choose_payment_page.dart';
-import 'package:litpic/pages/edit_shipping_info_page.dart';
+import 'package:litpic/models/stripe/credit_card.dart';
+import 'package:litpic/pages/checkout_final_page.dart';
+import 'package:litpic/pages/saved_cards_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
-import 'package:litpic/views/data_box_view.dart';
+import 'package:litpic/views/credit_card_view.dart';
 import 'package:litpic/views/pay_flow_diagram_view.dart';
 import 'package:litpic/views/round_button_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class ChooseShippingPage extends StatefulWidget {
-  const ChooseShippingPage({Key key}) : super(key: key);
+class CheckoutPaymentPage extends StatefulWidget {
+  const CheckoutPaymentPage({Key key}) : super(key: key);
   @override
-  _ChooseShippingPageState createState() => _ChooseShippingPageState();
+  _CheckoutPaymentPageState createState() => _CheckoutPaymentPageState();
 }
 
-class _ChooseShippingPageState extends State<ChooseShippingPage>
+class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
@@ -85,7 +86,7 @@ class _ChooseShippingPageState extends State<ChooseShippingPage>
           padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
           child: PayFlowDiagramView(
             paymentComplete: false,
-            shippingComplete: false,
+            shippingComplete: true,
             submitComplete: false,
             animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                 parent: animationController,
@@ -102,12 +103,12 @@ class _ChooseShippingPageState extends State<ChooseShippingPage>
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) {
-                return EditShippingInfoPage();
+                return SavedCardsPage();
               }),
             );
           },
           showExtra: true,
-          titleTxt: 'Shipping',
+          titleTxt: 'Default Card',
           subTxt: 'Edit',
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
@@ -117,10 +118,10 @@ class _ChooseShippingPageState extends State<ChooseShippingPage>
         ),
       );
 
-      if (_currentUser.customer.address == null) {
+      if (_currentUser.customer.sources.isEmpty) {
         listViews.add(
           TitleView(
-            titleTxt: 'No Address Saved',
+            titleTxt: 'No Saved Cards',
             animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                 parent: animationController,
                 curve: Interval((1 / count) * 0, 1.0,
@@ -131,52 +132,39 @@ class _ChooseShippingPageState extends State<ChooseShippingPage>
           ),
         );
       } else {
+        CreditCard creditCard = _currentUser.customer.card;
         listViews.add(
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: DataBoxView(
-              dataBoxChildren: [
-                DataBoxChild(
-                    iconData: Icons.location_on,
-                    text: 'Address',
-                    subtext: _currentUser.customer.address.line1,
-                    color: Colors.amber),
-                DataBoxChild(
-                    iconData: Icons.location_city,
-                    text: 'City',
-                    subtext: _currentUser.customer.address.city,
-                    color: Colors.amber),
-                DataBoxChild(
-                    iconData: Icons.my_location,
-                    text: 'State',
-                    subtext: _currentUser.customer.address.state,
-                    color: Colors.amber),
-                DataBoxChild(
-                    iconData: Icons.contact_mail,
-                    text: 'ZIP',
-                    subtext: _currentUser.customer.address.postalCode,
-                    color: Colors.amber)
-              ],
-              animation: Tween(begin: 0.0, end: 1.0).animate(
-                CurvedAnimation(
-                  parent: animationController,
-                  curve: Interval((1 / count) * 3, 1.0,
-                      curve: Curves.fastOutSlowIn),
-                ),
-              ),
-              animationController: animationController,
-            ),
+          CreditCardView(
+            deleteCard: () async {
+              getIt<ModalService>().showAlert(
+                  context: context,
+                  title: 'Error',
+                  message: 'Click edit to make changes to this card.');
+            },
+            makeDefaultCard: () async {
+              getIt<ModalService>().showAlert(
+                  context: context,
+                  title: 'Error',
+                  message: 'Click edit to make changes to this card.');
+            },
+            isDefault: true,
+            creditCard: creditCard,
+            animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                parent: animationController,
+                curve: Interval((1 / count) * 0, 1.0,
+                    curve: Curves.fastOutSlowIn))),
+            animationController: animationController,
           ),
         );
       }
 
-      if (_currentUser.customer.address != null) {
+      if (_currentUser.customer.sources.isNotEmpty) {
         listViews.add(
           Padding(
             padding: EdgeInsets.all(20),
             child: RoundButtonView(
               buttonColor: Colors.amber,
-              text: 'CHOOSE PAYMENT',
+              text: 'FINALIZE ORDER',
               textColor: Colors.white,
               animation: Tween(begin: 0.0, end: 1.0).animate(
                 CurvedAnimation(
@@ -190,7 +178,7 @@ class _ChooseShippingPageState extends State<ChooseShippingPage>
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) {
-                    return ChoosePaymentPage();
+                    return CheckoutFinalPage();
                   }),
                 );
               },
@@ -321,7 +309,7 @@ class _ChooseShippingPageState extends State<ChooseShippingPage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Choose Shipping',
+                                  'Choose Payment',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,

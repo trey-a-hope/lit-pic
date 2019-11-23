@@ -49,10 +49,12 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
 
   @override
   void initState() {
-    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
         parent: widget.animationController,
-        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    // addAllListData();
+        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn),
+      ),
+    );
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -104,15 +106,6 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
                 ),
         ),
       ),
-    );
-
-    listViews.add(
-      _isLoading
-          ? LinearProgressIndicator(
-              backgroundColor: Colors.blue[200],
-              valueColor: AlwaysStoppedAnimation(Colors.blue),
-            )
-          : SizedBox.shrink(),
     );
 
     listViews.add(
@@ -529,6 +522,11 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
                                 ),
                               ),
                             ),
+                            _isLoading
+                                ? CircularProgressIndicator(
+                                    strokeWidth: 3.0,
+                                  )
+                                : SizedBox.shrink()
                           ],
                         ),
                       )

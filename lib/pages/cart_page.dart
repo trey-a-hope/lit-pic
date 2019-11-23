@@ -6,7 +6,7 @@ import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/models/stripe/sku.dart';
-import 'package:litpic/pages/choose_shipping_page.dart';
+import 'package:litpic/pages/checkout_shipping_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/formatter_service.dart';
@@ -34,6 +34,8 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   double topBarOpacity = 0.0;
 
   final GetIt getIt = GetIt.I;
+
+  //Properties
   final Color iconColor = Colors.amber[700];
   User _currentUser;
   SharedPreferences prefs;
@@ -41,19 +43,18 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   bool addAllListDataComplete = false;
   bool calculateTotalsComplete = false;
 
-  bool fetchCartItemsComplete = false;
+  //Data
   List<CartItem> cartItems = List<CartItem>();
   int totalLithophanes = 0;
-  final double shippingFee = 0.0;
-  // Coupon _coupon;
   Sku _sku;
 
+  //Prices
   double subTotal = 0.0;
-  double stripeProcessingFee = 0.0;
-  double monthlyDiscount;
   double total = 0.0;
-  double totalWithCoupon = 0.0;
+  final double shippingFee = 0.0;
+  bool fetchCartItemsComplete = false;
 
+  //Async
   bool _isLoading = false;
 
   @override
@@ -64,7 +65,6 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
         curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn),
       ),
     );
-    // addAllListData();
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -96,8 +96,6 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       addAllListDataComplete = true;
 
       var count = 1;
-
-      // listViews.clear();
 
       if (cartItems.isEmpty) {
         listViews.add(
@@ -175,30 +173,30 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
           ),
         );
 
-        listViews.add(
-          Padding(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Column(
-                  // mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text('Processing fee'),
-                    Text(
-                      '2.9% + \$0.30 per transaction',
-                      style: TextStyle(color: Colors.grey),
-                    )
-                  ],
-                ),
-                Text(
-                    '+${getIt<FormatterService>().money(amount: stripeProcessingFee)}',
-                    style: TextStyle(fontWeight: FontWeight.bold))
-              ],
-            ),
-          ),
-        );
+        // listViews.add(
+        //   Padding(
+        //     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //       children: <Widget>[
+        //         Column(
+        //           // mainAxisAlignment: MainAxisAlignment.start,
+        //           crossAxisAlignment: CrossAxisAlignment.start,
+        //           children: <Widget>[
+        //             Text('Processing fee'),
+        //             Text(
+        //               '2.9% + \$0.30 per transaction',
+        //               style: TextStyle(color: Colors.grey),
+        //             )
+        //           ],
+        //         ),
+        //         Text(
+        //             '+${getIt<FormatterService>().money(amount: stripeProcessingFee)}',
+        //             style: TextStyle(fontWeight: FontWeight.bold))
+        //       ],
+        //     ),
+        //   ),
+        // );
         listViews.add(Divider());
 
         TextStyle orderTotalStyle = TextStyle(
@@ -232,15 +230,13 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
               buttonColor: Colors.amber,
               onPressed: () {
                 prefs.setDouble('subTotal', subTotal);
-                prefs.setDouble('stripeProcessingFee', stripeProcessingFee);
                 prefs.setDouble('shippingFee', shippingFee);
                 prefs.setDouble('total', total);
-                prefs.setInt('totalLithophanes', totalLithophanes);
 
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) {
-                    return ChooseShippingPage();
+                    return CheckoutShippingPage();
                   }),
                 );
               },
@@ -271,8 +267,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
 
   double getTotal() {
     double subTotal = getSubTotal();
-    double stripeProcessingFee = getStripeProcessingFee();
-    return subTotal + stripeProcessingFee;
+    return subTotal;
   }
 
   Future<void> fetchCartItems() async {
@@ -313,7 +308,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     if (!calculateTotalsComplete) {
       calculateTotalsComplete = true;
       subTotal = getSubTotal();
-      stripeProcessingFee = getStripeProcessingFee();
+      // stripeProcessingFee = getStripeProcessingFee();
       // monthlyDiscount = getMonthlyDiscount();
       total = getTotal();
       // totalWithCoupon = getTotalWithCoupon();
@@ -470,9 +465,12 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                                         listViews.clear();
                                       });
 
-                                      //Re add views with new data.
-                                      loadComplete = false;
-                                      await load();
+                                      //Refresh cart data.
+                                      fetchCartItemsComplete = false;
+                                      await fetchCartItems();
+                                      // //Re add views with new data.
+                                      // loadComplete = false;
+                                      // await load();
 
                                       //Re add views with new data.
                                       addAllListDataComplete = false;

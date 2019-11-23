@@ -4,9 +4,12 @@ import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/models/stripe/order.dart';
+import 'package:litpic/pages/order_details_page.dart';
 import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/order.dart';
+import 'package:litpic/views/list_tile_view.dart';
 import 'package:litpic/views/order_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -87,13 +90,24 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
       );
 
       for (int i = 0; i < orders.length; i++) {
+        Order order = orders[i];
         listViews.add(
-          OrderView(
+          ListTileView(
+            icon: Icon(
+              MdiIcons.creditCardClock,
+              color: Colors.purple,
+            ),
+            subTitle: 'ID: ${order.id}',
+            title:
+                '${order.quantity} ${order.description}(s) - ${getIt<FormatterService>().money(amount: order.amount)}',
             onTap: () {
-              getIt<ModalService>().showAlert(
-                  context: context, title: 'Open Order', message: 'ToDo');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OrderDetailsPage(order: order),
+                ),
+              );
             },
-            order: orders[i],
             animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                 parent: animationController,
                 curve: Interval((1 / count) * 0, 1.0,

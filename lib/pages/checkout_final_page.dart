@@ -12,20 +12,22 @@ import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
+import 'package:litpic/services/stripe/order.dart';
 import 'package:litpic/services/stripe/sku.dart';
+import 'package:litpic/views/cart_item_bought_view.dart';
 import 'package:litpic/views/cart_item_view.dart';
 import 'package:litpic/views/pay_flow_diagram_view.dart';
 import 'package:litpic/views/round_button_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ChooseFinalPage extends StatefulWidget {
-  const ChooseFinalPage({Key key}) : super(key: key);
+class CheckoutFinalPage extends StatefulWidget {
+  const CheckoutFinalPage({Key key}) : super(key: key);
   @override
-  _ChooseFinalPageState createState() => _ChooseFinalPageState();
+  _CheckoutFinalPageState createState() => _CheckoutFinalPageState();
 }
 
-class _ChooseFinalPageState extends State<ChooseFinalPage>
+class _CheckoutFinalPageState extends State<CheckoutFinalPage>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
@@ -49,7 +51,6 @@ class _ChooseFinalPageState extends State<ChooseFinalPage>
   SharedPreferences prefs;
 
   double subTotal;
-  double stripeProcessingFee;
   double shippingFee;
   double total;
   int totalLithophanes;
@@ -117,32 +118,14 @@ class _ChooseFinalPageState extends State<ChooseFinalPage>
         listViews.add(
           Padding(
             padding: EdgeInsets.all(10),
-            child: CartItemView(
+            child: CartItemBoughtView(
               price: _sku.price,
-              delete: () {
-                getIt<ModalService>().showAlert(
-                    context: context,
-                    title: 'Error',
-                    message: 'You cannot edit cart here.');
-              },
               cartItem: cartItems[i],
               animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                   parent: animationController,
                   curve: Interval((1 / count) * 0, 1.0,
                       curve: Curves.fastOutSlowIn))),
               animationController: animationController,
-              increment: () {
-                getIt<ModalService>().showAlert(
-                    context: context,
-                    title: 'Error',
-                    message: 'You cannot edit cart here.');
-              },
-              decrement: () {
-                getIt<ModalService>().showAlert(
-                    context: context,
-                    title: 'Error',
-                    message: 'You cannot edit cart here.');
-              },
             ),
           ),
         );
@@ -220,30 +203,30 @@ class _ChooseFinalPageState extends State<ChooseFinalPage>
         ),
       );
 
-      listViews.add(
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Column(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text('Processing fee'),
-                  Text(
-                    '2.9% + \$0.30 per transaction',
-                    style: TextStyle(color: Colors.grey),
-                  )
-                ],
-              ),
-              Text(
-                  '+${getIt<FormatterService>().money(amount: stripeProcessingFee)}',
-                  style: TextStyle(fontWeight: FontWeight.bold))
-            ],
-          ),
-        ),
-      );
+      // listViews.add(
+      //   Padding(
+      //     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+      //     child: Row(
+      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //       children: <Widget>[
+      //         Column(
+      //           // mainAxisAlignment: MainAxisAlignment.start,
+      //           crossAxisAlignment: CrossAxisAlignment.start,
+      //           children: <Widget>[
+      //             Text('Processing fee'),
+      //             Text(
+      //               '2.9% + \$0.30 per transaction',
+      //               style: TextStyle(color: Colors.grey),
+      //             )
+      //           ],
+      //         ),
+      //         Text(
+      //             '+${getIt<FormatterService>().money(amount: stripeProcessingFee)}',
+      //             style: TextStyle(fontWeight: FontWeight.bold))
+      //       ],
+      //     ),
+      //   ),
+      // );
 
       listViews.add(
         Divider(),
@@ -307,7 +290,6 @@ class _ChooseFinalPageState extends State<ChooseFinalPage>
         await fetchCartItems();
 
         subTotal = prefs.getDouble('subTotal');
-        stripeProcessingFee = prefs.getDouble('stripeProcessingFee');
         shippingFee = prefs.getDouble('shippingFee');
         total = prefs.getDouble('total');
 
@@ -369,7 +351,50 @@ class _ChooseFinalPageState extends State<ChooseFinalPage>
           _isLoading = true;
         });
 
-        await Future.delayed(Duration(seconds: 3));
+        //Create order.
+        final String orderID = await getIt<StripeOrder>().create(
+            line1: _currentUser.customer.address.line1,
+            name: _currentUser.customer.name,
+            email: _currentUser.customer.email,
+            city: _currentUser.customer.address.city,
+            state: _currentUser.customer.address.state,
+            postalCode: _currentUser.customer.address.postalCode,
+            country: _currentUser.customer.address.country,
+            customerID: _currentUser.customerID,
+            sku: _sku,
+            cartItems: cartItems);
+
+        //Pay order.
+        await getIt<StripeOrder>().pay(
+            orderID: orderID,
+            source: _currentUser.customer.defaultSource,
+            customerID: _currentUser.customerID);
+
+        //Save order data to firebase.
+        for (int i = 0; i < cartItems.length; i++) {
+          await Firestore.instance
+              .collection('Orders')
+              .document(orderID)
+              .collection('Cart Items')
+              .add(cartItems[i].toMap());
+        }
+
+        //Clear shopping cart.
+        CollectionReference colRef = Firestore.instance
+            .collection('Users')
+            .document(_currentUser.id)
+            .collection('Cart Items');
+        QuerySnapshot query = await colRef.getDocuments();
+        List<DocumentSnapshot> docs = query.documents;
+
+        for (int i = 0; i < docs.length; i++) {
+          await Firestore.instance
+              .collection('Users')
+              .document(_currentUser.id)
+              .collection('Cart Items')
+              .document(docs[i].documentID)
+              .delete();
+        }
 
         Navigator.push(
           context,
