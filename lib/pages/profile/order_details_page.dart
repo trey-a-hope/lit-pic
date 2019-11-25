@@ -114,7 +114,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
 
       listViews.add(
         SimpleTitleView(
-          titleTxt: 'Order ID',
+          titleTxt: 'ID',
           subTxt: order.id,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/models/stripe/coupon.dart';
@@ -29,11 +30,10 @@ abstract class StripeOrder {
       @required String carrier,
       @required String trackingNumber});
 
-  Future<void> pay({
-    @required String orderID,
-    @required String source,
-    @required String customerID
-  });
+  Future<void> pay(
+      {@required String orderID,
+      @required String source,
+      @required String customerID});
 }
 
 class StripeOrderImplementation extends StripeOrder {
@@ -53,15 +53,21 @@ class StripeOrderImplementation extends StripeOrder {
     );
 
     try {
-      List<Order> orders = List<Order>();
       Map map = json.decode(response.body);
-      for (int i = 0; i < map['data'].length; i++) {
-        Order order = Order.fromMap(map: map['data'][i]);
-        orders.add(order);
+      if (map['statusCode'] == null) {
+        List<Order> orders = List<Order>();
+        Map map = json.decode(response.body);
+        for (int i = 0; i < map['data'].length; i++) {
+          Order order = Order.fromMap(map: map['data'][i]);
+          orders.add(order);
+        }
+        return orders;
+      } else {
+        throw PlatformException(
+            message: map['raw']['message'], code: map['raw']['code']);
       }
-      return orders;
     } catch (e) {
-      throw Exception();
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 
@@ -105,18 +111,19 @@ class StripeOrderImplementation extends StripeOrder {
 
     try {
       Map map = json.decode(response.body);
-      return map['id'];
+      if (map['statusCode'] == null) {
+        return map['id'];
+      } else {
+        throw PlatformException(
+            message: map['raw']['message'], code: map['raw']['code']);
+      }
     } catch (e) {
-      throw Exception();
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 
   @override
-  Future<void> pay({
-    String orderID,
-    String source,
-    String customerID
-  }) async {
+  Future<void> pay({String orderID, String source, String customerID}) async {
     Map data = {
       'apiKey': apiKey,
       'orderID': orderID,
@@ -132,9 +139,14 @@ class StripeOrderImplementation extends StripeOrder {
 
     try {
       Map map = json.decode(response.body);
-      return map['id'];
+      if (map['statusCode'] == null) {
+        return;
+      } else {
+        throw PlatformException(
+            message: map['raw']['message'], code: map['raw']['code']);
+      }
     } catch (e) {
-      throw Exception();
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 
@@ -160,9 +172,14 @@ class StripeOrderImplementation extends StripeOrder {
 
     try {
       Map map = json.decode(response.body);
-      return map['id'];
+      if (map['statusCode'] == null) {
+        return;
+      } else {
+        throw PlatformException(
+            message: map['raw']['message'], code: map['raw']['code']);
+      }
     } catch (e) {
-      throw Exception();
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 }

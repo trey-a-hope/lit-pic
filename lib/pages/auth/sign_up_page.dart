@@ -60,9 +60,8 @@ class SignUpPageState extends State<SignUpPage>
 
           //Create customer in Stripe.
           final FirebaseUser firebaseUser = authResult.user;
-          String customerID = await getIt<StripeCustomer>().create(
-              email: firebaseUser.email,
-              name: _nameController.text);
+          String customerID = await getIt<StripeCustomer>()
+              .create(email: _emailController.text, name: _nameController.text);
 
           User user = User(
               id: null,

@@ -213,6 +213,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> load() async {
     try {
+      //Wait for user to be created in Auth to prevent error message.
+      await Future.delayed(Duration(seconds: 3));
+
       //Load user.
       _currentUser = await getIt<AuthService>().getCurrentUser();
 

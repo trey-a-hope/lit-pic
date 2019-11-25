@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:litpic/models/stripe/coupon.dart';
 import 'dart:convert' show json;
@@ -27,9 +28,14 @@ class StripeSkuImplementation extends StripeSku {
 
     try {
       Map map = json.decode(response.body);
-      return Sku.fromMap(map: map);
+      if (map['statusCode'] == null) {
+        return Sku.fromMap(map: map);
+      } else {
+        throw PlatformException(
+            message: map['raw']['message'], code: map['raw']['code']);
+      }
     } catch (e) {
-      throw Exception();
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 }

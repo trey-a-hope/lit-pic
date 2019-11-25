@@ -62,3 +62,6 @@ Thank you for giving detailed report!!
 # Flutter widget wrap
 Alt + C to wrap in Container
 Alt + S to wrap in Stack
+
+## App Icon
+<div>Icons made by <a href="https://www.flaticon.com/authors/adib-sulthon" title="Adib Sulthon">Adib Sulthon</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>

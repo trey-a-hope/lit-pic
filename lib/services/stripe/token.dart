@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show Encoding, json;
 
@@ -39,9 +39,14 @@ class StripeTokenImplementation extends StripeToken {
 
     try {
       Map map = json.decode(response.body);
-      return map['id'];
+      if (map['statusCode'] == null) {
+        return map['id'];
+      } else {
+        throw PlatformException(
+            message: map['raw']['message'], code: map['raw']['code']);
+      }
     } catch (e) {
-      throw Exception();
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 }

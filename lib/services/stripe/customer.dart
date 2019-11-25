@@ -19,7 +19,7 @@ abstract class StripeCustomer {
       String defaultSource,
       String name,
       String email});
-  Future<void> delete({@required String customerID});
+  Future<bool> delete({@required String customerID});
 }
 
 class StripeCustomerImplementation extends StripeCustomer {
@@ -80,49 +80,55 @@ class StripeCustomerImplementation extends StripeCustomer {
     );
 
     try {
-      Map customerMap = json.decode(response.body);
-      Map shippingMap = customerMap['shipping'];
-      Map sourcesMap = customerMap['sources'];
+      Map map = json.decode(response.body);
 
-      //Add default card if one is active.
-      CreditCard card;
-      if (customerMap['default_source'] != null) {
-        Map cardMap = customerMap['sources']['data'][0];
-        card = CreditCard(
-          id: cardMap['id'],
-          brand: cardMap['brand'],
-          country: cardMap['country'],
-          expMonth: cardMap['exp_month'],
-          expYear: cardMap['exp_year'],
-          last4: cardMap['last4'],
-        );
-      }
+      if (map['statusCode'] == null) {
+        Map shippingMap = map['shipping'];
+        Map sourcesMap = map['sources'];
 
-      //Add sources if available.
-      List<CreditCard> sources = List<CreditCard>();
-      if (sourcesMap != null) {
-        for (int i = 0; i < sourcesMap['data'].length; i++) {
-          Map sourceMap = sourcesMap['data'][i];
-          CreditCard creditCard = CreditCard(
-            id: sourceMap['id'],
-            country: sourceMap['country'],
-            expMonth: sourceMap['exp_month'],
-            expYear: sourceMap['exp_year'],
-            brand: sourceMap['brand'],
-            last4: sourceMap['last4'],
+        //Add default card if one is active.
+        CreditCard card;
+        if (map['default_source'] != null) {
+          Map cardMap = map['sources']['data'][0];
+          card = CreditCard(
+            id: cardMap['id'],
+            brand: cardMap['brand'],
+            country: cardMap['country'],
+            expMonth: cardMap['exp_month'],
+            expYear: cardMap['exp_year'],
+            last4: cardMap['last4'],
           );
-          sources.add(creditCard);
         }
-      }
 
-      return Customer(
-          id: customerMap['id'],
-          email: customerMap['email'],
-          defaultSource: customerMap['default_source'],
-          card: card,
-          name: customerMap['name'],
-          shipping: Shipping.fromMap(map: shippingMap),
-          sources: sources);
+        //Add sources if available.
+        List<CreditCard> sources = List<CreditCard>();
+        if (sourcesMap != null) {
+          for (int i = 0; i < sourcesMap['data'].length; i++) {
+            Map sourceMap = sourcesMap['data'][i];
+            CreditCard creditCard = CreditCard(
+              id: sourceMap['id'],
+              country: sourceMap['country'],
+              expMonth: sourceMap['exp_month'],
+              expYear: sourceMap['exp_year'],
+              brand: sourceMap['brand'],
+              last4: sourceMap['last4'],
+            );
+            sources.add(creditCard);
+          }
+        }
+
+        return Customer(
+            id: map['id'],
+            email: map['email'],
+            defaultSource: map['default_source'],
+            card: card,
+            name: map['name'],
+            shipping: Shipping.fromMap(map: shippingMap),
+            sources: sources);
+      } else {
+        throw PlatformException(
+            message: map['raw']['message'], code: map['raw']['code']);
+      }
     } catch (e) {
       throw Exception();
     }
@@ -196,7 +202,7 @@ class StripeCustomerImplementation extends StripeCustomer {
   }
 
   @override
-  Future<void> delete({String customerID}) async {
+  Future<bool> delete({String customerID}) async {
     Map data = {'apiKey': apiKey, 'customerID': customerID};
 
     http.Response response = await http.post(
@@ -205,11 +211,12 @@ class StripeCustomerImplementation extends StripeCustomer {
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
 
-    try {
-      Map map = json.decode(response.body);
-      return;
-    } catch (e) {
-      throw Exception(e.toString());
+    Map map = json.decode(response.body);
+    if (map['statusCode'] == null) {
+      return map['deleted'];
+    } else {
+      throw PlatformException(
+          message: map['raw']['message'], code: map['raw']['code']);
     }
   }
 }
