@@ -3,24 +3,24 @@ import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/pages/checkout_payment_page.dart';
-import 'package:litpic/pages/edit_shipping_info_page.dart';
+import 'package:litpic/models/stripe/credit_card.dart';
+import 'package:litpic/models/stripe/order.dart';
+import 'package:litpic/pages/profile/add_card_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/services/stripe/card.dart';
 import 'package:litpic/services/stripe/customer.dart';
-import 'package:litpic/views/data_box_view.dart';
-import 'package:litpic/views/pay_flow_diagram_view.dart';
-import 'package:litpic/views/round_button_view.dart';
+import 'package:litpic/views/credit_card_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class CheckoutShippingPage extends StatefulWidget {
-  const CheckoutShippingPage({Key key}) : super(key: key);
+class SavedCardsPage extends StatefulWidget {
+  const SavedCardsPage({Key key}) : super(key: key);
   @override
-  _CheckoutShippingPageState createState() => _CheckoutShippingPageState();
+  _SavedCardsPageState createState() => _SavedCardsPageState();
 }
 
-class _CheckoutShippingPageState extends State<CheckoutShippingPage>
+class _SavedCardsPageState extends State<SavedCardsPage>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
@@ -31,8 +31,10 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage>
   double topBarOpacity = 0.0;
 
   final GetIt getIt = GetIt.I;
+  final Color iconColor = Colors.amber[700];
 
   User _currentUser;
+  List<Order> orders = List<Order>();
 
   bool loadCustomerInfoComplete = false;
   bool addAllListDataComplete = false;
@@ -80,47 +82,19 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage>
       addAllListDataComplete = true;
       var count = 5;
 
-      listViews.add(
-        Padding(
-          padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
-          child: PayFlowDiagramView(
-            paymentComplete: false,
-            shippingComplete: false,
-            submitComplete: false,
-            animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-                parent: animationController,
-                curve: Interval((1 / count) * 0, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-            animationController: animationController,
-          ),
-        ),
-      );
+      // listViews.add(
+      //   _isLoading
+      //       ? LinearProgressIndicator(
+      //           backgroundColor: Colors.blue[200],
+      //           valueColor: AlwaysStoppedAnimation(Colors.blue),
+      //         )
+      //       : SizedBox.shrink(),
+      // );
 
-      listViews.add(
-        TitleView(
-          showExtraOnTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) {
-                return EditShippingInfoPage();
-              }),
-            );
-          },
-          showExtra: true,
-          titleTxt: 'Shipping',
-          subTxt: 'Edit',
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: animationController,
-              curve:
-                  Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-          animationController: animationController,
-        ),
-      );
-
-      if (_currentUser.customer.shipping == null) {
+      if (_currentUser.customer.sources.isEmpty) {
         listViews.add(
           TitleView(
-            titleTxt: 'No Address Saved',
+            titleTxt: 'No Saved Cards',
             animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                 parent: animationController,
                 curve: Interval((1 / count) * 0, 1.0,
@@ -131,72 +105,38 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage>
           ),
         );
       } else {
-        listViews.add(
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: DataBoxView(
-              dataBoxChildren: [
-                DataBoxChild(
-                    iconData: Icons.location_on,
-                    text: 'Address',
-                    subtext: _currentUser.customer.shipping.address.line1,
-                    color: Colors.amber),
-                DataBoxChild(
-                    iconData: Icons.location_city,
-                    text: 'City',
-                    subtext: _currentUser.customer.shipping.address.city,
-                    color: Colors.amber),
-                DataBoxChild(
-                    iconData: Icons.my_location,
-                    text: 'State',
-                    subtext: _currentUser.customer.shipping.address.state,
-                    color: Colors.amber),
-                DataBoxChild(
-                    iconData: Icons.contact_mail,
-                    text: 'ZIP',
-                    subtext: _currentUser.customer.shipping.address.postalCode,
-                    color: Colors.amber)
-              ],
-              animation: Tween(begin: 0.0, end: 1.0).animate(
-                CurvedAnimation(
-                  parent: animationController,
-                  curve: Interval((1 / count) * 3, 1.0,
-                      curve: Curves.fastOutSlowIn),
-                ),
-              ),
-              animationController: animationController,
-            ),
-          ),
-        );
-      }
-
-      if (_currentUser.customer.shipping != null) {
-        listViews.add(
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: RoundButtonView(
-              buttonColor: Colors.amber,
-              text: 'CHOOSE PAYMENT',
-              textColor: Colors.white,
-              animation: Tween(begin: 0.0, end: 1.0).animate(
-                CurvedAnimation(
-                  parent: animationController,
-                  curve: Interval((1 / count) * 3, 1.0,
-                      curve: Curves.fastOutSlowIn),
-                ),
-              ),
-              animationController: animationController,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) {
-                    return CheckoutPaymentPage();
-                  }),
-                );
+        for (int i = 0; i < _currentUser.customer.sources.length; i++) {
+          CreditCard creditCard = _currentUser.customer.sources[i];
+          listViews.add(
+            CreditCardView(
+              deleteCard: () async {
+                bool confirm = await getIt<ModalService>().showConfirmation(
+                    context: context,
+                    title: 'Delete Card - ${creditCard.last4}',
+                    message: 'Are you sure?');
+                if (confirm) {
+                  deleteCard(creditCard: creditCard);
+                }
               },
+              makeDefaultCard: () async {
+                bool confirm = await getIt<ModalService>().showConfirmation(
+                    context: context,
+                    title: 'Make Default Card - ${creditCard.last4}',
+                    message: 'Are you sure?');
+                if (confirm) {
+                  makeDefaultCard(creditCard: creditCard);
+                }
+              },
+              isDefault: _currentUser.customer.defaultSource == creditCard.id,
+              creditCard: creditCard,
+              animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                  parent: animationController,
+                  curve: Interval((1 / count) * 0, 1.0,
+                      curve: Curves.fastOutSlowIn))),
+              animationController: animationController,
             ),
-          ),
-        );
+          );
+        }
       }
     }
   }
@@ -204,12 +144,13 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage>
   Future<void> loadCustomerInfo() async {
     if (!loadCustomerInfoComplete) {
       loadCustomerInfoComplete = true;
-
       try {
         //Load user and orders.
         _currentUser = await getIt<AuthService>().getCurrentUser();
         _currentUser.customer = await getIt<StripeCustomer>()
             .retrieve(customerID: _currentUser.customerID);
+
+        print(_currentUser.customer.defaultSource);
 
         return;
       } catch (e) {
@@ -220,6 +161,79 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage>
         );
         return;
       }
+    }
+  }
+
+  void deleteCard({@required CreditCard creditCard}) async {
+    try {
+      setState(() {
+        _isLoading = true;
+        listViews.clear();
+      });
+
+      getIt<StripeCard>()
+          .delete(customerID: _currentUser.customerID, cardID: creditCard.id);
+
+      //Re add views with new data.
+      loadCustomerInfoComplete = false;
+      await loadCustomerInfo();
+
+      await Future.delayed(
+          Duration(seconds: 1)); //Wait for stripe to update data.
+
+      //Re add views with new data.
+      addAllListDataComplete = false;
+      addAllListData();
+
+      //
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      getIt<ModalService>().showAlert(
+        context: context,
+        title: 'Error',
+        message: e.toString(),
+      );
+    }
+  }
+
+  void makeDefaultCard({@required CreditCard creditCard}) async {
+    try {
+      setState(() {
+        _isLoading = true;
+        listViews.clear();
+      });
+
+      getIt<StripeCustomer>().update(
+          customerID: _currentUser.customerID,
+          defaultSource: creditCard.id,
+          name: _currentUser.customer.name);
+
+      //Re add views with new data.
+      loadCustomerInfoComplete = false;
+      await loadCustomerInfo();
+
+      await Future.delayed(
+          Duration(seconds: 1)); //Wait for stripe to update data.
+
+      //Re add views with new data.
+      addAllListDataComplete = false;
+      addAllListData();
+
+      //
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      getIt<ModalService>().showAlert(
+        context: context,
+        title: 'Error',
+        message: e.message,
+      );
     }
   }
 
@@ -321,7 +335,7 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Choose Shipping',
+                                  'Saved Cards',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,
@@ -352,12 +366,25 @@ class _CheckoutShippingPageState extends State<CheckoutShippingPage>
                                       addAllListDataComplete = false;
                                       addAllListData();
 
-                                      setState(() {
-                                        _isLoading = false;
-                                      });
+                                      setState(
+                                        () {
+                                          _isLoading = false;
+                                        },
+                                      );
                                     },
                                     icon: Icon(Icons.refresh),
                                   ),
+                            IconButton(
+                              icon: Icon(Icons.add),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) {
+                                    return AddCardPage();
+                                  }),
+                                );
+                              },
+                            ),
                           ],
                         ),
                       )

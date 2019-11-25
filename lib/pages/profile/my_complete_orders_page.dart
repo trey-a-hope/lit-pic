@@ -3,24 +3,23 @@ import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/credit_card.dart';
 import 'package:litpic/models/stripe/order.dart';
-import 'package:litpic/pages/add_card_page.dart';
+import 'package:litpic/pages/profile/order_details_page.dart';
 import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/card.dart';
-import 'package:litpic/services/stripe/customer.dart';
-import 'package:litpic/views/credit_card_view.dart';
+import 'package:litpic/services/stripe/order.dart';
+import 'package:litpic/views/list_tile_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class SavedCardsPage extends StatefulWidget {
-  const SavedCardsPage({Key key}) : super(key: key);
+class MyCompleteOrdersPage extends StatefulWidget {
+  const MyCompleteOrdersPage({Key key}) : super(key: key);
   @override
-  _SavedCardsPageState createState() => _SavedCardsPageState();
+  _MyCompleteOrdersPageState createState() => _MyCompleteOrdersPageState();
 }
 
-class _SavedCardsPageState extends State<SavedCardsPage>
+class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
@@ -36,7 +35,6 @@ class _SavedCardsPageState extends State<SavedCardsPage>
   User _currentUser;
   List<Order> orders = List<Order>();
 
-  bool loadCustomerInfoComplete = false;
   bool addAllListDataComplete = false;
 
   bool _isLoading = false;
@@ -82,53 +80,39 @@ class _SavedCardsPageState extends State<SavedCardsPage>
       addAllListDataComplete = true;
       var count = 5;
 
-      // listViews.add(
-      //   _isLoading
-      //       ? LinearProgressIndicator(
-      //           backgroundColor: Colors.blue[200],
-      //           valueColor: AlwaysStoppedAnimation(Colors.blue),
-      //         )
-      //       : SizedBox.shrink(),
-      // );
-
-      if (_currentUser.customer.sources.isEmpty) {
+      if (orders.isEmpty) {
         listViews.add(
           TitleView(
-            titleTxt: 'No Saved Cards',
+            showExtra: false,
+            titleTxt: 'No complete orders.',
+            subTxt: '',
             animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                 parent: animationController,
                 curve: Interval((1 / count) * 0, 1.0,
                     curve: Curves.fastOutSlowIn))),
             animationController: animationController,
-            showExtra: false,
-            subTxt: '',
           ),
         );
       } else {
-        for (int i = 0; i < _currentUser.customer.sources.length; i++) {
-          CreditCard creditCard = _currentUser.customer.sources[i];
+        for (int i = 0; i < orders.length; i++) {
+          Order order = orders[i];
           listViews.add(
-            CreditCardView(
-              deleteCard: () async {
-                bool confirm = await getIt<ModalService>().showConfirmation(
-                    context: context,
-                    title: 'Delete Card - ${creditCard.last4}',
-                    message: 'Are you sure?');
-                if (confirm) {
-                  deleteCard(creditCard: creditCard);
-                }
+            ListTileView(
+              icon: Icon(
+                MdiIcons.creditCardMarker,
+                color: Colors.green,
+              ),
+              subTitle: 'ID: ${order.id}',
+              title:
+                  '${order.quantity} ${order.description}(s) - ${getIt<FormatterService>().money(amount: order.amount)}',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OrderDetailsPage(order: order),
+                  ),
+                );
               },
-              makeDefaultCard: () async {
-                bool confirm = await getIt<ModalService>().showConfirmation(
-                    context: context,
-                    title: 'Make Default Card - ${creditCard.last4}',
-                    message: 'Are you sure?');
-                if (confirm) {
-                  makeDefaultCard(creditCard: creditCard);
-                }
-              },
-              isDefault: _currentUser.customer.defaultSource == creditCard.id,
-              creditCard: creditCard,
               animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                   parent: animationController,
                   curve: Interval((1 / count) * 0, 1.0,
@@ -142,98 +126,20 @@ class _SavedCardsPageState extends State<SavedCardsPage>
   }
 
   Future<void> loadCustomerInfo() async {
-    if (!loadCustomerInfoComplete) {
-      loadCustomerInfoComplete = true;
-      try {
-        //Load user and orders.
-        _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomer>()
-            .retrieve(customerID: _currentUser.customerID);
-
-        print(_currentUser.customer.defaultSource);
-
-        return;
-      } catch (e) {
-        getIt<ModalService>().showAlert(
-          context: context,
-          title: 'Error',
-          message: e.toString(),
-        );
-        return;
-      }
-    }
-  }
-
-  void deleteCard({@required CreditCard creditCard}) async {
     try {
-      setState(() {
-        _isLoading = true;
-        listViews.clear();
-      });
+      //Load user and orders.
+      _currentUser = await getIt<AuthService>().getCurrentUser();
+      orders = await getIt<StripeOrder>()
+          .list(customerID: _currentUser.customerID, status: 'fulfilled');
 
-      getIt<StripeCard>()
-          .delete(customerID: _currentUser.customerID, cardID: creditCard.id);
-
-      //Re add views with new data.
-      loadCustomerInfoComplete = false;
-      await loadCustomerInfo();
-
-      await Future.delayed(
-          Duration(seconds: 1)); //Wait for stripe to update data.
-
-      //Re add views with new data.
-      addAllListDataComplete = false;
-      addAllListData();
-
-      //
-      setState(() {
-        _isLoading = false;
-      });
+      return;
     } catch (e) {
       getIt<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),
       );
-    }
-  }
-
-  void makeDefaultCard({@required CreditCard creditCard}) async {
-    try {
-      setState(() {
-        _isLoading = true;
-        listViews.clear();
-      });
-
-      getIt<StripeCustomer>().update(
-          customerID: _currentUser.customerID,
-          defaultSource: creditCard.id,
-          name: _currentUser.customer.name);
-
-      //Re add views with new data.
-      loadCustomerInfoComplete = false;
-      await loadCustomerInfo();
-
-      await Future.delayed(
-          Duration(seconds: 1)); //Wait for stripe to update data.
-
-      //Re add views with new data.
-      addAllListDataComplete = false;
-      addAllListData();
-
-      //
-      setState(() {
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      getIt<ModalService>().showAlert(
-        context: context,
-        title: 'Error',
-        message: e.message,
-      );
+      return;
     }
   }
 
@@ -335,7 +241,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Saved Cards',
+                                  'Complete Orders',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,
@@ -346,44 +252,6 @@ class _SavedCardsPageState extends State<SavedCardsPage>
                                   ),
                                 ),
                               ),
-                            ),
-                            _isLoading
-                                ? CircularProgressIndicator(
-                                    strokeWidth: 3.0,
-                                  )
-                                : IconButton(
-                                    onPressed: () async {
-                                      setState(() {
-                                        _isLoading = true;
-                                        listViews.clear();
-                                      });
-
-                                      //Re add views with new data.
-                                      loadCustomerInfoComplete = false;
-                                      await loadCustomerInfo();
-
-                                      //Re add views with new data.
-                                      addAllListDataComplete = false;
-                                      addAllListData();
-
-                                      setState(
-                                        () {
-                                          _isLoading = false;
-                                        },
-                                      );
-                                    },
-                                    icon: Icon(Icons.refresh),
-                                  ),
-                            IconButton(
-                              icon: Icon(Icons.add),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) {
-                                    return AddCardPage();
-                                  }),
-                                );
-                              },
                             ),
                           ],
                         ),

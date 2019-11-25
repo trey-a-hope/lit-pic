@@ -4,23 +4,22 @@ import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/models/stripe/order.dart';
-import 'package:litpic/pages/order_details_page.dart';
+import 'package:litpic/pages/profile/order_details_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/order.dart';
 import 'package:litpic/views/list_tile_view.dart';
-import 'package:litpic/views/order_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class MyCompleteOrdersPage extends StatefulWidget {
-  const MyCompleteOrdersPage({Key key}) : super(key: key);
+class MyOpenOrdersPage extends StatefulWidget {
+  const MyOpenOrdersPage({Key key}) : super(key: key);
   @override
-  _MyCompleteOrdersPageState createState() => _MyCompleteOrdersPageState();
+  _MyOpenOrdersPageState createState() => _MyOpenOrdersPageState();
 }
 
-class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
+class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
@@ -81,11 +80,20 @@ class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
       addAllListDataComplete = true;
       var count = 5;
 
+      listViews.add(
+        _isLoading
+            ? LinearProgressIndicator(
+                backgroundColor: Colors.blue[200],
+                valueColor: AlwaysStoppedAnimation(Colors.blue),
+              )
+            : SizedBox.shrink(),
+      );
+
       if (orders.isEmpty) {
         listViews.add(
           TitleView(
             showExtra: false,
-            titleTxt: 'No complete orders.',
+            titleTxt: 'No open orders.',
             subTxt: '',
             animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                 parent: animationController,
@@ -100,8 +108,8 @@ class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
           listViews.add(
             ListTileView(
               icon: Icon(
-                MdiIcons.creditCardMarker,
-                color: Colors.green,
+                MdiIcons.creditCardClock,
+                color: Colors.purple,
               ),
               subTitle: 'ID: ${order.id}',
               title:
@@ -131,7 +139,7 @@ class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
       //Load user and orders.
       _currentUser = await getIt<AuthService>().getCurrentUser();
       orders = await getIt<StripeOrder>()
-          .list(customerID: _currentUser.customerID, status: 'fulfilled');
+          .list(customerID: _currentUser.customerID, status: 'paid');
 
       return;
     } catch (e) {
@@ -242,7 +250,7 @@ class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Complete Orders',
+                                  'Open Orders',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,

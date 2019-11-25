@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/services.dart' as prefix0;
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/bottom_bar_view.dart';
@@ -13,7 +12,7 @@ import 'package:litpic/pages/auth/login_page.dart';
 import 'package:litpic/pages/cart_page.dart';
 import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/make_lithophane_page.dart';
-import 'package:litpic/pages/profile_page.dart';
+import 'package:litpic/pages/profile/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
@@ -24,7 +23,6 @@ import 'package:litpic/services/image_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/storage_service.dart';
 import 'package:litpic/services/stripe/card.dart';
-import 'package:litpic/services/stripe/charge.dart';
 import 'package:litpic/services/stripe/coupon.dart';
 import 'package:litpic/services/stripe/customer.dart';
 import 'package:litpic/services/stripe/order.dart';
@@ -73,13 +71,9 @@ void main() {
   getIt.registerSingleton<StripeCard>(
       StripeCardImplementation(apiKey: testSecretKey, endpoint: endpoint),
       signalsReady: true);
-  //Stripe Charge
-  getIt.registerSingleton<StripeCharge>(
-      StripeChargeImplementation(apiKey: testSecretKey, endpoint: endpoint),
-      signalsReady: true);
   //Stripe Customer
   getIt.registerSingleton<StripeCustomer>(
-      StripeCustomerImplementation(apiKey: testSecretKey, endpoint: endpoint),
+      StripeCustomerImplementation(apiKey: testSecretKey, endpoint: endpoint), 
       signalsReady: true);
   //Stripe Coupon
   getIt.registerSingleton<StripeCoupon>(

@@ -6,7 +6,7 @@ import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/models/stripe/sku.dart';
-import 'package:litpic/pages/checkout_shipping_page.dart';
+import 'package:litpic/pages/checkout/checkout_shipping_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/formatter_service.dart';

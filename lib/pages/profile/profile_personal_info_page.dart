@@ -3,27 +3,26 @@ import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/order.dart';
-import 'package:litpic/pages/order_details_page.dart';
+import 'package:litpic/pages/profile/edit_basic_info_page.dart';
+import 'package:litpic/pages/profile/edit_shipping_info_page.dart';
 import 'package:litpic/services/auth_service.dart';
-import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/order.dart';
-import 'package:litpic/views/list_tile_view.dart';
-import 'package:litpic/views/order_view.dart';
+import 'package:litpic/services/stripe/customer.dart';
+import 'package:litpic/views/data_box_view.dart';
+import 'package:litpic/views/simple_title_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class MyOpenOrdersPage extends StatefulWidget {
-  const MyOpenOrdersPage({Key key}) : super(key: key);
+class ProfilePersonalInfoPage extends StatefulWidget {
+  const ProfilePersonalInfoPage({Key key}) : super(key: key);
   @override
-  _MyOpenOrdersPageState createState() => _MyOpenOrdersPageState();
+  _ProfilePersonalInfoPageState createState() =>
+      _ProfilePersonalInfoPageState();
 }
 
-class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
+class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
     with TickerProviderStateMixin {
   AnimationController animationController;
-
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = List<Widget>();
@@ -34,22 +33,19 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
   final Color iconColor = Colors.amber[700];
 
   User _currentUser;
-  List<Order> orders = List<Order>();
-
-  bool addAllListDataComplete = false;
-
   bool _isLoading = false;
+
+  bool loadCustomerInfoComplete = false;
+  bool addAllListDataComplete = false;
 
   @override
   void initState() {
     animationController =
         AnimationController(duration: Duration(milliseconds: 600), vsync: this);
-    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
+    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
         parent: animationController,
-        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn),
-      ),
-    );
+        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+    // addAllListData();
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -82,74 +78,147 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
       var count = 5;
 
       listViews.add(
-        _isLoading
-            ? LinearProgressIndicator(
-                backgroundColor: Colors.blue[200],
-                valueColor: AlwaysStoppedAnimation(Colors.blue),
-              )
-            : SizedBox.shrink(),
+        TitleView(
+          showExtraOnTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) {
+                return EditBasicInfoPage();
+              }),
+            );
+          },
+          showExtra: true,
+          titleTxt: 'Basic',
+          subTxt: 'Edit',
+          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: animationController,
+        ),
       );
 
-      if (orders.isEmpty) {
+      listViews.add(
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: DataBoxView(
+            dataBoxChildren: [
+              DataBoxChild(
+                  iconData: Icons.face,
+                  text: 'Name',
+                  subtext: _currentUser.customer.name,
+                  color: Colors.red),
+              DataBoxChild(
+                  iconData: Icons.email,
+                  text: 'Email',
+                  subtext: _currentUser.customer.email,
+                  color: Colors.red),
+            ],
+            animation: Tween(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                parent: animationController,
+                curve:
+                    Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn),
+              ),
+            ),
+            animationController: animationController,
+          ),
+        ),
+      );
+
+      listViews.add(
+        TitleView(
+          showExtraOnTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) {
+                return EditShippingInfoPage();
+              }),
+            );
+          },
+          showExtra: true,
+          titleTxt: 'Shipping',
+          subTxt: 'Edit',
+          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: animationController,
+        ),
+      );
+
+      if (_currentUser.customer.shipping == null) {
         listViews.add(
-          TitleView(
-            showExtra: false,
-            titleTxt: 'No open orders.',
+          SimpleTitleView(
+            titleTxt: 'Currently no shipping info.',
             subTxt: '',
             animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                 parent: animationController,
-                curve: Interval((1 / count) * 0, 1.0,
+                curve: Interval((1 / count) * 2, 1.0,
                     curve: Curves.fastOutSlowIn))),
             animationController: animationController,
           ),
         );
       } else {
-        for (int i = 0; i < orders.length; i++) {
-          Order order = orders[i];
-          listViews.add(
-            ListTileView(
-              icon: Icon(
-                MdiIcons.creditCardClock,
-                color: Colors.purple,
-              ),
-              subTitle: 'ID: ${order.id}',
-              title:
-                  '${order.quantity} ${order.description}(s) - ${getIt<FormatterService>().money(amount: order.amount)}',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => OrderDetailsPage(order: order),
-                  ),
-                );
-              },
-              animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+        listViews.add(
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: DataBoxView(
+              dataBoxChildren: [
+                DataBoxChild(
+                    iconData: Icons.location_on,
+                    text: 'Address',
+                    subtext: _currentUser.customer.shipping.address.line1,
+                    color: Colors.amber),
+                DataBoxChild(
+                    iconData: Icons.location_city,
+                    text: 'City',
+                    subtext: _currentUser.customer.shipping.address.city,
+                    color: Colors.amber),
+                DataBoxChild(
+                    iconData: Icons.my_location,
+                    text: 'State',
+                    subtext: _currentUser.customer.shipping.address.state,
+                    color: Colors.amber),
+                DataBoxChild(
+                    iconData: Icons.contact_mail,
+                    text: 'ZIP',
+                    subtext: _currentUser.customer.shipping.address.postalCode,
+                    color: Colors.amber)
+              ],
+              animation: Tween(begin: 0.0, end: 1.0).animate(
+                CurvedAnimation(
                   parent: animationController,
-                  curve: Interval((1 / count) * 0, 1.0,
-                      curve: Curves.fastOutSlowIn))),
+                  curve: Interval((1 / count) * 3, 1.0,
+                      curve: Curves.fastOutSlowIn),
+                ),
+              ),
               animationController: animationController,
             ),
-          );
-        }
+          ),
+        );
       }
     }
   }
 
   Future<void> loadCustomerInfo() async {
-    try {
-      //Load user and orders.
-      _currentUser = await getIt<AuthService>().getCurrentUser();
-      orders = await getIt<StripeOrder>()
-          .list(customerID: _currentUser.customerID, status: 'paid');
+    if (!loadCustomerInfoComplete) {
+      loadCustomerInfoComplete = true;
+      try {
+        //Load user.
+        _currentUser = await getIt<AuthService>().getCurrentUser();
+        _currentUser.customer = await getIt<StripeCustomer>()
+            .retrieve(customerID: _currentUser.customerID);
 
-      return;
-    } catch (e) {
-      getIt<ModalService>().showAlert(
-        context: context,
-        title: 'Error',
-        message: e.toString(),
-      );
-      return;
+        return;
+      } catch (e) {
+        getIt<ModalService>().showAlert(
+          context: context,
+          title: 'Error',
+          message: e.toString(),
+        );
+        return;
+      }
     }
   }
 
@@ -251,7 +320,7 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Open Orders',
+                                  "Personal Info",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,
@@ -263,6 +332,31 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
                                 ),
                               ),
                             ),
+                            _isLoading
+                                ? CircularProgressIndicator(
+                                    strokeWidth: 3.0,
+                                  )
+                                : IconButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        _isLoading = true;
+                                        listViews.clear();
+                                      });
+
+                                      //Re add views with new data.
+                                      loadCustomerInfoComplete = false;
+                                      await loadCustomerInfo();
+
+                                      //Re add views with new data.
+                                      addAllListDataComplete = false;
+                                      addAllListData();
+
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    },
+                                    icon: Icon(Icons.refresh),
+                                  ),
                           ],
                         ),
                       )

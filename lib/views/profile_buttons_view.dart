@@ -1,10 +1,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/pages/my_complete_orders_page.dart';
-import 'package:litpic/pages/my_open_orders_page.dart';
-import 'package:litpic/pages/saved_cards_page.dart';
-import 'package:litpic/pages/profile_personal_info_page.dart';
+import 'package:litpic/pages/profile/my_complete_orders_page.dart';
+import 'package:litpic/pages/profile/my_open_orders_page.dart';
+import 'package:litpic/pages/profile/profile_personal_info_page.dart';
+import 'package:litpic/pages/profile/saved_cards_page.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class ProfileButtonsView extends StatefulWidget {
