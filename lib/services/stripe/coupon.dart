@@ -18,7 +18,7 @@ class StripeCouponImplementation extends StripeCoupon {
     Map data = {'apiKey': apiKey, 'couponID': couponID};
 
     http.Response response = await http.post(
-      endpoint + 'StripeRetrieveCoupon',
+      '${endpoint}StripeRetrieveCoupon',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
@@ -185,10 +186,14 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
         _currentUser.customer = await getIt<StripeCustomer>()
             .retrieve(customerID: _currentUser.customerID);
 
-        _addressController.text = _currentUser.customer.shipping.address.line1;
-        _cityController.text = _currentUser.customer.shipping.address.city;
-        _stateController.text = _currentUser.customer.shipping.address.state;
-        _zipController.text = _currentUser.customer.shipping.address.postalCode;
+        if (_currentUser.customer.shipping != null) {
+          _addressController.text =
+              _currentUser.customer.shipping.address.line1;
+          _cityController.text = _currentUser.customer.shipping.address.city;
+          _stateController.text = _currentUser.customer.shipping.address.state;
+          _zipController.text =
+              _currentUser.customer.shipping.address.postalCode;
+        }
 
         return;
       } catch (e) {
@@ -217,13 +222,14 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
           );
 
           //Update address info.
-          await getIt<StripeCustomer>().updateAddress(
+          await getIt<StripeCustomer>().update(
+              name: _currentUser.customer.name,
               customerID: _currentUser.customerID,
               line1: _addressController.text,
               city: _cityController.text,
               state: _stateController.text,
               postalCode: _zipController.text,
-              country: 'USA');
+              country: 'US');
 
           setState(
             () {
@@ -244,7 +250,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
           getIt<ModalService>().showAlert(
             context: context,
             title: 'Error',
-            message: e.toString(),
+            message: e.message,
           );
         }
       } else {

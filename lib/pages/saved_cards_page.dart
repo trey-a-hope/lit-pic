@@ -205,8 +205,10 @@ class _SavedCardsPageState extends State<SavedCardsPage>
         listViews.clear();
       });
 
-      getIt<StripeCustomer>().updateDefaultSource(
-          customerID: _currentUser.customerID, defaultSource: creditCard.id);
+      getIt<StripeCustomer>().update(
+          customerID: _currentUser.customerID,
+          defaultSource: creditCard.id,
+          name: _currentUser.customer.name);
 
       //Re add views with new data.
       loadCustomerInfoComplete = false;
@@ -224,10 +226,13 @@ class _SavedCardsPageState extends State<SavedCardsPage>
         _isLoading = false;
       });
     } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
       getIt<ModalService>().showAlert(
         context: context,
         title: 'Error',
-        message: e.toString(),
+        message: e.message,
       );
     }
   }

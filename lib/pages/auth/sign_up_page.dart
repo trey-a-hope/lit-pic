@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/asset_images.dart';
 import 'package:litpic/common/good_button.dart';
@@ -61,7 +62,6 @@ class SignUpPageState extends State<SignUpPage>
           final FirebaseUser firebaseUser = authResult.user;
           String customerID = await getIt<StripeCustomer>().create(
               email: firebaseUser.email,
-              description: '',
               name: _nameController.text);
 
           User user = User(
@@ -76,7 +76,7 @@ class SignUpPageState extends State<SignUpPage>
           await getIt<DBService>().createUser(user: user);
 
           Navigator.of(context).pop();
-        } catch (e) {
+        } on PlatformException catch (e) {
           setState(
             () {
               _isLoading = false;

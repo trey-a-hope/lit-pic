@@ -47,7 +47,7 @@ class StripeOrderImplementation extends StripeOrder {
     Map data = {'apiKey': apiKey, 'customerID': customerID, 'status': status};
 
     http.Response response = await http.post(
-      endpoint + 'StripeListOrders',
+      '${endpoint}StripeListOrders',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -98,7 +98,7 @@ class StripeOrderImplementation extends StripeOrder {
     };
 
     http.Response response = await http.post(
-      endpoint + 'StripeCreateOrder',
+      '${endpoint}StripeCreateOrder',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -125,7 +125,7 @@ class StripeOrderImplementation extends StripeOrder {
     };
 
     http.Response response = await http.post(
-      endpoint + 'StripePayOrder',
+      '${endpoint}StripePayOrder',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -153,7 +153,7 @@ class StripeOrderImplementation extends StripeOrder {
     };
 
     http.Response response = await http.post(
-      endpoint + 'StripeUpdateOrder',
+      '${endpoint}StripeUpdateOrder',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );

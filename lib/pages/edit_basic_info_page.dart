@@ -201,11 +201,11 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
           await getIt<AuthService>().updateEmail(email: updatedEmail);
 
           //Update email.
-          await getIt<StripeCustomer>().updateEmail(
+          await getIt<StripeCustomer>().update(
               customerID: _currentUser.customerID, email: updatedEmail);
 
           //Update name.
-          await getIt<StripeCustomer>().updateName(
+          await getIt<StripeCustomer>().update(
               customerID: _currentUser.customerID, name: updatedName);
 
           setState(
@@ -228,7 +228,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
           getIt<ModalService>().showAlert(
             context: context,
             title: 'Error',
-            message: e.toString(),
+            message: e.message,
           );
         }
       } else {

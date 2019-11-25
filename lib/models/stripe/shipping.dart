@@ -10,6 +10,6 @@ class Shipping {
   factory Shipping.fromMap({@required Map map}) {
     return map == null
         ? map
-        : Shipping(name: map['name'], address: map['address']);
+        : Shipping(name: map['name'], address: Address.fromMap(map: map['address']));
   }
 }

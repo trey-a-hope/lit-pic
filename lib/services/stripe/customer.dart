@@ -1,29 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:litpic/models/stripe/address.dart';
 import 'package:litpic/models/stripe/credit_card.dart';
 import 'dart:convert' show json;
-
 import 'package:litpic/models/stripe/customer.dart';
 import 'package:litpic/models/stripe/shipping.dart';
 
 abstract class StripeCustomer {
-  Future<String> create(
-      {@required String email,
-      @required String description,
-      @required String name});
+  Future<String> create({String email, String name});
   Future<Customer> retrieve({@required String customerID});
-  Future<void> updateDefaultSource(
-      {@required String customerID, String defaultSource});
-  Future<void> updateAddress(
+  Future<void> update(
       {@required String customerID,
       String city,
       String country,
       String line1,
       String postalCode,
-      String state});
-  Future<void> updateName({@required String customerID, String name});
-  Future<void> updateEmail({@required String customerID, String email});
+      String state,
+      String defaultSource,
+      String name,
+      String email});
   Future<void> delete({@required String customerID});
 }
 
@@ -41,22 +36,36 @@ class StripeCustomerImplementation extends StripeCustomer {
       @required String name}) async {
     Map data = {
       'apiKey': apiKey,
-      'email': email,
-      'description': description,
-      'name': name
     };
 
+    if (name != null) {
+      data['name'] = name;
+    }
+
+    if (description != null) {
+      data['description'] = description;
+    }
+
+    if (email != null) {
+      data['email'] = email;
+    }
+
     http.Response response = await http.post(
-      endpoint + 'StripeCreateCustomer',
+      '${endpoint}StripeCreateCustomer',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
 
     try {
       Map map = json.decode(response.body);
-      return map['id'];
+      if (map['statusCode'] == null) {
+        return map['id'];
+      } else {
+        throw PlatformException(
+            message: map['raw']['message'], code: map['raw']['code']);
+      }
     } catch (e) {
-      throw Exception();
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 
@@ -65,14 +74,14 @@ class StripeCustomerImplementation extends StripeCustomer {
     Map data = {'apiKey': apiKey, 'customerID': customerID};
 
     http.Response response = await http.post(
-      endpoint + 'StripeRetrieveCustomer',
+      '${endpoint}StripeRetrieveCustomer',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
 
     try {
       Map customerMap = json.decode(response.body);
-      Map addressMap = customerMap['address'];
+      Map shippingMap = customerMap['shipping'];
       Map sourcesMap = customerMap['sources'];
 
       //Add default card if one is active.
@@ -112,10 +121,7 @@ class StripeCustomerImplementation extends StripeCustomer {
           defaultSource: customerMap['default_source'],
           card: card,
           name: customerMap['name'],
-          shipping: Shipping(
-            name: customerMap['name'],
-            address: Address.fromMap(map: addressMap),
-          ),
+          shipping: Shipping.fromMap(map: shippingMap),
           sources: sources);
     } catch (e) {
       throw Exception();
@@ -123,34 +129,69 @@ class StripeCustomerImplementation extends StripeCustomer {
   }
 
   @override
-  Future<void> updateAddress(
+  Future<void> update(
       {String customerID,
       String city,
       String country,
       String line1,
       String postalCode,
-      String state}) async {
+      String state,
+      String defaultSource,
+      String name,
+      String email}) async {
     Map data = {
       'apiKey': apiKey,
       'customerID': customerID,
-      'city': city,
-      'country': country,
-      'line1': line1,
-      'postal_code': postalCode,
-      'state': state
     };
 
+    if (name != null) {
+      data['name'] = name;
+    }
+
+    if (line1 != null) {
+      data['line1'] = line1;
+    }
+
+    if (city != null) {
+      data['city'] = city;
+    }
+
+    if (country != null) {
+      data['country'] = country;
+    }
+
+    if (email != null) {
+      data['email'] = email;
+    }
+
+    if (defaultSource != null) {
+      data['default_source'] = defaultSource;
+    }
+
+    if (postalCode != null) {
+      data['postal_code'] = postalCode;
+    }
+
+    if (state != null) {
+      data['state'] = state;
+    }
+
     http.Response response = await http.post(
-      endpoint + 'StripeUpdateCustomer',
+      '${endpoint}StripeUpdateCustomer',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
 
     try {
       Map map = json.decode(response.body);
-      return;
+      if (map['statusCode'] == null) {
+        return;
+      } else {
+        throw PlatformException(
+            message: map['raw']['message'], code: map['raw']['code']);
+      }
     } catch (e) {
-      throw Exception();
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 
@@ -159,7 +200,7 @@ class StripeCustomerImplementation extends StripeCustomer {
     Map data = {'apiKey': apiKey, 'customerID': customerID};
 
     http.Response response = await http.post(
-      endpoint + 'StripeDeleteCustomer',
+      '${endpoint}StripeDeleteCustomer',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -169,69 +210,6 @@ class StripeCustomerImplementation extends StripeCustomer {
       return;
     } catch (e) {
       throw Exception(e.toString());
-    }
-  }
-
-  @override
-  Future<void> updateEmail({String customerID, String email}) async {
-    Map data = {'apiKey': apiKey, 'customerID': customerID, 'email': email};
-
-    http.Response response = await http.post(
-      endpoint + 'StripeUpdateCustomer',
-      body: data,
-      headers: {'content-type': 'application/x-www-form-urlencoded'},
-    );
-
-    try {
-      Map map = json.decode(response.body);
-      return;
-    } catch (e) {
-      throw Exception();
-    }
-  }
-
-  @override
-  Future<void> updateName({String customerID, String name}) async {
-    Map data = {
-      'apiKey': apiKey,
-      'customerID': customerID,
-      'name': name,
-    };
-
-    http.Response response = await http.post(
-      endpoint + 'StripeUpdateCustomer',
-      body: data,
-      headers: {'content-type': 'application/x-www-form-urlencoded'},
-    );
-
-    try {
-      Map map = json.decode(response.body);
-      return;
-    } catch (e) {
-      throw Exception();
-    }
-  }
-
-  @override
-  Future<void> updateDefaultSource(
-      {String customerID, String defaultSource}) async {
-    Map data = {
-      'apiKey': apiKey,
-      'customerID': customerID,
-      'default_source': defaultSource,
-    };
-
-    http.Response response = await http.post(
-      endpoint + 'StripeUpdateCustomer',
-      body: data,
-      headers: {'content-type': 'application/x-www-form-urlencoded'},
-    );
-
-    try {
-      Map map = json.decode(response.body);
-      return;
-    } catch (e) {
-      throw Exception();
     }
   }
 }

@@ -9,6 +9,7 @@ import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
 import 'package:litpic/views/data_box_view.dart';
+import 'package:litpic/views/simple_title_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -146,43 +147,57 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
         ),
       );
 
-      listViews.add(
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: DataBoxView(
-            dataBoxChildren: [
-              DataBoxChild(
-                  iconData: Icons.location_on,
-                  text: 'Address',
-                  subtext: _currentUser.customer.shipping.address.line1,
-                  color: Colors.amber),
-              DataBoxChild(
-                  iconData: Icons.location_city,
-                  text: 'City',
-                  subtext: _currentUser.customer.shipping.address.city,
-                  color: Colors.amber),
-              DataBoxChild(
-                  iconData: Icons.my_location,
-                  text: 'State',
-                  subtext: _currentUser.customer.shipping.address.state,
-                  color: Colors.amber),
-              DataBoxChild(
-                  iconData: Icons.contact_mail,
-                  text: 'ZIP',
-                  subtext: _currentUser.customer.shipping.address.postalCode,
-                  color: Colors.amber)
-            ],
-            animation: Tween(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
+      if (_currentUser.customer.shipping == null) {
+        listViews.add(
+          SimpleTitleView(
+            titleTxt: 'Currently no shipping info.',
+            subTxt: '',
+            animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                 parent: animationController,
-                curve:
-                    Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn),
-              ),
-            ),
+                curve: Interval((1 / count) * 2, 1.0,
+                    curve: Curves.fastOutSlowIn))),
             animationController: animationController,
           ),
-        ),
-      );
+        );
+      } else {
+        listViews.add(
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: DataBoxView(
+              dataBoxChildren: [
+                DataBoxChild(
+                    iconData: Icons.location_on,
+                    text: 'Address',
+                    subtext: _currentUser.customer.shipping.address.line1,
+                    color: Colors.amber),
+                DataBoxChild(
+                    iconData: Icons.location_city,
+                    text: 'City',
+                    subtext: _currentUser.customer.shipping.address.city,
+                    color: Colors.amber),
+                DataBoxChild(
+                    iconData: Icons.my_location,
+                    text: 'State',
+                    subtext: _currentUser.customer.shipping.address.state,
+                    color: Colors.amber),
+                DataBoxChild(
+                    iconData: Icons.contact_mail,
+                    text: 'ZIP',
+                    subtext: _currentUser.customer.shipping.address.postalCode,
+                    color: Colors.amber)
+              ],
+              animation: Tween(begin: 0.0, end: 1.0).animate(
+                CurvedAnimation(
+                  parent: animationController,
+                  curve: Interval((1 / count) * 3, 1.0,
+                      curve: Curves.fastOutSlowIn),
+                ),
+              ),
+              animationController: animationController,
+            ),
+          ),
+        );
+      }
     }
   }
 

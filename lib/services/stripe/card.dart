@@ -19,7 +19,7 @@ class StripeCardImplementation extends StripeCard {
     Map data = {'apiKey': apiKey, 'customerID': customerID, 'token': token};
 
     http.Response response = await http.post(
-      endpoint + 'StripeCreateCard',
+      '${endpoint}StripeCreateCard',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -38,7 +38,7 @@ class StripeCardImplementation extends StripeCard {
     Map data = {'apiKey': apiKey, 'customerID': customerID, 'cardID': cardID};
 
     http.Response response = await http.post(
-      endpoint + 'StripeDeleteCard',
+      '${endpoint}StripeDeleteCard',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );

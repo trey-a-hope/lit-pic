@@ -34,10 +34,12 @@ class _ProfilePageState extends State<ProfilePage>
   bool loadCustomerInfoComplete = false;
   @override
   void initState() {
-    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
         parent: widget.animationController,
-        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    // addAllListData();
+        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn),
+      ),
+    );
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -221,7 +223,6 @@ class _ProfilePageState extends State<ProfilePage>
                                 ),
                               ),
                             ),
-                           
                           ],
                         ),
                       )

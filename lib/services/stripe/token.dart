@@ -32,7 +32,7 @@ class StripeTokenImplementation extends StripeToken {
     };
 
     http.Response response = await http.post(
-      endpoint + 'StripeCreateToken',
+      '${endpoint}StripeCreateToken',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );

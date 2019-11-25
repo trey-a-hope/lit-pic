@@ -20,7 +20,7 @@ class StripeSkuImplementation extends StripeSku {
     Map data = {'apiKey': apiKey, 'skuID': skuID};
 
     http.Response response = await http.post(
-      endpoint + 'StripeRetrieveSku',
+      '${endpoint}StripeRetrieveSku',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
