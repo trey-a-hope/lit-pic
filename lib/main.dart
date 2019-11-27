@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart' as prefix0;
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
@@ -104,7 +105,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (Platform.isAndroid) {
-      FlutterStatusbarcolor.setStatusBarColor(Colors.black);
+      FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
     } else {
       FlutterStatusbarcolor.setStatusBarColor(Colors.white);
     }
