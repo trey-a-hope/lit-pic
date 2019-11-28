@@ -213,9 +213,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> load() async {
     try {
-      //Wait for user to be created in Auth to prevent error message.
-      await Future.delayed(Duration(seconds: 3));
-
       //Load user.
       _currentUser = await getIt<AuthService>().getCurrentUser();
 
@@ -229,7 +226,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       //Update user's fcm token.
       final String fcmToken = await _fcm.getToken();
       if (fcmToken != null) {
-        print(fcmToken);
         getIt<DBService>()
             .updateUser(userID: _currentUser.id, data: {'fcmToken': fcmToken});
       }
@@ -259,11 +255,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
       return;
     } catch (e) {
-      getIt<ModalService>().showAlert(
-        context: context,
-        title: 'Error',
-        message: e.toString(),
-      );
+      // getIt<ModalService>().showAlert(
+      //   context: context,
+      //   title: 'Error',
+      //   message: e.toString(),
+      // );
       return;
     }
   }

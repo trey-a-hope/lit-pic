@@ -38,6 +38,16 @@ class CommonThings {
 }
 
 void main() {
+  SystemChrome.setPreferredOrientations(
+    [DeviceOrientation.portraitUp],
+  );
+
+  if (Platform.isAndroid) {
+    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+  } else {
+    FlutterStatusbarcolor.setStatusBarColor(Colors.white);
+  }
+
   //Make status bar in Android transparent.
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: Colors.transparent));
@@ -74,7 +84,7 @@ void main() {
       signalsReady: true);
   //Stripe Customer
   getIt.registerSingleton<StripeCustomer>(
-      StripeCustomerImplementation(apiKey: testSecretKey, endpoint: endpoint), 
+      StripeCustomerImplementation(apiKey: testSecretKey, endpoint: endpoint),
       signalsReady: true);
   //Stripe Coupon
   getIt.registerSingleton<StripeCoupon>(
@@ -104,16 +114,6 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    if (Platform.isAndroid) {
-      FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
-    } else {
-      FlutterStatusbarcolor.setStatusBarColor(Colors.white);
-    }
-
-    SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp],
-    );
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Lit Pic',

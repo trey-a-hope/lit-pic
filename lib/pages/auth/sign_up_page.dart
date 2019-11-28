@@ -51,6 +51,10 @@ class SignUpPageState extends State<SignUpPage>
             },
           );
 
+          //Create customer in Stripe.
+          String customerID = await getIt<StripeCustomer>()
+              .create(email: _emailController.text, name: _nameController.text);
+
           //Create user in Auth.
           AuthResult authResult =
               await getIt<AuthService>().createUserWithEmailAndPassword(
@@ -58,20 +62,17 @@ class SignUpPageState extends State<SignUpPage>
             password: _passwordController.text,
           );
 
-          //Create customer in Stripe.
+          //Create user in Database.
           final FirebaseUser firebaseUser = authResult.user;
-          String customerID = await getIt<StripeCustomer>()
-              .create(email: _emailController.text, name: _nameController.text);
-
           User user = User(
               id: null,
               isAdmin: false,
               fcmToken: null,
-              timestamp: Timestamp.fromDate(DateTime.now()),
+              timestamp: Timestamp.fromDate(
+                DateTime.now(),
+              ),
               uid: firebaseUser.uid,
               customerID: customerID);
-
-          //Create user in Database.
           await getIt<DBService>().createUser(user: user);
 
           Navigator.of(context).pop();

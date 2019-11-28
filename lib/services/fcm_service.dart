@@ -19,7 +19,7 @@ class FCMServiceImplementation extends FCMService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   final String _endpoint = 'https://fcm.googleapis.com/fcm/send';
   final String _contentType = 'application/json';
-  final String _authorization = 'key=AAAAFF2txTo:APA91bHvHUsfU5FUz_e0VHGif98mTquCJVH17lBH6f8X-J5RdNp353lB4yFEPsz7NEK5I-u08SiZBZpzCtOXPTExBBu1etTzpv6I6DWApWJ3c6wARefXksvtTlU83YJx1J3nA7HMyyu3';
+  final String _authorization = 'key=AAAAfwIwcFs:APA91bGpR2eNlUi7d6RUnCr3FmdkDrmRg6pqlyHDAgxQq3VWc9Z_YwswWsQB2EFgP5ktZ9QpgyYTc8VaC1yP_fdbUtLrSgv7TGFrOG3HPIuZDt4kDA2ti8fe4np4aHrjdsfescGGGEPa';
 
   Future<http.Response> _sendNotification(
       String to, String title, String body) async {

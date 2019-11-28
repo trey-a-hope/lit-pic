@@ -3,22 +3,22 @@ import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/database/user.dart';
-import 'package:litpic/pages/admin/admin_page.dart';
+import 'package:litpic/pages/admin/admin_complete_orders.dart';
+import 'package:litpic/pages/admin/admin_open_orders.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/views/list_tile_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class SettingsPage extends StatefulWidget {
+class AdminPage extends StatefulWidget {
   final AnimationController animationController;
 
-  const SettingsPage({Key key, this.animationController}) : super(key: key);
+  const AdminPage({Key key, this.animationController}) : super(key: key);
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  _AdminPageState createState() => _AdminPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage>
-    with TickerProviderStateMixin {
+class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = List<Widget>();
@@ -27,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   final GetIt getIt = GetIt.I;
   final Color iconColor = Colors.amber[700];
-  User _currentUser;
+
   bool addAllListDataComplete = false;
 
   @override
@@ -64,60 +64,10 @@ class _SettingsPageState extends State<SettingsPage>
   void addAllListData() {
     if (!addAllListDataComplete) {
       addAllListDataComplete = true;
-      int count = 3;
-      //Help & Support
-      // listViews.add(
-      //   ListTile(
-      //     leading: Icon(
-      //       MdiIcons.helpNetwork,
-      //       color: iconColor,
-      //     ),
-      //     title: Text(
-      //       'Help/Support',
-      //       style: TextStyle(fontWeight: FontWeight.bold),
-      //     ),
-      //     subtitle: Text(
-      //       '24/7 assistance.',
-      //     ),
-      //     trailing: Icon(Icons.chevron_right),
-      //     onTap: () async {
-      //       getIt<ModalService>().showAlert(
-      //           context: context, title: 'Help/Support', message: 'TODO');
-      //     },
-      //   ),
-      // );
 
-      //Admin
-      if (_currentUser.isAdmin) {
-        listViews.add(
-          ListTileView(
-            animationController: widget.animationController,
-            animation: Tween(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
-                parent: widget.animationController,
-                curve:
-                    Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
-              ),
-            ),
-            icon: Icon(
-              MdiIcons.security,
-              color: iconColor,
-            ),
-            title: 'Admin',
-            subTitle: 'Do admin things.',
-            onTap: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) {
-                  return AdminPage(animationController: widget.animationController);
-                }),
-              );
-            },
-          ),
-        );
-      }
+      int count = 1;
 
-      //Delete Account
+      //Open Orders
       listViews.add(
         ListTileView(
           animationController: widget.animationController,
@@ -129,22 +79,23 @@ class _SettingsPageState extends State<SettingsPage>
             ),
           ),
           icon: Icon(
-            MdiIcons.delete,
+            MdiIcons.clipboardList,
             color: iconColor,
           ),
-          title: 'Delete Account',
-          subTitle: 'Remove account from this app.',
+          title: 'Open Orders',
+          subTitle: 'Close and notify customer of finished orders.',
           onTap: () async {
-            getIt<ModalService>().showAlert(
-                context: context,
-                title: 'Delete Account',
-                message:
-                    'Contact tr3umphant.designs@gmail.com to remove your account. Thank you.');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AdminOpenOrdersPage(),
+              ),
+            );
           },
         ),
       );
 
-      //Sign Out
+            //Complete Orders
       listViews.add(
         ListTileView(
           animationController: widget.animationController,
@@ -152,36 +103,25 @@ class _SettingsPageState extends State<SettingsPage>
             CurvedAnimation(
               parent: widget.animationController,
               curve:
-                  Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn),
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
             ),
           ),
           icon: Icon(
-            MdiIcons.logout,
+            MdiIcons.clipboardList,
             color: iconColor,
           ),
-          title: 'Sign Out',
-          subTitle: 'Exit account temporarily.',
+          title: 'Complete Orders',
+          subTitle: 'See what is finished.',
           onTap: () async {
-            bool confirm = await getIt<ModalService>().showConfirmation(
-                context: context, title: 'Sign Out', message: 'Are you sure?');
-            if (confirm) {
-              await getIt<AuthService>().signOut();
-            }
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AdminCompleteOrdersPage(),
+              ),
+            );
           },
         ),
       );
-    }
-  }
-
-  Future<void> load() async {
-    try {
-      //Load user.
-      _currentUser = await getIt<AuthService>().getCurrentUser();
-      return;
-    } catch (e) {
-      getIt<ModalService>()
-          .showAlert(context: context, title: 'Error', message: e.message);
-      return;
     }
   }
 
@@ -206,7 +146,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   Widget getMainListViewUI() {
     List<Future> futures = List<Future>();
-    futures.add(load());
+    futures.add(Future.delayed(Duration(seconds: 0)));
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {
@@ -273,11 +213,17 @@ class _SettingsPageState extends State<SettingsPage>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
+                            IconButton(
+                              icon: Icon(MdiIcons.chevronLeft),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "Settings",
+                                  "Admin",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,
@@ -289,67 +235,6 @@ class _SettingsPageState extends State<SettingsPage>
                                 ),
                               ),
                             ),
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_left,
-                            //         color: LitPicTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                            // Padding(
-                            //   padding: const EdgeInsets.only(
-                            //     left: 8,
-                            //     right: 8,
-                            //   ),
-                            //   child: Row(
-                            //     children: <Widget>[
-                            //       Padding(
-                            //         padding: const EdgeInsets.only(right: 8),
-                            //         child: Icon(
-                            //           Icons.calendar_today,
-                            //           color: LitPicTheme.grey,
-                            //           size: 18,
-                            //         ),
-                            //       ),
-                            //       Text(
-                            //         "15 May",
-                            //         textAlign: TextAlign.left,
-                            //         style: TextStyle(
-                            //           fontFamily: LitPicTheme.fontName,
-                            //           fontWeight: FontWeight.normal,
-                            //           fontSize: 18,
-                            //           letterSpacing: -0.2,
-                            //           color: LitPicTheme.darkerText,
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius:
-                            //         BorderRadius.all(Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_right,
-                            //         color: LitPicTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       )

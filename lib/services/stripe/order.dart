@@ -9,8 +9,7 @@ import 'dart:convert' show json;
 import 'package:litpic/models/stripe/sku.dart';
 
 abstract class StripeOrder {
-  Future<List<Order>> list(
-      {@required String customerID, @required String status});
+  Future<List<Order>> list({String customerID, @required String status});
 
   Future<String> create(
       {@required String customerID,
@@ -44,7 +43,17 @@ class StripeOrderImplementation extends StripeOrder {
 
   @override
   Future<List<Order>> list({String customerID, String status}) async {
-    Map data = {'apiKey': apiKey, 'customerID': customerID, 'status': status};
+    Map data = {
+      'apiKey': apiKey,
+    };
+
+    if (customerID != null) {
+      data['customerID'] = customerID;
+    }
+
+    if (status != null) {
+      data['status'] = status;
+    }
 
     http.Response response = await http.post(
       '${endpoint}StripeListOrders',
