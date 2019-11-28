@@ -65,3 +65,63 @@ Alt + S to wrap in Stack
 
 ## App Icon
 <div>Icons made by <a href="https://www.flaticon.com/authors/adib-sulthon" title="Adib Sulthon">Adib Sulthon</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+
+# Create Angular App
+- npm install -g @angular/cli
+- ng new web
+- cd web
+- sudo ng serve --open
+- sudo npm install
+- sudo ng build --prod
+- sudo npm install -g firebase-tools
+- sudo firebase login
+- sudo firebase init
+- "(public directory) dist/web" 
+- "(dist/web/index.html already exists, overwrite?) NO"
+sudo ng generate component widgets/footer
+
+## Angular, Create Service
+- ng g s services/user
+
+## Angular, Create Component
+- ng g c views/about --module app
+
+## Angular, Create Routing
+- ng generate module app-routing --flat --module=app
+
+## Angular, Run Locally
+- ng serve --open
+
+## iPhone Dimensions
+iPhone 3+4 (3.5 Inch)
+    640 x 960
+iPhone 5, iPhone 5S, iPhone 5C (4 Inch)
+    640 x 1136
+iPhone 6, iPhone 6S, iPhone 7, iPhone 8 (4.7 Inch)
+    750 x 1334
+iPhone 6 Plus, iPhone 6S Plus, iPhone 7 Plus, iPhone 8 Plus (5.5 Inch)
+    1242 x 2208
+iPhone X (5.8 Inch)
+    1125 x 2436
+iPhone XR (6.1 Inch)
+    828 x 1792
+iPhone XS (5.8 Inch)
+    1125 x 2436
+iPhone XS Max (6.5 Inch)
+    1242 x 2688
+iPad Mini 2, iPad Mini 3, iPad Mini 4 (7.9 Inch)
+    1536 x 2048
+iPad 3, iPad 4, iPad Pro, iPad Air, iPad Air 2 (9.7 Inch)
+    1536 x 2048
+iPad Pro (10.5 Inch)
+    1668 x 2224
+iPad Pro (12.9 Inch)
+    2048 x 2732
+Apple Watch Series 1, Apple Watch Series 2, Apple Watch Series 3 - 38mm (1.5 Inch)
+    272 x 340
+Apple Watch Series 4 - 40mm (1.57 Inch)
+    394 x 324
+Apple Watch Series 1, Apple Watch Series 2, Apple Watch Series 3 - 42mm (1.65 Inch)
+    312 x 390
+Apple Watch Series 4 - 44mm (1.78 Inch)
+    448 x 368 
