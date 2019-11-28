@@ -88,7 +88,7 @@ class CartItemBoughtView extends StatelessWidget {
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Text(
-                                                  "Color: ${cartItem.color} / Quanity: ${cartItem.quantity}",
+                                                  "Color: ${cartItem.color}\nQuanity: ${cartItem.quantity}",
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w200,

@@ -231,7 +231,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
               customerID: _currentUser.customerID,
               line1: _addressController.text,
               city: _cityController.text,
-              state: _stateController.text,
+              state: _stateController.text.toUpperCase(),
               postalCode: _zipController.text,
               country: 'US');
 
