@@ -101,6 +101,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
               Padding(
                 padding: EdgeInsets.all(20),
                 child: TextFormFieldView(
+                  keyboardType: TextInputType.text,
                   labelText: 'Name',
                   validator: getIt<ValidatorService>().isEmpty,
                   textEditingController: _nameController,
@@ -116,6 +117,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: TextFormFieldView(
+                  keyboardType: TextInputType.text,
                   labelText: 'Email',
                   validator: getIt<ValidatorService>().email,
                   textEditingController: _emailController,
@@ -201,12 +203,12 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
           await getIt<AuthService>().updateEmail(email: updatedEmail);
 
           //Update email.
-          await getIt<StripeCustomer>().update(
-              customerID: _currentUser.customerID, email: updatedEmail);
+          await getIt<StripeCustomer>()
+              .update(customerID: _currentUser.customerID, email: updatedEmail);
 
           //Update name.
-          await getIt<StripeCustomer>().update(
-              customerID: _currentUser.customerID, name: updatedName);
+          await getIt<StripeCustomer>()
+              .update(customerID: _currentUser.customerID, name: updatedName);
 
           setState(
             () {

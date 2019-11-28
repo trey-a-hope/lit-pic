@@ -90,6 +90,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
           child: Padding(
             padding: EdgeInsets.all(20),
             child: TextFormFieldView(
+              keyboardType: TextInputType.text,
               animation: Tween(begin: 0.0, end: 1.0).animate(
                 CurvedAnimation(
                   parent: animationController,
@@ -132,7 +133,10 @@ class _PasswordResetPageState extends State<PasswordResetPage>
   void submit() async {
     if (_formKey.currentState.validate()) {
       bool confirm = await getIt<ModalService>().showConfirmation(
-          context: context, title: 'Submit', message: 'A link to reset your password will be sent to ${_emailController.text}');
+          context: context,
+          title: 'Submit',
+          message:
+              'A link to reset your password will be sent to ${_emailController.text}');
 
       if (confirm) {
         _formKey.currentState.save();

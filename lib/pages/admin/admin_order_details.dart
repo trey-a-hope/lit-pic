@@ -66,7 +66,8 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
 
   List<CartItem> cartItems = List<CartItem>();
 
-  TextEditingController _carrierController = TextEditingController(text: 'USPS');
+  TextEditingController _carrierController =
+      TextEditingController(text: 'USPS');
   TextEditingController _trackingNumberController = TextEditingController();
 
   @override
@@ -292,6 +293,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
                 Padding(
                   padding: EdgeInsets.all(20),
                   child: TextFormFieldView(
+                    keyboardType: TextInputType.text,
                     iconData: MdiIcons.clipboardList,
                     labelText: 'Carrier',
                     textEditingController: _carrierController,
@@ -309,10 +311,11 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
                 Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                   child: TextFormFieldView(
+                    keyboardType: TextInputType.number,
                     iconData: MdiIcons.clipboardList,
                     labelText: 'Tracking Number',
                     textEditingController: _trackingNumberController,
-                    validator: getIt<ValidatorService>().isEmpty,
+                    validator: getIt<ValidatorService>().trackingNumber,
                     animation: Tween(begin: 0.0, end: 1.0).animate(
                       CurvedAnimation(
                         parent: animationController,
@@ -422,11 +425,18 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
           });
 
           //Update order to fulfilled status.
-          await getIt<StripeOrder>().update(orderID: order.id, carrier: _carrierController.text, status: 'fulfilled', trackingNumber: _trackingNumberController.text);
+          await getIt<StripeOrder>().update(
+              orderID: order.id,
+              carrier: _carrierController.text,
+              status: 'fulfilled',
+              trackingNumber: _trackingNumberController.text);
 
           //Send notification to user of complete order.
 
-          getIt<ModalService>().showAlert(context: context, title: 'Success', message: 'Order ${order.id} has been updated.');
+          getIt<ModalService>().showAlert(
+              context: context,
+              title: 'Success',
+              message: 'Order ${order.id} has been updated.');
 
           setState(() {
             _isLoading = false;

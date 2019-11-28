@@ -95,6 +95,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
               Padding(
                 padding: EdgeInsets.all(20),
                 child: TextFormFieldView(
+                  keyboardType: TextInputType.text,
                   labelText: 'Address',
                   validator: getIt<ValidatorService>().isEmpty,
                   textEditingController: _addressController,
@@ -110,6 +111,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: TextFormFieldView(
+                  keyboardType: TextInputType.text,
                   labelText: 'City',
                   validator: getIt<ValidatorService>().isEmpty,
                   textEditingController: _cityController,
@@ -125,6 +127,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: TextFormFieldView(
+                  keyboardType: TextInputType.text,
                   labelText: 'State',
                   validator: getIt<ValidatorService>().state,
                   textEditingController: _stateController,
@@ -140,6 +143,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: TextFormFieldView(
+                  keyboardType: TextInputType.number,
                   labelText: 'ZIP',
                   validator: getIt<ValidatorService>().zip,
                   textEditingController: _zipController,

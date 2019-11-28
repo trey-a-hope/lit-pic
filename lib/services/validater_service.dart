@@ -8,6 +8,7 @@ abstract class ValidatorService {
   String cardNumber(String value);
   String cardExpiration(String value);
   String cardCVC(String value);
+  String trackingNumber(String value);
 }
 
 class ValidatorServiceImplementation extends ValidatorService {
@@ -90,6 +91,14 @@ class ValidatorServiceImplementation extends ValidatorService {
     if (value.isEmpty) return 'Invalid CVC.';
     final RegExp regExp = RegExp(r'^[0-9]{3}$');
     if (!regExp.hasMatch(value)) return 'Must be 3 numbers.';
+    return null;
+  }
+
+    @override
+  String trackingNumber(String value) {
+    if (value.isEmpty) return 'Invalid Tracking Number.';
+    final RegExp regExp = RegExp(r'^[0-9]{20}$');
+    if (!regExp.hasMatch(value)) return 'Must be 20 numbers.';
     return null;
   }
 }

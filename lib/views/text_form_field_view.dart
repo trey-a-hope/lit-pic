@@ -10,6 +10,7 @@ class TextFormFieldView extends StatelessWidget {
   final String labelText;
   final IconData iconData;
   final String Function(String) validator;
+  final TextInputType keyboardType;
 
   TextFormFieldView(
       {Key key,
@@ -18,7 +19,8 @@ class TextFormFieldView extends StatelessWidget {
       @required this.textEditingController,
       @required this.labelText,
       @required this.iconData,
-      @required this.validator})
+      @required this.validator,
+      @required this.keyboardType})
       : super(key: key);
 
   @override
@@ -33,7 +35,7 @@ class TextFormFieldView extends StatelessWidget {
                   0.0, 30 * (1.0 - animation.value), 0.0),
               child: TextFormField(
                 validator: validator,
-                keyboardType: TextInputType.text,
+                keyboardType: keyboardType,
                 textInputAction: TextInputAction.done,
                 controller: textEditingController,
                 style:

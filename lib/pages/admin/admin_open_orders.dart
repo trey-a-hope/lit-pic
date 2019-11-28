@@ -137,7 +137,7 @@ class _AdminOpenOrdersPageState extends State<AdminOpenOrdersPage>
   Future<void> loadCustomerInfo() async {
     try {
       orders = await getIt<StripeOrder>().list(status: 'paid');
-      orders.sort((a, b) => b.created.compareTo(a.created));
+      orders.sort((a, b) => b.updated.compareTo(a.updated));
 
       return;
     } catch (e) {

@@ -100,6 +100,7 @@ class _AddCardPageState extends State<AddCardPage>
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: TextFormFieldView(
+                  keyboardType: TextInputType.number,
                   textEditingController: _cardNumberController,
                   validator: getIt<ValidatorService>().cardNumber,
                   labelText: 'Card Number',
@@ -115,6 +116,7 @@ class _AddCardPageState extends State<AddCardPage>
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: TextFormFieldView(
+                  keyboardType: TextInputType.number,
                   textEditingController: _expirationController,
                   validator: getIt<ValidatorService>().cardExpiration,
                   labelText: 'Expiration',
@@ -130,6 +132,7 @@ class _AddCardPageState extends State<AddCardPage>
               Padding(
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: TextFormFieldView(
+                  keyboardType: TextInputType.number,
                   textEditingController: _cvcController,
                   validator: getIt<ValidatorService>().cardCVC,
                   labelText: 'CVC',
