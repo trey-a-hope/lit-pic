@@ -369,30 +369,30 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
             source: _currentUser.customer.defaultSource,
             customerID: _currentUser.customerID);
 
+        //Create order document reference.
+        DocumentReference ordersDocRef =
+            await Firestore.instance.collection('Orders').add({
+          'id': orderID,
+          'name': _currentUser.customer.shipping.name,
+          'email': _currentUser.customer.email
+        });
+
         //Save order data to firebase.
         for (int i = 0; i < cartItems.length; i++) {
-          await Firestore.instance
-              .collection('Orders')
-              .document(orderID)
-              .collection('Cart Items')
-              .add(cartItems[i].toMap());
+          await ordersDocRef.collection('Cart Items').add(cartItems[i].toMap());
         }
 
-        //Clear shopping cart.
-        CollectionReference colRef = Firestore.instance
+        //Create user cart items reference.
+        CollectionReference cartItemsColRef = Firestore.instance
             .collection('Users')
             .document(_currentUser.id)
             .collection('Cart Items');
-        QuerySnapshot query = await colRef.getDocuments();
-        List<DocumentSnapshot> docs = query.documents;
 
+        //Clear shopping cart.
+        List<DocumentSnapshot> docs =
+            (await cartItemsColRef.getDocuments()).documents;
         for (int i = 0; i < docs.length; i++) {
-          await Firestore.instance
-              .collection('Users')
-              .document(_currentUser.id)
-              .collection('Cart Items')
-              .document(docs[i].documentID)
-              .delete();
+          await cartItemsColRef.document(docs[i].documentID).delete();
         }
 
         Navigator.push(
