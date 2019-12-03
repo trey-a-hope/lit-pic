@@ -97,8 +97,8 @@ class ValidatorServiceImplementation extends ValidatorService {
     @override
   String trackingNumber(String value) {
     if (value.isEmpty) return 'Invalid Tracking Number.';
-    final RegExp regExp = RegExp(r'^[0-9]{20}$');
-    if (!regExp.hasMatch(value)) return 'Must be 20 numbers.';
+    final RegExp regExp = RegExp(r'^[0-9]{22}$');
+    if (!regExp.hasMatch(value)) return 'Must be 22 numbers.';
     return null;
   }
 }
