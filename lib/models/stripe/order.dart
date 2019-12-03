@@ -12,6 +12,7 @@ class Order {
   final String carrier;
   final String trackingNumber;
   final Shipping shipping;
+  final String customerID;
 
   Order(
       {@required this.created,
@@ -22,7 +23,8 @@ class Order {
       @required this.quantity,
       @required this.carrier,
       @required this.trackingNumber,
-      @required this.shipping});
+      @required this.shipping,
+      @required this.customerID});
 
   factory Order.fromMap({@required Map map}) {
     return map == null
@@ -38,6 +40,7 @@ class Order {
             amount: map['amount'] / 100,
             updated: DateTime.fromMillisecondsSinceEpoch(map['updated'] * 1000),
             carrier: map['shipping']['carrier'],
-            trackingNumber: map['shipping']['tracking_number']);
+            trackingNumber: map['shipping']['tracking_number'],
+            customerID: map['customer']);
   }
 }

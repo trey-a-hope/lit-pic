@@ -8,6 +8,7 @@ import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/views/list_tile_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   final AnimationController animationController;
@@ -109,13 +110,45 @@ class _SettingsPageState extends State<SettingsPage>
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) {
-                  return AdminPage(animationController: widget.animationController);
+                  return AdminPage(
+                      animationController: widget.animationController);
                 }),
               );
             },
           ),
         );
       }
+
+      //Go To Website
+      listViews.add(
+        ListTileView(
+          animationController: widget.animationController,
+          animation: Tween(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+              parent: widget.animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
+            ),
+          ),
+          icon: Icon(
+            MdiIcons.web,
+            color: iconColor,
+          ),
+          title: 'Go To Website',
+          subTitle: 'View our privacy-policy, support info, and more.',
+          onTap: () async {
+            var url = 'https://litpic-f293c.firebaseapp.com/';
+            if (await canLaunch(url)) {
+              await launch(url);
+            } else {
+              getIt<ModalService>().showAlert(
+                  context: context,
+                  title: 'Error',
+                  message: 'Could not launch $url.');
+            }
+          },
+        ),
+      );
 
       //Delete Account
       listViews.add(

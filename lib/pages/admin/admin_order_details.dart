@@ -10,6 +10,7 @@ import 'package:litpic/models/stripe/order.dart';
 import 'package:litpic/models/stripe/sku.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
+import 'package:litpic/services/fcm_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/order.dart';
@@ -140,7 +141,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
         ),
       );
 
-            listViews.add(Divider());
+      listViews.add(Divider());
 
       listViews.add(
         SimpleTitleView(
@@ -446,7 +447,19 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
               trackingNumber: _trackingNumberController.text);
 
           //Send notification to user of complete order.
+          DocumentSnapshot userDoc = (await Firestore.instance
+                  .collection('Users')
+                  .where('customerID', isEqualTo: order.customerID)
+                  .getDocuments())
+              .documents
+              .first;
+          User user = User.fromDoc(doc: userDoc);
+          await getIt<FCMService>().sendNotificationToUser(
+              fcmToken: user.fcmToken,
+              title: 'ORDER SHIPPED',
+              body: 'View details now.');
 
+          //Display success modal.
           getIt<ModalService>().showAlert(
               context: context,
               title: 'Success',

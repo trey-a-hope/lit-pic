@@ -377,7 +377,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
           'email': _currentUser.customer.email
         });
 
-        //Save order data to firebase.
+        //Save cart items to database.
         for (int i = 0; i < cartItems.length; i++) {
           await ordersDocRef.collection('Cart Items').add(cartItems[i].toMap());
         }
@@ -395,6 +395,9 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
           await cartItemsColRef.document(docs[i].documentID).delete();
         }
 
+        //Send notification to myself of new order created. TODO!
+
+        //Navigate to success page.
         Navigator.push(
           context,
           MaterialPageRoute(
