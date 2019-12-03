@@ -9,6 +9,7 @@ import 'package:litpic/models/stripe/sku.dart';
 import 'package:litpic/pages/checkout/checkout_success_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
+import 'package:litpic/services/fcm_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe/customer.dart';
@@ -53,6 +54,8 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
   double shippingFee;
   double total;
   int totalLithophanes;
+
+  String adminDocID;
 
   @override
   void initState() {
@@ -338,6 +341,11 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
     return;
   }
 
+  Future<void> fetchAdminDocID() async {
+    adminDocID = await getIt<DBService>().retrieveAdminDocID();
+    return;
+  }
+
   void _submit() async {
     bool confirm = await getIt<ModalService>().showConfirmation(
         context: context,
@@ -362,6 +370,8 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
             customerID: _currentUser.customerID,
             sku: _sku,
             cartItems: cartItems);
+
+            
 
         //Pay order.
         await getIt<StripeOrder>().pay(
@@ -395,7 +405,12 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
           await cartItemsColRef.document(docs[i].documentID).delete();
         }
 
-        //Send notification to myself of new order created. TODO!
+        //Send notification to myself of new order created.
+        User treyHope = await getIt<DBService>().retrieveUser(id: adminDocID);
+        await getIt<FCMService>().sendNotificationToUser(
+            fcmToken: treyHope.fcmToken,
+            title: 'NEW ORDER',
+            body: 'From ${_currentUser.customer.name}');
 
         //Navigate to success page.
         Navigator.push(
@@ -442,6 +457,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
     List<Future> futures = List<Future>();
     futures.add(loadCustomerInfo());
     futures.add(fetchLithophaneSku());
+    futures.add(fetchAdminDocID());
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {

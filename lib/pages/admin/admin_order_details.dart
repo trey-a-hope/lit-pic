@@ -447,13 +447,8 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
               trackingNumber: _trackingNumberController.text);
 
           //Send notification to user of complete order.
-          DocumentSnapshot userDoc = (await Firestore.instance
-                  .collection('Users')
-                  .where('customerID', isEqualTo: order.customerID)
-                  .getDocuments())
-              .documents
-              .first;
-          User user = User.fromDoc(doc: userDoc);
+          User user = await getIt<DBService>()
+              .retrieveUser(customerID: order.customerID);
           await getIt<FCMService>().sendNotificationToUser(
               fcmToken: user.fcmToken,
               title: 'ORDER SHIPPED',

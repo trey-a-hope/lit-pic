@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final FirebaseMessaging _fcm = FirebaseMessaging();
   // Coupon _coupon;
   bool addAllListDataComplete = false;
-  String youtubeVideoID;
+  // String youtubeVideoID;
 
   @override
   void initState() {
@@ -264,10 +264,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> fetchYouTubeVideoID() async {
-    youtubeVideoID = await getIt<DBService>().retrieveYouTubeVideoID();
-    return;
-  }
+  // Future<void> fetchYouTubeVideoID() async {
+  //   youtubeVideoID = await getIt<DBService>().retrieveYouTubeVideoID();
+  //   return;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -291,7 +291,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget getMainListViewUI() {
     List<Future> futures = List<Future>();
     futures.add(load());
-    futures.add(fetchYouTubeVideoID());
+    // futures.add(fetchYouTubeVideoID());
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {

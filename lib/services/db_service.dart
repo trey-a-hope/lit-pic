@@ -13,7 +13,7 @@ abstract class DBService {
   //Users
   Future<void> createUser({@required User user});
   Future<void> deleteUser({@required String id});
-  Future<User> retrieveUser({@required String id});
+  Future<User> retrieveUser({String id, String customerID});
   Future<List<User>> retrieveUsers({bool isAdmin, int limit});
   Future<void> updateUser(
       {@required String userID, @required Map<String, dynamic> data});
@@ -28,13 +28,12 @@ abstract class DBService {
       @required Map<String, dynamic> data});
   Future<void> deleteCartItem(
       {@required String userID, @required String cartItemID});
-  Future<String> retrieveCouponID();
 
   //Sku
   Future<String> retrieveSkuID();
 
-    //Sku
-  Future<String> retrieveYouTubeVideoID();
+  //Admin
+  Future<String> retrieveAdminDocID();
 }
 
 class DBServiceImplementation extends DBService {
@@ -60,10 +59,21 @@ class DBServiceImplementation extends DBService {
   }
 
   @override
-  Future<User> retrieveUser({String id}) async {
+  Future<User> retrieveUser({String id, String customerID}) async {
     try {
-      DocumentSnapshot documentSnapshot = await _usersDB.document(id).get();
-      return User.fromDoc(doc: documentSnapshot);
+      if (id != null) {
+        DocumentSnapshot documentSnapshot = await _usersDB.document(id).get();
+        return User.fromDoc(doc: documentSnapshot);
+      } else if (customerID != null) {
+        DocumentSnapshot documentSnapshot = (await _usersDB
+                .where('customerID', isEqualTo: customerID)
+                .getDocuments())
+            .documents
+            .first;
+        return User.fromDoc(doc: documentSnapshot);
+      } else {
+        throw Exception();
+      }
     } catch (e) {
       throw Exception(e.toString());
     }
@@ -210,18 +220,12 @@ class DBServiceImplementation extends DBService {
   }
 
   @override
-  Future<String> retrieveCouponID() async {
-    return (await _dataDB.get()).data['couponID'];
-  }
-
-  @override
   Future<String> retrieveSkuID() async {
     return (await _dataDB.get()).data['skuID'];
   }
 
   @override
-  Future<String> retrieveYouTubeVideoID() async{
-    return (await _dataDB.get()).data['youtubeVideoID'];
-
+  Future<String> retrieveAdminDocID() async {
+    return (await _dataDB.get()).data['adminDocID'];
   }
 }
