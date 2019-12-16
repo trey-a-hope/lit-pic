@@ -1,26 +1,30 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:litpic/asset_images.dart';
 import 'package:litpic/common/hero_screen.dart';
-import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/main.dart';
+import 'package:litpic/models/database/lit_pic.dart';
 
 class RecentCreationsView extends StatefulWidget {
   final AnimationController mainScreenAnimationController;
   final Animation mainScreenAnimation;
+  final List<LitPic> litPics;
 
   const RecentCreationsView(
-      {Key key, this.mainScreenAnimationController, this.mainScreenAnimation})
+      {Key key,
+      @required this.mainScreenAnimationController,
+      @required this.mainScreenAnimation,
+      @required this.litPics})
       : super(key: key);
   @override
-  _RecentCreationsViewState createState() => _RecentCreationsViewState();
+  _RecentCreationsViewState createState() =>
+      _RecentCreationsViewState(litPics: this.litPics);
 }
 
 class _RecentCreationsViewState extends State<RecentCreationsView>
     with TickerProviderStateMixin {
+  _RecentCreationsViewState({@required this.litPics});
   AnimationController animationController;
-  List<LithophanesData> mealsListData = LithophanesData.tabIconsList;
+  final List<LitPic> litPics;
 
   @override
   void initState() {
@@ -51,11 +55,10 @@ class _RecentCreationsViewState extends State<RecentCreationsView>
               child: ListView.builder(
                 padding: const EdgeInsets.only(
                     top: 0, bottom: 0, right: 16, left: 16),
-                itemCount: mealsListData.length,
+                itemCount: litPics.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
-                  var count =
-                      mealsListData.length > 10 ? 10 : mealsListData.length;
+                  var count = litPics.length > 10 ? 10 : litPics.length;
                   var animation = Tween(begin: 0.0, end: 1.0).animate(
                       CurvedAnimation(
                           parent: animationController,
@@ -64,7 +67,7 @@ class _RecentCreationsViewState extends State<RecentCreationsView>
                   animationController.forward();
 
                   return MealsView(
-                    mealsListData: mealsListData[index],
+                    litPic: litPics[index],
                     animation: animation,
                     animationController: animationController,
                   );
@@ -79,12 +82,12 @@ class _RecentCreationsViewState extends State<RecentCreationsView>
 }
 
 class MealsView extends StatelessWidget {
-  final LithophanesData mealsListData;
+  final LitPic litPic;
   final AnimationController animationController;
   final Animation animation;
 
   const MealsView(
-      {Key key, this.mealsListData, this.animationController, this.animation})
+      {Key key, this.litPic, this.animationController, this.animation})
       : super(key: key);
 
   @override
@@ -108,15 +111,14 @@ class MealsView extends StatelessWidget {
                       decoration: BoxDecoration(
                         boxShadow: <BoxShadow>[
                           BoxShadow(
-                              color: HexColor(mealsListData.endColor)
-                                  .withOpacity(0.6),
+                              color: HexColor(litPic.endColor).withOpacity(0.6),
                               offset: Offset(1.1, 4.0),
                               blurRadius: 8.0),
                         ],
                         gradient: LinearGradient(
                           colors: [
-                            HexColor(mealsListData.startColor),
-                            HexColor(mealsListData.endColor),
+                            HexColor(litPic.startColor),
+                            HexColor(litPic.endColor),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -136,7 +138,7 @@ class MealsView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              mealsListData.titleTxt,
+                              litPic.title,
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 fontFamily: LitPicTheme.fontName,
@@ -155,7 +157,7 @@ class MealsView extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      mealsListData.meals.join("\n"),
+                                      litPic.dimensions,
                                       style: TextStyle(
                                         fontFamily: LitPicTheme.fontName,
                                         fontWeight: FontWeight.w500,
@@ -168,59 +170,37 @@ class MealsView extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            mealsListData.kacl != 0
-                                ? Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: <Widget>[
-                                      Text(
-                                        mealsListData.kacl.toString(),
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontFamily: LitPicTheme.fontName,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 24,
-                                          letterSpacing: 0.2,
-                                          color: LitPicTheme.white,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 4, bottom: 3),
-                                        child: Text(
-                                          'min',
-                                          style: TextStyle(
-                                            fontFamily: LitPicTheme.fontName,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 10,
-                                            letterSpacing: 0.2,
-                                            color: LitPicTheme.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : Container(
-                                    decoration: BoxDecoration(
-                                      color: LitPicTheme.nearlyWhite,
-                                      shape: BoxShape.circle,
-                                      boxShadow: <BoxShadow>[
-                                        BoxShadow(
-                                            color: LitPicTheme.nearlyBlack
-                                                .withOpacity(0.4),
-                                            offset: Offset(8.0, 8.0),
-                                            blurRadius: 8.0),
-                                      ],
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(6.0),
-                                      child: Icon(
-                                        Icons.add,
-                                        color: HexColor(mealsListData.endColor),
-                                        size: 24,
-                                      ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Text(
+                                  litPic.printMinutes.toString(),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: LitPicTheme.fontName,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 24,
+                                    letterSpacing: 0.2,
+                                    color: LitPicTheme.white,
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 4, bottom: 3),
+                                  child: Text(
+                                    'min',
+                                    style: TextStyle(
+                                      fontFamily: LitPicTheme.fontName,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 10,
+                                      letterSpacing: 0.2,
+                                      color: LitPicTheme.white,
                                     ),
                                   ),
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       ),
@@ -235,16 +215,26 @@ class MealsView extends StatelessWidget {
                           context,
                           MaterialPageRoute(builder: (_) {
                             return HeroScreen(
-                                imgUrl: null, imgPath: mealsListData.imagePath);
+                                imgUrl: litPic.imgUrl, imgPath: null);
                           }),
                         );
                       },
-                      child: SizedBox(
-                        width: 80,
+                      child: Container(
                         height: 80,
-                        child: Hero(
-                          tag: mealsListData.imagePath,
-                          child: Image.asset(mealsListData.imagePath),
+                        width: 80,
+                        child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(16.0)),
+                            child: AspectRatio(
+                              aspectRatio: 1.0,
+                              child: Hero(
+                                tag: litPic.imgUrl,
+                                child: Image.network(litPic.imgUrl),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),

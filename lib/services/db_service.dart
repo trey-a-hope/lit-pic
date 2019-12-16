@@ -1,9 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:litpic/models/database/cart_item.dart';
+import 'package:litpic/models/database/lit_pic.dart';
 import 'package:litpic/models/database/user.dart';
 
 abstract class DBService {
+  //Admin
+  Future<String> retrieveAdminDocID();
+
+  //Cart Item
+  Future<void> createCartItem(
+      {@required String userID, @required CartItem cartItem});
+  Future<List<CartItem>> retrieveCartItems({@required String userID});
+  Future<void> updateCartItem(
+      {@required String userID,
+      @required String cartItemID,
+      @required Map<String, dynamic> data});
+  Future<void> deleteCartItem(
+      {@required String userID, @required String cartItemID});
+
+  //Lit Pic
+  Future<List<LitPic>> retrieveLitPics();
+
   //Miscellanious
   Future<void> addPropertyToDocuments(
       {@required String collection,
@@ -18,28 +36,16 @@ abstract class DBService {
   Future<void> updateUser(
       {@required String userID, @required Map<String, dynamic> data});
 
-  //Cart Item
-  Future<void> createCartItem(
-      {@required String userID, @required CartItem cartItem});
-  Future<List<CartItem>> retrieveCartItems({@required String userID});
-  Future<void> updateCartItem(
-      {@required String userID,
-      @required String cartItemID,
-      @required Map<String, dynamic> data});
-  Future<void> deleteCartItem(
-      {@required String userID, @required String cartItemID});
-
   //Sku
   Future<String> retrieveSkuID();
-
-  //Admin
-  Future<String> retrieveAdminDocID();
 }
 
 class DBServiceImplementation extends DBService {
   final CollectionReference _usersDB = Firestore.instance.collection('Users');
   final DocumentReference _dataDB =
       Firestore.instance.collection('Data').document('OCqQBQf9d5GM2sbSrF85');
+  final CollectionReference _litPicsDB =
+      Firestore.instance.collection('Lit Pics');
 
   @override
   Future<void> createUser({User user}) async {
@@ -227,5 +233,22 @@ class DBServiceImplementation extends DBService {
   @override
   Future<String> retrieveAdminDocID() async {
     return (await _dataDB.get()).data['adminDocID'];
+  }
+
+  @override
+  Future<List<LitPic>> retrieveLitPics() async {
+    try {
+      List<DocumentSnapshot> docs = (await _litPicsDB.getDocuments()).documents;
+      List<LitPic> litPics = List<LitPic>();
+      for (int i = 0; i < docs.length; i++) {
+        litPics.add(
+          LitPic.fromDoc(doc: docs[i]),
+        );
+      }
+
+      return litPics;
+    } catch (e) {
+      throw Exception(e.toString());
+    }
   }
 }

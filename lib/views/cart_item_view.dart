@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/hero_screen.dart';
@@ -97,7 +96,7 @@ class CartItemView extends StatelessWidget {
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Text(
-                                                  "Color: ${cartItem.color}\nQuanity: ${cartItem.quantity}",
+                                                  "Quanity: ${cartItem.quantity}",
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w200,
@@ -148,7 +147,9 @@ class CartItemView extends StatelessWidget {
                                               padding:
                                                   const EdgeInsets.all(4.0),
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
                                                 children: <Widget>[
                                                   IconButton(
                                                     onPressed: increment,
@@ -215,8 +216,8 @@ class CartItemView extends StatelessWidget {
                                   },
                                   child: Hero(
                                     tag: cartItem.imgUrl,
-                                    child: CachedNetworkImage(
-                                      imageUrl: cartItem.imgUrl,
+                                    child: Image.network(
+                                      cartItem.imgUrl,
                                     ),
                                   ),
                                 ),

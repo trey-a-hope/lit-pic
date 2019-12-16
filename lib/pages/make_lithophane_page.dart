@@ -4,9 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
-import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/main.dart';
 import 'package:litpic/models/database/cart_item.dart';
@@ -41,7 +39,6 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
   double topBarOpacity = 0.0;
   final GetIt getIt = GetIt.I;
   int quantity = 1;
-  ColorName _selectedColor = filamentColors[0];
   File _image;
   bool _isLoading = false;
   User _currentUser;
@@ -155,34 +152,34 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
       height: 20,
     ));
 
-    listViews.add(
-      TitleView(
-        showExtra: false,
-        titleTxt: 'Choose Color',
-        subTxt: 'Details',
-        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
+    // listViews.add(
+    //   TitleView(
+    //     showExtra: false,
+    //     titleTxt: 'Choose Color',
+    //     subTxt: 'Details',
+    //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    //         parent: widget.animationController,
+    //         curve:
+    //             Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+    //     animationController: widget.animationController,
+    //   ),
+    // );
 
-    listViews.add(SizedBox(
-      height: 20,
-    ));
+    // listViews.add(SizedBox(
+    //   height: 20,
+    // ));
 
-    listViews.add(
-      Container(
-        height: 100,
-        child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: filamentColors.length,
-            itemBuilder: (context, index) {
-              return colorCircle(colorName: filamentColors[index]);
-            }),
-      ),
-    );
+    // listViews.add(
+    //   Container(
+    //     height: 100,
+    //     child: ListView.builder(
+    //         scrollDirection: Axis.horizontal,
+    //         itemCount: filamentColors.length,
+    //         itemBuilder: (context, index) {
+    //           return colorCircle(colorName: filamentColors[index]);
+    //         }),
+    //   ),
+    // );
 
     listViews.add(
       Padding(
@@ -191,13 +188,10 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
           onPressed: () {
             _addImageToCart();
           },
-          buttonColor: _selectedColor.color,
+          buttonColor: Colors.amber,
           text:
-              'ADD LITHOPHANE TO CART - ${getIt<FormatterService>().money(amount: _sku.price * quantity)}',
-          textColor: (_selectedColor.color == Colors.white ||
-                  _selectedColor.color == Colors.yellow)
-              ? Colors.black
-              : Colors.white,
+              'ADD LITHOPHANE${quantity == 1 ? '' : 'S'} TO CART - ${getIt<FormatterService>().money(amount: _sku.price * quantity)}',
+          textColor: Colors.white,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: widget.animationController,
               curve:
@@ -305,7 +299,6 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
             id: null,
             imgUrl: imgUrl,
             imgPath: imgPath,
-            color: _selectedColor.name,
             quantity: quantity),
       );
 
@@ -541,32 +534,32 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
     );
   }
 
-  Widget colorCircle({@required ColorName colorName}) {
-    final double size = 50;
+  // Widget colorCircle({@required ColorName colorName}) {
+  //   final double size = 50;
 
-    return Padding(
-      padding: EdgeInsets.all(5),
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            _selectedColor = colorName;
-          });
-        },
-        child: Container(
-          height: size,
-          width: size,
-          decoration: BoxDecoration(
-            color: colorName.color,
-            shape: BoxShape.circle,
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: LitPicTheme.nearlyDarkBlue.withOpacity(0.4),
-                  offset: Offset(4.0, 4.0),
-                  blurRadius: 8.0),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  //   return Padding(
+  //     padding: EdgeInsets.all(5),
+  //     child: InkWell(
+  //       onTap: () {
+  //         setState(() {
+  //           _selectedColor = colorName;
+  //         });
+  //       },
+  //       child: Container(
+  //         height: size,
+  //         width: size,
+  //         decoration: BoxDecoration(
+  //           color: colorName.color,
+  //           shape: BoxShape.circle,
+  //           boxShadow: <BoxShadow>[
+  //             BoxShadow(
+  //                 color: LitPicTheme.nearlyDarkBlue.withOpacity(0.4),
+  //                 offset: Offset(4.0, 4.0),
+  //                 blurRadius: 8.0),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }

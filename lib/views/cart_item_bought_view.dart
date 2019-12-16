@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/hero_screen.dart';
@@ -88,7 +87,7 @@ class CartItemBoughtView extends StatelessWidget {
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Text(
-                                                  "Color: ${cartItem.color}\nQuanity: ${cartItem.quantity}",
+                                                  "Quanity: ${cartItem.quantity}",
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w200,
@@ -165,8 +164,8 @@ class CartItemBoughtView extends StatelessWidget {
                                   },
                                   child: Hero(
                                     tag: cartItem.imgUrl,
-                                    child: CachedNetworkImage(
-                                      imageUrl: cartItem.imgUrl,
+                                    child: Image.network(
+                                      cartItem.imgUrl,
                                     ),
                                   ),
                                 ),

@@ -1,5 +1,3 @@
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class HeroScreen extends StatelessWidget {
@@ -17,8 +15,8 @@ class HeroScreen extends StatelessWidget {
             tag: imgUrl == null ? imgPath : imgUrl,
             child: imgUrl == null
                 ? Image.asset(imgPath)
-                : CachedNetworkImage(
-                    imageUrl: imgUrl,
+                : Image.network(
+                    imgUrl,
                   ),
           ),
         ),

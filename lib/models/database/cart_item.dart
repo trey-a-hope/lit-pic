@@ -6,22 +6,19 @@ class CartItem {
   final String imgUrl;
   final String imgPath;
   final int quantity;
-  final String color;
 
   CartItem(
       {@required this.id,
       @required this.imgUrl,
       @required this.imgPath,
-      @required this.quantity,
-      @required this.color});
+      @required this.quantity});
 
   factory CartItem.fromDoc({@required DocumentSnapshot doc}) {
     return CartItem(
         id: doc.data['id'],
         imgUrl: doc.data['imgUrl'],
         imgPath: doc.data['imgPath'],
-        quantity: doc.data['quantity'],
-        color: doc.data['color']);
+        quantity: doc.data['quantity']);
   }
 
   Map<String, dynamic> toMap() {
@@ -29,7 +26,6 @@ class CartItem {
       'id': id,
       'imgUrl': imgUrl,
       'imgPath': imgPath,
-      'color': color,
       'quantity': quantity
     };
   }

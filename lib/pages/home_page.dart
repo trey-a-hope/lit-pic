@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
+import 'package:litpic/models/database/lit_pic.dart';
 import 'package:litpic/models/database/user.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
@@ -14,7 +14,6 @@ import 'package:litpic/views/detail_card_view.dart';
 import 'package:litpic/views/recent_creations_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:youtube_player/youtube_player.dart';
 
 class HomePage extends StatefulWidget {
   final AnimationController animationController;
@@ -37,6 +36,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   // Coupon _coupon;
   bool addAllListDataComplete = false;
   // String youtubeVideoID;
+  List<LitPic> litPics = List<LitPic>();
 
   @override
   void initState() {
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           }
         },
         widget: CircleAvatar(
-          backgroundImage: CachedNetworkImageProvider(
+          backgroundImage: NetworkImage(
               'https://scontent-ort2-2.cdninstagram.com/vp/c21f18b9242101f4476511108371b153/5E892519/t51.2885-19/s320x320/60980291_2287245398154667_3908855079028916224_n.jpg?_nc_ht=scontent-ort2-2.cdninstagram.com'),
         ),
         image: Image.asset('assets/images/litpic_example.jpg'),
@@ -177,6 +177,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         Padding(
           padding: EdgeInsets.only(top: 20),
           child: RecentCreationsView(
+            litPics: litPics,
             mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
                 CurvedAnimation(
                     parent: widget.animationController,
@@ -264,10 +265,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
-  // Future<void> fetchYouTubeVideoID() async {
-  //   youtubeVideoID = await getIt<DBService>().retrieveYouTubeVideoID();
-  //   return;
-  // }
+  Future<void> fetchLitPics() async {
+    litPics = await getIt<DBService>().retrieveLitPics();
+    return;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -291,7 +292,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget getMainListViewUI() {
     List<Future> futures = List<Future>();
     futures.add(load());
-    // futures.add(fetchYouTubeVideoID());
+    futures.add(fetchLitPics());
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {

@@ -124,7 +124,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
         ),
       );
 
-                  listViews.add(Divider());
+      listViews.add(Divider());
 
       listViews.add(
         SimpleTitleView(
@@ -303,19 +303,25 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       //Clear list to prevent for duplicates later.
       cartItems.clear();
 
-      //Fetch cart item documents.
-      QuerySnapshot querySnapshot = await Firestore.instance
+      //Fetch order that matches order id.
+      QuerySnapshot orderQuerySnapshot = await Firestore.instance
           .collection('Orders')
-          .document(order.id)
-          .collection('Cart Items')
+          .where('id', isEqualTo: order.id)
           .getDocuments();
 
-      List<DocumentSnapshot> docs = querySnapshot.documents;
+      //Fetch cart items for that order.
+      DocumentSnapshot cartItemDoc = orderQuerySnapshot.documents.first;
+      QuerySnapshot cartItemsSnapshot = await Firestore.instance
+          .collection('Orders')
+          .document(cartItemDoc.documentID)
+          .collection('Cart Items')
+          .getDocuments();
+      List<DocumentSnapshot> cartItemDocs = cartItemsSnapshot.documents;
 
       //Add cart items to list.
-      for (int i = 0; i < docs.length; i++) {
+      for (int i = 0; i < cartItemDocs.length; i++) {
         cartItems.add(
-          CartItem.fromDoc(doc: docs[i]),
+          CartItem.fromDoc(doc: cartItemDocs[i]),
         );
       }
     }
