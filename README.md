@@ -27,6 +27,7 @@ git init
 git remote add origin [my-repo]
 git fetch
 git checkout origin/master -ft
+git commit -m "initial commit"
 ## git branch --set-upstream-to=origin/master master
 ## git push -f origin master
 
