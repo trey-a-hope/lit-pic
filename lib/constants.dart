@@ -6,7 +6,7 @@ final String testPublishableKey = 'pk_test_E2jn7tAPmhIlGYM2rg1hzQWc00DAPdLu9K';
 final String liveSecretKey = 'sk_live_YugWsgAGKCQkFVQhCDBMvIsm00ZguJ4JNu';
 final String livePublishableKey = 'pk_live_hzezrgkyvfcgoW8HNxBb4UZQ00s8snV5WZ';
 final String endpoint =
-    'https://us-central1-hidden-gems-e481d.cloudfunctions.net/';
+    'https://us-central1-myapi-e0bfc.cloudfunctions.net/';
 
 
 // class LithophanesData {
