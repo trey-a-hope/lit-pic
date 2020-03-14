@@ -2,7 +2,7 @@ name: litpic
 description: Mobile app for requested customed 3D printing lithophanes.
 author: Trey Hope <tr3designs.prints@gmail.com>
 
-version: 1.0.14+14
+version: 1.0.15+15
 
 environment:
   sdk: ">=2.6.0 <3.0.0"

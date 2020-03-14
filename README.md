@@ -5,6 +5,10 @@ https://www.youtube.com/watch?time_continue=1&v=mjHR4qkXRSc
 ## Create keystore file.
 - Command [keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key]
 
+## Grant access over entire project, (to avoid the EACCES errors.)
+sudo chown -R <username> <directory>
+sudo chown -R treyhope myapi
+
 ## Build Android APK
 - Command [flutter clean]
 - Command [flutter build apk --release]
