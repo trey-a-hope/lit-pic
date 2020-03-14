@@ -11,6 +11,7 @@ import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/pages/auth/login_page.dart';
 import 'package:litpic/pages/cart_page.dart';
+import 'package:litpic/pages/exampleWidget.dart';
 import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/make_lithophane_page.dart';
 import 'package:litpic/pages/profile/profile_page.dart';
@@ -38,6 +39,8 @@ class CommonThings {
 }
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   SystemChrome.setPreferredOrientations(
     [DeviceOrientation.portraitUp],
   );
@@ -51,8 +54,6 @@ void main() {
   //Make status bar in Android transparent.
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-
-  WidgetsFlutterBinding.ensureInitialized();
 
   //Authentication
   getIt.registerSingleton<AuthService>(AuthServiceImplementation(),
@@ -123,7 +124,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.black,
         fontFamily: 'Montserrat',
       ),
-      home: LandingPage(),
+      home: ExampleWidget(),
     );
   }
 }
