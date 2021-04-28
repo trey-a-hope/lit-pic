@@ -196,7 +196,7 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
       try {
         //Load user and orders.
         _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomer>()
+        _currentUser.customer = await getIt<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
         return;

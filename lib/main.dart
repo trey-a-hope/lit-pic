@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart' as prefix0;
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
@@ -16,21 +15,8 @@ import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/make_lithophane_page.dart';
 import 'package:litpic/pages/profile/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
-import 'package:litpic/services/auth_service.dart';
-import 'package:litpic/services/db_service.dart';
-import 'package:litpic/services/device_service.dart';
-import 'package:litpic/services/fcm_service.dart';
-import 'package:litpic/services/formatter_service.dart';
-import 'package:litpic/services/image_service.dart';
-import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/storage_service.dart';
-import 'package:litpic/services/stripe/card.dart';
-import 'package:litpic/services/stripe/coupon.dart';
-import 'package:litpic/services/stripe/customer.dart';
-import 'package:litpic/services/stripe/order.dart';
-import 'package:litpic/services/stripe/sku.dart';
-import 'package:litpic/services/stripe/token.dart';
-import 'package:litpic/services/validater_service.dart';
+import 'package:litpic/service_locator.dart';
+import 'package:package_info/package_info.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -38,7 +24,7 @@ class CommonThings {
   static double width;
 }
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setPreferredOrientations(
@@ -55,57 +41,11 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
-  //Authentication
-  getIt.registerSingleton<AuthService>(AuthServiceImplementation(),
-      signalsReady: true);
-  //Database
-  getIt.registerSingleton<DBService>(DBServiceImplementation(),
-      signalsReady: true);
-  //Firebase Cloud Messaging
-  getIt.registerSingleton<FCMService>(FCMServiceImplementation(),
-      signalsReady: true);
-  //Formatter
-  getIt.registerSingleton<FormatterService>(FormatterServiceImplementation(),
-      signalsReady: true);
-  //Image
-  getIt.registerSingleton<ImageService>(ImageServiceImplementation(),
-      signalsReady: true);
-  //Modal
-  getIt.registerSingleton<ModalService>(ModalServiceImplementation(),
-      signalsReady: true);
-  //Package Device Info
-  getIt.registerSingleton<DeviceService>(DeviceServiceImplementation(),
-      signalsReady: true);
-  //Storage
-  getIt.registerSingleton<StorageService>(StorageServiceImplementation(),
-      signalsReady: true);
-  //Stripe Card
-  getIt.registerSingleton<StripeCard>(
-      StripeCardImplementation(apiKey: testSecretKey, endpoint: endpoint),
-      signalsReady: true);
-  //Stripe Customer
-  getIt.registerSingleton<StripeCustomer>(
-      StripeCustomerImplementation(apiKey: testSecretKey, endpoint: endpoint),
-      signalsReady: true);
-  //Stripe Coupon
-  getIt.registerSingleton<StripeCoupon>(
-      StripeCouponImplementation(apiKey: testSecretKey, endpoint: endpoint),
-      signalsReady: true);
-  //Stripe Order
-  getIt.registerSingleton<StripeOrder>(
-      StripeOrderImplementation(apiKey: testSecretKey, endpoint: endpoint),
-      signalsReady: true);
-  //Stripe Sku
-  getIt.registerSingleton<StripeSku>(
-      StripeSkuImplementation(apiKey: testSecretKey, endpoint: endpoint),
-      signalsReady: true);
-  //Stripe Token
-  getIt.registerSingleton<StripeToken>(
-      StripeTokenImplementation(apiKey: testSecretKey, endpoint: endpoint),
-      signalsReady: true);
-  //Validator
-  getIt.registerSingleton<ValidatorService>(ValidatorServiceImplementation(),
-      signalsReady: true);
+  setUpLocater();
+
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  version = packageInfo.version;
+  buildNumber = packageInfo.buildNumber;
 
   runApp(
     MyApp(),
@@ -124,7 +64,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.black,
         fontFamily: 'Montserrat',
       ),
-      home: ExampleWidget(),
+      home: LandingPage(),
     );
   }
 }
@@ -255,16 +195,4 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
       ],
     );
   }
-}
-
-class HexColor extends Color {
-  static int _getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll("#", "");
-    if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
-    }
-    return int.parse(hexColor, radix: 16);
-  }
-
-  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }

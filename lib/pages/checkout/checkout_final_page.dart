@@ -287,7 +287,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
       try {
         //Load user and orders.
         _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomer>()
+        _currentUser.customer = await getIt<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
         await fetchCartItems();
 
@@ -337,7 +337,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
 
   Future<void> fetchLithophaneSku() async {
     final String skuID = await getIt<DBService>().retrieveSkuID();
-    _sku = await getIt<StripeSku>().retrieve(skuID: skuID);
+    _sku = await getIt<StripeSkuService>().retrieve(skuID: skuID);
     return;
   }
 
@@ -359,7 +359,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
         });
 
         //Create order.
-        final String orderID = await getIt<StripeOrder>().create(
+        final String orderID = await getIt<StripeOrderService>().create(
             line1: _currentUser.customer.shipping.address.line1,
             name: _currentUser.customer.shipping.name,
             email: _currentUser.customer.email,
@@ -371,10 +371,8 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
             sku: _sku,
             cartItems: cartItems);
 
-            
-
         //Pay order.
-        await getIt<StripeOrder>().pay(
+        await getIt<StripeOrderService>().pay(
             orderID: orderID,
             source: _currentUser.customer.defaultSource,
             customerID: _currentUser.customerID);

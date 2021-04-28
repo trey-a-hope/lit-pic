@@ -52,8 +52,11 @@ class SignUpPageState extends State<SignUpPage>
           );
 
           //Create customer in Stripe.
-          String customerID = await getIt<StripeCustomer>()
-              .create(email: _emailController.text, name: _nameController.text);
+          String customerID = await getIt<StripeCustomerService>().create(
+            email: _emailController.text,
+            name: _nameController.text,
+            description: '',
+          );
 
           //Create user in Auth.
           AuthResult authResult =

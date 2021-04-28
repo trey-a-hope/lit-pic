@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:litpic/models/database/cart_item.dart';
-import 'package:litpic/models/stripe/coupon.dart';
 import 'package:litpic/models/stripe/order.dart';
 import 'dart:convert' show json;
 
 import 'package:litpic/models/stripe/sku.dart';
 
-abstract class StripeOrder {
+import '../../constants.dart';
+
+abstract class IStripeOrderService {
   Future<List<Order>> list({String customerID, @required String status});
 
   Future<String> create(
@@ -35,17 +36,10 @@ abstract class StripeOrder {
       @required String customerID});
 }
 
-class StripeOrderImplementation extends StripeOrder {
-  StripeOrderImplementation({@required this.apiKey, @required this.endpoint});
-
-  final String apiKey;
-  final String endpoint;
-
+class StripeOrderService extends IStripeOrderService {
   @override
   Future<List<Order>> list({String customerID, String status}) async {
-    Map data = {
-      'apiKey': apiKey,
-    };
+    Map data = {};
 
     if (customerID != null) {
       data['customerID'] = customerID;
@@ -56,7 +50,7 @@ class StripeOrderImplementation extends StripeOrder {
     }
 
     http.Response response = await http.post(
-      '${endpoint}StripeListOrders',
+      '${GCF_ENDPOINT}StripeListOrders',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -64,7 +58,7 @@ class StripeOrderImplementation extends StripeOrder {
     try {
       Map map = json.decode(response.body);
       if (map['statusCode'] == null) {
-        List<Order> orders = List<Order>();
+        List<Order> orders = [];
         Map map = json.decode(response.body);
         for (int i = 0; i < map['data'].length; i++) {
           Order order = Order.fromMap(map: map['data'][i]);
@@ -98,7 +92,6 @@ class StripeOrderImplementation extends StripeOrder {
     }
 
     Map<String, dynamic> data = {
-      'apiKey': apiKey,
       'customerID': customerID,
       'email': email,
       'name': name,
@@ -113,7 +106,7 @@ class StripeOrderImplementation extends StripeOrder {
     };
 
     http.Response response = await http.post(
-      '${endpoint}StripeCreateOrder',
+      '${GCF_ENDPOINT}StripeCreateOrder',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -133,15 +126,10 @@ class StripeOrderImplementation extends StripeOrder {
 
   @override
   Future<void> pay({String orderID, String source, String customerID}) async {
-    Map data = {
-      'apiKey': apiKey,
-      'orderID': orderID,
-      'source': source,
-      'customerID': customerID
-    };
+    Map data = {'orderID': orderID, 'source': source, 'customerID': customerID};
 
     http.Response response = await http.post(
-      '${endpoint}StripePayOrder',
+      '${GCF_ENDPOINT}StripePayOrder',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -166,7 +154,6 @@ class StripeOrderImplementation extends StripeOrder {
       String carrier,
       String trackingNumber}) async {
     Map data = {
-      'apiKey': apiKey,
       'orderID': orderID,
       'status': status,
       'carrier': carrier,
@@ -174,7 +161,7 @@ class StripeOrderImplementation extends StripeOrder {
     };
 
     http.Response response = await http.post(
-      '${endpoint}StripeUpdateOrder',
+      '${GCF_ENDPOINT}StripeUpdateOrder',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );

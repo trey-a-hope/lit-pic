@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/user.dart';
 import 'package:litpic/models/stripe/order.dart';
 import 'package:litpic/pages/admin/admin_order_details.dart';
-import 'package:litpic/pages/profile/order_details_page.dart';
-import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/order.dart';
 import 'package:litpic/views/list_tile_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
+import '../../services/stripe/order.dart';
 
 class AdminCompleteOrdersPage extends StatefulWidget {
   const AdminCompleteOrdersPage({Key key}) : super(key: key);
@@ -137,7 +135,7 @@ class _AdminCompleteOrdersPageState extends State<AdminCompleteOrdersPage>
 
   Future<void> loadCustomerInfo() async {
     try {
-      orders = await getIt<StripeOrder>().list(status: 'fulfilled');
+      orders = await getIt<StripeOrderService>().list(status: 'fulfilled');
       orders.sort((a, b) => b.updated.compareTo(a.updated));
 
       return;

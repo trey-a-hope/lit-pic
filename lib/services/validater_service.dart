@@ -1,4 +1,4 @@
-abstract class ValidatorService {
+abstract class IValidatorService {
   String isEmpty(String value);
   String mobile(String value);
   String email(String value);
@@ -11,7 +11,7 @@ abstract class ValidatorService {
   String trackingNumber(String value);
 }
 
-class ValidatorServiceImplementation extends ValidatorService {
+class ValidatorService extends IValidatorService {
   @override
   String isEmpty(String value) {
     if (value.length == 0) {
@@ -94,7 +94,7 @@ class ValidatorServiceImplementation extends ValidatorService {
     return null;
   }
 
-    @override
+  @override
   String trackingNumber(String value) {
     if (value.isEmpty) return 'Invalid Tracking Number.';
     final RegExp regExp = RegExp(r'^[0-9]{22}$');

@@ -342,7 +342,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
 
   Future<void> fetchLithophaneSku() async {
     final String skuID = await getIt<DBService>().retrieveSkuID();
-    _sku = await getIt<StripeSku>().retrieve(skuID: skuID);
+    _sku = await getIt<StripeSkuService>().retrieve(skuID: skuID);
     return;
   }
 

@@ -196,7 +196,7 @@ class _AddCardPageState extends State<AddCardPage>
     try {
       //Load user and orders.
       _currentUser = await getIt<AuthService>().getCurrentUser();
-      _currentUser.customer = await getIt<StripeCustomer>()
+      _currentUser.customer = await getIt<StripeCustomerService>()
           .retrieve(customerID: _currentUser.customerID);
 
       return;
@@ -230,10 +230,10 @@ class _AddCardPageState extends State<AddCardPage>
         String cvc = _cvcController.text;
 
         try {
-          String token = await getIt<StripeToken>().create(
+          String token = await getIt<StripeTokenService>().create(
               number: number, expMonth: expMonth, expYear: expYear, cvc: cvc);
 
-          await getIt<StripeCard>()
+          await getIt<StripeCardService>()
               .create(customerID: _currentUser.customerID, token: token);
 
           print(token);

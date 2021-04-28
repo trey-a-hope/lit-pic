@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:litpic/common/hero_screen.dart';
+import 'package:litpic/extensions/hexcolor.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/main.dart';
 import 'package:litpic/models/database/lit_pic.dart';

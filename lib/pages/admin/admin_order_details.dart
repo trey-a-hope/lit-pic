@@ -391,7 +391,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
     if (!fetchLithophaneSkuComplete) {
       fetchLithophaneSkuComplete = true;
       final String skuID = await getIt<DBService>().retrieveSkuID();
-      _sku = await getIt<StripeSku>().retrieve(skuID: skuID);
+      _sku = await getIt<StripeSkuService>().retrieve(skuID: skuID);
       return;
     } else {
       return;
@@ -440,7 +440,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
           });
 
           //Update order to fulfilled status.
-          await getIt<StripeOrder>().update(
+          await getIt<StripeOrderService>().update(
               orderID: order.id,
               carrier: _carrierController.text,
               status: 'fulfilled',

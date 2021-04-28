@@ -296,10 +296,7 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
       getIt<DBService>().createCartItem(
         userID: _currentUser.id,
         cartItem: CartItem(
-            id: null,
-            imgUrl: imgUrl,
-            imgPath: imgPath,
-            quantity: quantity),
+            id: null, imgUrl: imgUrl, imgPath: imgPath, quantity: quantity),
       );
 
       //Clear image and stop loading indicator.
@@ -406,7 +403,7 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
 
   Future<void> fetchLithophaneSku() async {
     final String skuID = await getIt<DBService>().retrieveSkuID();
-    _sku = await getIt<StripeSku>().retrieve(skuID: skuID);
+    _sku = await getIt<StripeSkuService>().retrieve(skuID: skuID);
     return;
   }
 

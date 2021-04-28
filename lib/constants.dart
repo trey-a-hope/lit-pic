@@ -1,67 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:litpic/main.dart';
 
-final String testSecretKey = 'sk_test_6s03VnuOvJtDW7a6ygpFdDdM00Jxr17MUX';
-final String testPublishableKey = 'pk_test_E2jn7tAPmhIlGYM2rg1hzQWc00DAPdLu9K';
-final String liveSecretKey = 'sk_live_YugWsgAGKCQkFVQhCDBMvIsm00ZguJ4JNu';
-final String livePublishableKey = 'pk_live_hzezrgkyvfcgoW8HNxBb4UZQ00s8snV5WZ';
-final String endpoint =
-    'https://us-central1-myapi-e0bfc.cloudfunctions.net/';
+import 'extensions/hexcolor.dart';
 
+const String GCF_ENDPOINT =
+    'https://us-central1-litpic-f293c.cloudfunctions.net/';
 
-// class LithophanesData {
-//   String imagePath;
-//   String titleTxt;
-//   String startColor;
-//   String endColor;
-//   List<String> meals;
-//   int kacl;
-
-//   LithophanesData({
-//     this.imagePath = '',
-//     this.titleTxt = '',
-//     this.startColor = "",
-//     this.endColor = "",
-//     this.meals,
-//     this.kacl = 0,
-//   });
-
-//   static List<LithophanesData> tabIconsList = [
-//     LithophanesData(
-//       imagePath: 'assets/images/ankhti.png',
-//       titleTxt: 'Ankhti & Family',
-//       kacl: 45,
-//       meals: ["6in x 7in,", "White PLA"],
-//       startColor: "#FA7D82",
-//       endColor: "#FFB295",
-//     ),
-//     LithophanesData(
-//       imagePath: 'assets/images/sza.png',
-//       titleTxt: 'SZA',
-//       kacl: 50,
-//       meals: ["8in x 6in,", "White PLA"],
-//       startColor: "#738AE6",
-//       endColor: "#5C5EDD",
-//     ),
-
-//     LithophanesData(
-//       imagePath: 'assets/images/mlk.png',
-//       titleTxt: 'MLK',
-//       kacl: 42,
-//       meals: ["8in x 4.5in,", "Red PLA"],
-//       startColor: "#FE95B6",
-//       endColor: "#FF5287",
-//     ),
-//     // MealsListData(
-//     //   imagePath: 'assets/fitness_app/dinner.png',
-//     //   titleTxt: 'Dinner',
-//     //   kacl: 0,
-//     //   meals: ["Recommend:", "703 kcal"],
-//     //   startColor: "#6F72CA",
-//     //   endColor: "#1E1466",
-//     // ),
-//   ];
-// }
+//These are set in main().
+String version;
+String buildNumber;
+double screenWidth;
+double screenHeight;
 
 class TabIconData {
   Icon unselectedIcon;

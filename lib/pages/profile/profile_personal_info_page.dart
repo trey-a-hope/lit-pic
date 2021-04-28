@@ -207,7 +207,7 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
       try {
         //Load user.
         _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomer>()
+        _currentUser.customer = await getIt<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
         return;

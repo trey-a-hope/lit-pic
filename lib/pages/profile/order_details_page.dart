@@ -285,7 +285,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
     if (!fetchLithophaneSkuComplete) {
       fetchLithophaneSkuComplete = true;
       final String skuID = await getIt<DBService>().retrieveSkuID();
-      _sku = await getIt<StripeSku>().retrieve(skuID: skuID);
+      _sku = await getIt<StripeSkuService>().retrieve(skuID: skuID);
       return;
     } else {
       return;

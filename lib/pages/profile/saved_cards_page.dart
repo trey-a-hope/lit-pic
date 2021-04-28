@@ -147,7 +147,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
       try {
         //Load user and orders.
         _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomer>()
+        _currentUser.customer = await getIt<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
         print(_currentUser.customer.defaultSource);
@@ -171,7 +171,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
         listViews.clear();
       });
 
-      getIt<StripeCard>()
+      getIt<StripeCardService>()
           .delete(customerID: _currentUser.customerID, cardID: creditCard.id);
 
       //Re add views with new data.
@@ -205,7 +205,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
         listViews.clear();
       });
 
-      getIt<StripeCustomer>().update(
+      getIt<StripeCustomerService>().update(
           customerID: _currentUser.customerID,
           defaultSource: creditCard.id,
           name: _currentUser.customer.name);

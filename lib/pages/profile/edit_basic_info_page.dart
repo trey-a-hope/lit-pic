@@ -164,7 +164,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
       try {
         //Load user.
         _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomer>()
+        _currentUser.customer = await getIt<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
         _nameController.text = _currentUser.customer.name;
@@ -203,11 +203,11 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
           await getIt<AuthService>().updateEmail(email: updatedEmail);
 
           //Update email.
-          await getIt<StripeCustomer>()
+          await getIt<StripeCustomerService>()
               .update(customerID: _currentUser.customerID, email: updatedEmail);
 
           //Update name.
-          await getIt<StripeCustomer>()
+          await getIt<StripeCustomerService>()
               .update(customerID: _currentUser.customerID, name: updatedName);
 
           setState(

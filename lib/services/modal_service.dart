@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-abstract class ModalService {
+abstract class IModalService {
   // void showInSnackBar(
   //     {@required GlobalKey<ScaffoldState> scaffoldKey,
   //     @required String message});
@@ -19,7 +19,7 @@ abstract class ModalService {
       @required String message});
 }
 
-class ModalServiceImplementation extends ModalService {
+class ModalService extends IModalService {
   final GetIt getIt = GetIt.I;
 
   // @override

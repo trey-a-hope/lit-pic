@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show Encoding, json;
 
-abstract class StripeToken extends ChangeNotifier {
+import '../../constants.dart';
+
+abstract class IStripeTokenService extends ChangeNotifier {
   Future<String> create(
       {@required String number,
       @required String expMonth,
@@ -11,12 +13,7 @@ abstract class StripeToken extends ChangeNotifier {
       @required String cvc});
 }
 
-class StripeTokenImplementation extends StripeToken {
-  StripeTokenImplementation({@required this.apiKey, @required this.endpoint});
-
-  final String apiKey;
-  final String endpoint;
-
+class StripeTokenService extends IStripeTokenService {
   @override
   Future<String> create(
       {@required String number,
@@ -24,7 +21,6 @@ class StripeTokenImplementation extends StripeToken {
       @required String expYear,
       @required String cvc}) async {
     Map data = {
-      'apiKey': apiKey,
       'number': number,
       'exp_month': expMonth,
       'exp_year': expYear,
@@ -32,7 +28,7 @@ class StripeTokenImplementation extends StripeToken {
     };
 
     http.Response response = await http.post(
-      '${endpoint}StripeCreateToken',
+      '${GCF_ENDPOINT}StripeCreateToken',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );

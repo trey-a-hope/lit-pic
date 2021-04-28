@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:litpic/models/database/user.dart';
 
-abstract class AuthService {
+abstract class IAuthService {
   Future<User> getCurrentUser();
   Future<void> signOut();
   Stream<FirebaseUser> onAuthStateChanged();
@@ -20,7 +20,7 @@ abstract class AuthService {
   Future<void> sendPasswordResetEmail({@required String email});
 }
 
-class AuthServiceImplementation extends AuthService {
+class AuthService extends IAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final CollectionReference _usersDB = Firestore.instance.collection('Users');
 

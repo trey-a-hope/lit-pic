@@ -187,7 +187,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
       try {
         //Load user.
         _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomer>()
+        _currentUser.customer = await getIt<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
         if (_currentUser.customer.shipping != null) {
@@ -226,7 +226,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
           );
 
           //Update address info.
-          await getIt<StripeCustomer>().update(
+          await getIt<StripeCustomerService>().update(
               name: _currentUser.customer.name,
               customerID: _currentUser.customerID,
               line1: _addressController.text,

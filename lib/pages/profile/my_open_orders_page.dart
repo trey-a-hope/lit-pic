@@ -138,7 +138,7 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
     try {
       //Load user and orders.
       _currentUser = await getIt<AuthService>().getCurrentUser();
-      orders = await getIt<StripeOrder>()
+      orders = await getIt<StripeOrderService>()
           .list(customerID: _currentUser.customerID, status: 'paid');
 
       return;

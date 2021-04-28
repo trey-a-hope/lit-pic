@@ -6,7 +6,9 @@ import 'dart:convert' show json;
 import 'package:litpic/models/stripe/customer.dart';
 import 'package:litpic/models/stripe/shipping.dart';
 
-abstract class StripeCustomer {
+import '../../constants.dart';
+
+abstract class IStripeCustomerService {
   Future<String> create({String email, String name});
   Future<Customer> retrieve({@required String customerID});
   Future<void> update(
@@ -22,21 +24,13 @@ abstract class StripeCustomer {
   Future<bool> delete({@required String customerID});
 }
 
-class StripeCustomerImplementation extends StripeCustomer {
-  StripeCustomerImplementation(
-      {@required this.apiKey, @required this.endpoint});
-
-  final String apiKey;
-  final String endpoint;
-
+class StripeCustomerService extends IStripeCustomerService {
   @override
   Future<String> create(
       {@required String email,
       @required String description,
       @required String name}) async {
-    Map data = {
-      'apiKey': apiKey,
-    };
+    Map data = {};
 
     if (name != null) {
       data['name'] = name;
@@ -51,7 +45,7 @@ class StripeCustomerImplementation extends StripeCustomer {
     }
 
     http.Response response = await http.post(
-      '${endpoint}StripeCreateCustomer',
+      '${GCF_ENDPOINT}StripeCreateCustomer',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -71,10 +65,10 @@ class StripeCustomerImplementation extends StripeCustomer {
 
   @override
   Future<Customer> retrieve({@required String customerID}) async {
-    Map data = {'apiKey': apiKey, 'customerID': customerID};
+    Map data = {'customerID': customerID};
 
     http.Response response = await http.post(
-      '${endpoint}StripeRetrieveCustomer',
+      '${GCF_ENDPOINT}StripeRetrieveCustomer',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -101,7 +95,7 @@ class StripeCustomerImplementation extends StripeCustomer {
         }
 
         //Add sources if available.
-        List<CreditCard> sources = List<CreditCard>();
+        List<CreditCard> sources = [];
         if (sourcesMap != null) {
           for (int i = 0; i < sourcesMap['data'].length; i++) {
             Map sourceMap = sourcesMap['data'][i];
@@ -146,7 +140,6 @@ class StripeCustomerImplementation extends StripeCustomer {
       String name,
       String email}) async {
     Map data = {
-      'apiKey': apiKey,
       'customerID': customerID,
     };
 
@@ -183,7 +176,7 @@ class StripeCustomerImplementation extends StripeCustomer {
     }
 
     http.Response response = await http.post(
-      '${endpoint}StripeUpdateCustomer',
+      '${GCF_ENDPOINT}StripeUpdateCustomer',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -203,10 +196,10 @@ class StripeCustomerImplementation extends StripeCustomer {
 
   @override
   Future<bool> delete({String customerID}) async {
-    Map data = {'apiKey': apiKey, 'customerID': customerID};
+    Map data = {'customerID': customerID};
 
     http.Response response = await http.post(
-      '${endpoint}StripeDeleteCustomer',
+      '${GCF_ENDPOINT}StripeDeleteCustomer',
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );

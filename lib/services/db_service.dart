@@ -4,7 +4,7 @@ import 'package:litpic/models/database/cart_item.dart';
 import 'package:litpic/models/database/lit_pic.dart';
 import 'package:litpic/models/database/user.dart';
 
-abstract class DBService {
+abstract class IDBService {
   //Admin
   Future<String> retrieveAdminDocID();
 
@@ -40,7 +40,7 @@ abstract class DBService {
   Future<String> retrieveSkuID();
 }
 
-class DBServiceImplementation extends DBService {
+class DBService extends IDBService {
   final CollectionReference _usersDB = Firestore.instance.collection('Users');
   final DocumentReference _dataDB =
       Firestore.instance.collection('Data').document('OCqQBQf9d5GM2sbSrF85');

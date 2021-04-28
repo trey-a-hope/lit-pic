@@ -4,7 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-abstract class FCMService {
+abstract class IFCMService {
   Future<void> sendNotificationToUser(
       {@required String fcmToken,
       @required String title,
@@ -15,11 +15,12 @@ abstract class FCMService {
   Future<void> subscribeToTopic({@required String topic});
 }
 
-class FCMServiceImplementation extends FCMService {
+class FCMService extends IFCMService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   final String _endpoint = 'https://fcm.googleapis.com/fcm/send';
   final String _contentType = 'application/json';
-  final String _authorization = 'key=AAAAfwIwcFs:APA91bGpR2eNlUi7d6RUnCr3FmdkDrmRg6pqlyHDAgxQq3VWc9Z_YwswWsQB2EFgP5ktZ9QpgyYTc8VaC1yP_fdbUtLrSgv7TGFrOG3HPIuZDt4kDA2ti8fe4np4aHrjdsfescGGGEPa';
+  final String _authorization =
+      'key=AAAAfwIwcFs:APA91bGpR2eNlUi7d6RUnCr3FmdkDrmRg6pqlyHDAgxQq3VWc9Z_YwswWsQB2EFgP5ktZ9QpgyYTc8VaC1yP_fdbUtLrSgv7TGFrOG3HPIuZDt4kDA2ti8fe4np4aHrjdsfescGGGEPa';
 
   Future<http.Response> _sendNotification(
       String to, String title, String body) async {

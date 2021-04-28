@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-abstract class StorageService {
+abstract class IStorageService {
   Future<String> uploadImage({@required File file, @required String imgPath});
   Future<void> deleteImage({@required String imgPath});
 }
 
-class StorageServiceImplementation extends StorageService {
+class StorageService extends IStorageService {
   //Add validation to determine if file is image or not...
   @override
   Future<String> uploadImage(
