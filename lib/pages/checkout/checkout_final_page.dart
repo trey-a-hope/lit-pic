@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
+import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/cart_item_model.dart';
 import 'package:litpic/models/sku_model.dart';
@@ -15,6 +16,7 @@ import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/services/stripe_order_service.dart';
 import 'package:litpic/services/stripe_sku_service.dart';
+import 'package:litpic/services/user_service.dart';
 import 'package:litpic/views/cart_item_bought_view.dart';
 import 'package:litpic/views/pay_flow_diagram_view.dart';
 import 'package:litpic/views/round_button_view.dart';
@@ -55,8 +57,6 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
   double shippingFee;
   double total;
   int totalLithophanes;
-
-  String adminDocID;
 
   @override
   void initState() {
@@ -297,8 +297,8 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
       //Fetch cart item documents.
       List<DocumentSnapshot> docs = (await Firestore.instance
               .collection('Users')
-              .document(_currentUser.id)
-              .collection('Cart Items')
+              .document(_currentUser.uid)
+              .collection('cartItems')
               .getDocuments())
           .documents;
 
@@ -309,17 +309,6 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
         );
       }
     }
-  }
-
-  Future<void> fetchLithophaneSku() async {
-    // final String skuID = await locator<DBService>().retrieveSkuID();
-    // _sku = await locator<StripeSkuService>().retrieve(skuID: skuID);
-    // return;
-  }
-
-  Future<void> fetchAdminDocID() async {
-    // adminDocID = await locator<DBService>().retrieveAdminDocID();
-    // return;
   }
 
   void _submit() async {
@@ -363,14 +352,14 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
 
         //Save cart items to database.
         for (int i = 0; i < cartItems.length; i++) {
-          await ordersDocRef.collection('Cart Items').add(cartItems[i].toMap());
+          await ordersDocRef.collection('cartItems').add(cartItems[i].toMap());
         }
 
         //Create user cart items reference.
         CollectionReference cartItemsColRef = Firestore.instance
             .collection('Users')
-            .document(_currentUser.id)
-            .collection('Cart Items');
+            .document(_currentUser.uid)
+            .collection('cartItems');
 
         //Clear shopping cart.
         List<DocumentSnapshot> docs =
@@ -381,7 +370,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
 
         //Send notification to myself of new order created.
         UserModel treyHope =
-            await locator<DBService>().retrieveUser(id: adminDocID);
+            await locator<UserService>().retrieveUser(uid: ADMIN_DOC_ID);
         await locator<FCMService>().sendNotificationToUser(
             fcmToken: treyHope.fcmToken,
             title: 'NEW ORDER',
@@ -431,8 +420,8 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
   Widget getMainListViewUI() {
     List<Future> futures = List<Future>();
     futures.add(loadCustomerInfo());
-    futures.add(fetchLithophaneSku());
-    futures.add(fetchAdminDocID());
+    // futures.add(fetchLithophaneSku());
+    // futures.add(fetchAdminDocID());
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {

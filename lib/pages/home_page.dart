@@ -9,7 +9,9 @@ import 'package:litpic/models/litpic_model.dart';
 import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
+import 'package:litpic/services/litpic_service.dart';
 import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/services/user_service.dart';
 import 'package:litpic/views/detail_card_view.dart';
 import 'package:litpic/views/recent_creations_view.dart';
 import 'package:litpic/views/title_view.dart';
@@ -228,8 +230,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       //Update user's fcm token.
       final String fcmToken = await _fcm.getToken();
       if (fcmToken != null) {
-        locator<DBService>()
-            .updateUser(userID: _currentUser.id, data: {'fcmToken': fcmToken});
+        locator<UserService>()
+            .updateUser(uid: _currentUser.uid, data: {'fcmToken': fcmToken});
       }
 
       //Configure notifications for several action types.
@@ -262,7 +264,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> fetchLitPics() async {
-    litPics = await locator<DBService>().retrieveLitPics();
+    litPics = await locator<LitPicService>().retrieveLitPics();
     return;
   }
 

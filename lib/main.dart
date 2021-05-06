@@ -157,6 +157,7 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                     setState(
                       () {
                         tabBody = BlocProvider(
+                          lazy: true,
                           create: (context) =>
                               CreateLithophaneBloc()..add(LoadPageEvent()),
                           child: CreateLithophanePage(),

@@ -67,13 +67,13 @@ class CreateLithophaneBloc
       try {
         //Upload image to storage.
         final String photoID = Uuid().v1();
-        final String imgPath = 'Users/${_currentUser.id}/Orders/$photoID';
-        String imgUrl = await locator<StorageService>()
+        final String imgPath = 'Users/${_currentUser.uid}/Orders/$photoID';
+        final String imgUrl = await locator<StorageService>()
             .uploadImage(file: image, imgPath: imgPath);
 
         //Save cart item to database.
         await locator<CartItemService>().createCartItem(
-          userID: _currentUser.id,
+          uid: _currentUser.uid,
           cartItem: CartItemModel(
             id: null,
             imgUrl: imgUrl,

@@ -14,6 +14,7 @@ import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe_order_service.dart';
 import 'package:litpic/services/stripe_sku_service.dart';
+import 'package:litpic/services/user_service.dart';
 import 'package:litpic/services/validater_service.dart';
 import 'package:litpic/views/cart_item_bought_view.dart';
 import 'package:litpic/views/round_button_view.dart';
@@ -408,7 +409,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
       QuerySnapshot querySnapshot = await Firestore.instance
           .collection('Orders')
           .document(order.id)
-          .collection('Cart Items')
+          .collection('cartItems')
           .getDocuments();
 
       List<DocumentSnapshot> docs = querySnapshot.documents;
@@ -442,8 +443,8 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
               trackingNumber: _trackingNumberController.text);
 
           //Send notification to user of complete order.
-          UserModel user = await locator<DBService>()
-              .retrieveUser(customerID: order.customerID);
+          UserModel user = await locator<UserService>()
+              .retrieveUserByCustomerID(customerID: order.customerID);
           await locator<FCMService>().sendNotificationToUser(
               fcmToken: user.fcmToken,
               title: 'ORDER SHIPPED',

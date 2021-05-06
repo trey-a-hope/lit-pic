@@ -306,7 +306,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       QuerySnapshot cartItemsSnapshot = await Firestore.instance
           .collection('Orders')
           .document(cartItemDoc.documentID)
-          .collection('Cart Items')
+          .collection('cartItems')
           .getDocuments();
       List<DocumentSnapshot> cartItemDocs = cartItemsSnapshot.documents;
 

@@ -263,8 +263,8 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       //Fetch cart item documents.
       List<DocumentSnapshot> docs = (await Firestore.instance
               .collection('Users')
-              .document(_currentUser.id)
-              .collection('Cart Items')
+              .document(_currentUser.uid)
+              .collection('cartItems')
               .getDocuments())
           .documents;
 
@@ -477,7 +477,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
 
       //Remove cart item from database.
       await locator<CartItemService>()
-          .deleteCartItem(userID: _currentUser.id, cartItemID: cartItem.id);
+          .deleteCartItem(uid: _currentUser.uid, cartItemID: cartItem.id);
 
       //Remove image of cart item from storage.
       await locator<StorageService>().deleteImage(imgPath: cartItem.imgPath);
@@ -507,7 +507,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     });
 
     await locator<CartItemService>().updateCartItem(
-        userID: _currentUser.id,
+        uid: _currentUser.uid,
         cartItemID: cartItem.id,
         data: {'quantity': cartItem.quantity + 1});
 
@@ -539,7 +539,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     });
 
     await locator<CartItemService>().updateCartItem(
-        userID: _currentUser.id,
+        uid: _currentUser.uid,
         cartItemID: cartItem.id,
         data: {'quantity': cartItem.quantity - 1});
 

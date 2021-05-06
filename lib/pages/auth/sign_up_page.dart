@@ -11,6 +11,7 @@ import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe_customer_service.dart';
+import 'package:litpic/services/user_service.dart';
 import 'package:litpic/services/validater_service.dart';
 
 import '../../service_locator.dart';
@@ -30,6 +31,8 @@ class SignUpPageState extends State<SignUpPage>
   bool _autoValidate = false;
   bool _isLoading = false;
   final double _containerHeight = 350.0;
+
+  bool _obscureText = true;
 
   @override
   void initState() {
@@ -69,15 +72,13 @@ class SignUpPageState extends State<SignUpPage>
           //Create user in Database.
           final FirebaseUser firebaseUser = authResult.user;
           UserModel user = UserModel(
-              id: null,
-              isAdmin: false,
-              fcmToken: null,
-              timestamp: Timestamp.fromDate(
-                DateTime.now(),
-              ),
-              uid: firebaseUser.uid,
-              customerID: customerID);
-          await locator<DBService>().createUser(user: user);
+            uid: firebaseUser.uid,
+            fcmToken: null,
+            created: DateTime.now(),
+            modified: DateTime.now(),
+            customerID: customerID,
+          );
+          await locator<UserService>().createUser(user: user);
 
           Navigator.of(context).pop();
         } on PlatformException catch (e) {
@@ -157,7 +158,7 @@ class SignUpPageState extends State<SignUpPage>
                         padding: EdgeInsets.all(23),
                         child: Form(
                           key: _formKey,
-                          autovalidate: _autoValidate,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           child: ListView(
                             physics: BouncingScrollPhysics(),
                             shrinkWrap: true,
@@ -303,12 +304,20 @@ class SignUpPageState extends State<SignUpPage>
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.done,
       controller: _passwordController,
-      obscureText: true,
+      obscureText: _obscureText,
       style: TextStyle(color: Colors.black, fontFamily: 'SFUIDisplay'),
       decoration: InputDecoration(
           border: OutlineInputBorder(),
           labelText: 'Password',
           prefixIcon: Icon(Icons.lock_outline),
+          suffixIcon: IconButton(
+            icon: Icon(Icons.remove_red_eye_sharp),
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+          ),
           labelStyle: TextStyle(fontSize: 15)),
     );
   }

@@ -16,7 +16,7 @@ abstract class IAuthService {
   Future<void> updatePassword({@required String password});
   Future<void> updateEmail({@required String email});
 
-  Future<void> deleteUser({@required String userID});
+  Future<void> deleteUser({@required String uid});
   Future<void> sendPasswordResetEmail({@required String email});
 }
 
@@ -81,7 +81,7 @@ class AuthService extends IAuthService {
   }
 
   @override
-  Future<void> updatePassword({String password}) async {
+  Future<void> updatePassword({@required String password}) async {
     try {
       FirebaseUser firebaseUser = await _auth.currentUser();
       firebaseUser.updatePassword(password);
@@ -94,7 +94,7 @@ class AuthService extends IAuthService {
   }
 
   @override
-  Future<void> deleteUser({String userID}) async {
+  Future<void> deleteUser({@required String uid}) async {
     try {
       FirebaseUser firebaseUser = await _auth.currentUser();
       await firebaseUser.delete();

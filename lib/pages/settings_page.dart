@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
+import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/user_model.dart';
 import 'package:litpic/pages/admin/admin_page.dart';
@@ -69,7 +70,7 @@ class _SettingsPageState extends State<SettingsPage>
       int count = 3;
 
       //Admin
-      if (_currentUser.isAdmin) {
+      if (_currentUser.uid == ADMIN_DOC_ID) {
         listViews.add(
           ListTileView(
             animationController: widget.animationController,

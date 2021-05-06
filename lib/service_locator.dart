@@ -6,6 +6,7 @@ import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/fcm_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/image_service.dart';
+import 'package:litpic/services/litpic_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/storage_service.dart';
 import 'package:litpic/services/stripe_card_service.dart';
@@ -14,6 +15,7 @@ import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/services/stripe_order_service.dart';
 import 'package:litpic/services/stripe_sku_service.dart';
 import 'package:litpic/services/stripe_token_service.dart';
+import 'package:litpic/services/user_service.dart';
 import 'package:litpic/services/validater_service.dart';
 import 'services/fcm_service.dart';
 import 'services/validater_service.dart';
@@ -27,6 +29,7 @@ void setUpLocater() {
   locator.registerLazySingleton(() => FCMService());
   locator.registerLazySingleton(() => FormatterService());
   locator.registerLazySingleton(() => ImageService());
+  locator.registerLazySingleton(() => LitPicService());
   locator.registerLazySingleton(() => ModalService());
   locator.registerLazySingleton(() => StorageService());
   locator.registerLazySingleton(() => StripeCardService());
@@ -35,5 +38,6 @@ void setUpLocater() {
   locator.registerLazySingleton(() => StripeOrderService());
   locator.registerLazySingleton(() => StripeSkuService());
   locator.registerLazySingleton(() => StripeTokenService());
+  locator.registerLazySingleton(() => UserService());
   locator.registerLazySingleton(() => ValidatorService());
 }
