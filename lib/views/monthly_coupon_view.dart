@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/stripe/coupon.dart';
+import 'package:litpic/models/coupon_model.dart';
 
 class MonthlyCouponView extends StatelessWidget {
   final AnimationController animationController;
   final Animation animation;
-  final Coupon coupon;
+  final CouponModel coupon;
 
   final String dateFormat = 'MMM, dd yyyy';
 

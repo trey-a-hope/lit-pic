@@ -4,26 +4,20 @@ import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/cart_item.dart';
-import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/order.dart';
-import 'package:litpic/models/stripe/sku.dart';
-import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/models/cart_item_model.dart';
+import 'package:litpic/models/order_model.dart';
+import 'package:litpic/models/sku_model.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/formatter_service.dart';
-import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/order.dart';
-import 'package:litpic/services/stripe/sku.dart';
+import 'package:litpic/services/stripe_sku_service.dart';
 import 'package:litpic/views/cart_item_bought_view.dart';
-import 'package:litpic/views/cart_item_view.dart';
-import 'package:litpic/views/list_tile_view.dart';
-import 'package:litpic/views/order_view.dart';
 import 'package:litpic/views/simple_title_view.dart';
-import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+import '../../service_locator.dart';
+
 class OrderDetailsPage extends StatefulWidget {
-  final Order order;
+  final OrderModel order;
   const OrderDetailsPage({Key key, @required this.order}) : super(key: key);
   @override
   _OrderDetailsPageState createState() => _OrderDetailsPageState(order: order);
@@ -31,18 +25,16 @@ class OrderDetailsPage extends StatefulWidget {
 
 class _OrderDetailsPageState extends State<OrderDetailsPage>
     with TickerProviderStateMixin {
-  final Order order;
+  final OrderModel order;
 
   _OrderDetailsPageState({@required this.order});
   AnimationController animationController;
 
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
-
-  final GetIt getIt = GetIt.I;
 
   bool addAllListDataComplete = false;
   bool fetchLithophaneSkuComplete = false;
@@ -50,9 +42,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
   bool _isLoading = false;
 
   final String timeFormat = 'MMM d, yyyy @ h:mm a';
-  Sku _sku;
+  SkuModel _sku;
 
-  List<CartItem> cartItems = List<CartItem>();
+  List<CartItemModel> cartItems = [];
 
   @override
   void initState() {
@@ -199,7 +191,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'Amount',
-          subTxt: getIt<FormatterService>().money(amount: order.amount),
+          subTxt: locator<FormatterService>().money(amount: order.amount),
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -284,8 +276,8 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
   Future<void> fetchLithophaneSku() async {
     if (!fetchLithophaneSkuComplete) {
       fetchLithophaneSkuComplete = true;
-      final String skuID = await getIt<DBService>().retrieveSkuID();
-      _sku = await getIt<StripeSkuService>().retrieve(skuID: skuID);
+      final String skuID = await locator<DBService>().retrieveSkuID();
+      _sku = await locator<StripeSkuService>().retrieve(skuID: skuID);
       return;
     } else {
       return;
@@ -321,7 +313,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       //Add cart items to list.
       for (int i = 0; i < cartItemDocs.length; i++) {
         cartItems.add(
-          CartItem.fromDoc(doc: cartItemDocs[i]),
+          CartItemModel.fromDoc(doc: cartItemDocs[i]),
         );
       }
     }

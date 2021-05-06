@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:litpic/models/stripe/credit_card.dart';
+import 'package:litpic/models/credit_card_model.dart';
+import 'package:litpic/models/customer_model.dart';
+import 'package:litpic/models/shipping_model.dart';
 import 'dart:convert' show json;
-import 'package:litpic/models/stripe/customer.dart';
-import 'package:litpic/models/stripe/shipping.dart';
 
-import '../../constants.dart';
+import '../constants.dart';
 
 abstract class IStripeCustomerService {
   Future<String> create({String email, String name});
-  Future<Customer> retrieve({@required String customerID});
+  Future<CustomerModel> retrieve({@required String customerID});
   Future<void> update(
       {@required String customerID,
       String city,
@@ -64,7 +64,7 @@ class StripeCustomerService extends IStripeCustomerService {
   }
 
   @override
-  Future<Customer> retrieve({@required String customerID}) async {
+  Future<CustomerModel> retrieve({@required String customerID}) async {
     Map data = {'customerID': customerID};
 
     http.Response response = await http.post(
@@ -81,10 +81,10 @@ class StripeCustomerService extends IStripeCustomerService {
         Map sourcesMap = map['sources'];
 
         //Add default card if one is active.
-        CreditCard card;
+        CreditCardModel card;
         if (map['default_source'] != null) {
           Map cardMap = map['sources']['data'][0];
-          card = CreditCard(
+          card = CreditCardModel(
             id: cardMap['id'],
             brand: cardMap['brand'],
             country: cardMap['country'],
@@ -95,11 +95,11 @@ class StripeCustomerService extends IStripeCustomerService {
         }
 
         //Add sources if available.
-        List<CreditCard> sources = [];
+        List<CreditCardModel> sources = [];
         if (sourcesMap != null) {
           for (int i = 0; i < sourcesMap['data'].length; i++) {
             Map sourceMap = sourcesMap['data'][i];
-            CreditCard creditCard = CreditCard(
+            CreditCardModel creditCard = CreditCardModel(
               id: sourceMap['id'],
               country: sourceMap['country'],
               expMonth: sourceMap['exp_month'],
@@ -111,13 +111,13 @@ class StripeCustomerService extends IStripeCustomerService {
           }
         }
 
-        return Customer(
+        return CustomerModel(
             id: map['id'],
             email: map['email'],
             defaultSource: map['default_source'],
             card: card,
             name: map['name'],
-            shipping: Shipping.fromMap(map: shippingMap),
+            shipping: ShippingModel.fromMap(map: shippingMap),
             sources: sources);
       } else {
         throw PlatformException(

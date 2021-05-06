@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:litpic/common/hero_screen.dart';
 import 'package:litpic/extensions/hexcolor.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/main.dart';
-import 'package:litpic/models/database/lit_pic.dart';
+import 'package:litpic/models/litpic_model.dart';
 
 class RecentCreationsView extends StatefulWidget {
   final AnimationController mainScreenAnimationController;
   final Animation mainScreenAnimation;
-  final List<LitPic> litPics;
+  final List<LitPicModel> litPics;
 
   const RecentCreationsView(
       {Key key,
@@ -25,7 +24,7 @@ class _RecentCreationsViewState extends State<RecentCreationsView>
     with TickerProviderStateMixin {
   _RecentCreationsViewState({@required this.litPics});
   AnimationController animationController;
-  final List<LitPic> litPics;
+  final List<LitPicModel> litPics;
 
   @override
   void initState() {
@@ -83,7 +82,7 @@ class _RecentCreationsViewState extends State<RecentCreationsView>
 }
 
 class MealsView extends StatelessWidget {
-  final LitPic litPic;
+  final LitPicModel litPic;
   final AnimationController animationController;
   final Animation animation;
 

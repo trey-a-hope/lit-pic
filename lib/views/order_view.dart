@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:litpic/models/stripe/order.dart';
+import 'package:litpic/models/order_model.dart';
 import 'package:litpic/services/formatter_service.dart';
 
+import '../service_locator.dart';
+
 class OrderView extends StatelessWidget {
-  final Order order;
+  final OrderModel order;
   final AnimationController animationController;
   final Animation animation;
   final VoidCallback onTap;
-  final GetIt getIt = GetIt.I;
 
   OrderView(
       {Key key,
@@ -33,7 +34,7 @@ class OrderView extends StatelessWidget {
                 child: ListTile(
                   onTap: onTap,
                   title: Text(
-                      getIt<FormatterService>().money(amount: order.amount)),
+                      locator<FormatterService>().money(amount: order.amount)),
                   subtitle: Text('ID : ${order.id}'),
                   trailing: Icon(Icons.chevron_right),
                 ),

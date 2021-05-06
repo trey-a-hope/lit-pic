@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class Charge {
+class ChargeModel {
   String id;
   double amount;
   DateTime created;
   String description;
 
-  Charge(
+  ChargeModel(
       {@required this.id,
       @required this.amount,
       @required this.created,

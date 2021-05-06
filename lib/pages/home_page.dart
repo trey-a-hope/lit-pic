@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/lit_pic.dart';
-import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/litpic_model.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/modal_service.dart';
@@ -14,6 +14,8 @@ import 'package:litpic/views/detail_card_view.dart';
 import 'package:litpic/views/recent_creations_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../service_locator.dart';
 
 class HomePage extends StatefulWidget {
   final AnimationController animationController;
@@ -27,16 +29,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
-  final GetIt getIt = GetIt.I;
-  User _currentUser;
+  UserModel _currentUser;
   final FirebaseMessaging _fcm = FirebaseMessaging();
   // Coupon _coupon;
   bool addAllListDataComplete = false;
   // String youtubeVideoID;
-  List<LitPic> litPics = List<LitPic>();
+  List<LitPicModel> litPics = [];
 
   @override
   void initState() {
@@ -215,7 +216,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Future<void> load() async {
     try {
       //Load user.
-      _currentUser = await getIt<AuthService>().getCurrentUser();
+      _currentUser = await locator<AuthService>().getCurrentUser();
 
       //Request permission on iOS device.
       if (Platform.isIOS) {
@@ -227,7 +228,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       //Update user's fcm token.
       final String fcmToken = await _fcm.getToken();
       if (fcmToken != null) {
-        getIt<DBService>()
+        locator<DBService>()
             .updateUser(userID: _currentUser.id, data: {'fcmToken': fcmToken});
       }
 
@@ -235,19 +236,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       _fcm.configure(
         onMessage: (Map<String, dynamic> message) async {
           print("onMessage: $message");
-          getIt<ModalService>().showAlert(
+          locator<ModalService>().showAlert(
               context: context,
               title: message['notification']['title'],
               message: '');
         },
         onLaunch: (Map<String, dynamic> message) async {
-          getIt<ModalService>().showAlert(
+          locator<ModalService>().showAlert(
               context: context,
               title: message['notification']['title'],
               message: '');
         },
         onResume: (Map<String, dynamic> message) async {
-          getIt<ModalService>().showAlert(
+          locator<ModalService>().showAlert(
               context: context,
               title: message['notification']['title'],
               message: '');
@@ -256,17 +257,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
       return;
     } catch (e) {
-      // getIt<ModalService>().showAlert(
-      //   context: context,
-      //   title: 'Error',
-      //   message: e.toString(),
-      // );
       return;
     }
   }
 
   Future<void> fetchLitPics() async {
-    litPics = await getIt<DBService>().retrieveLitPics();
+    litPics = await locator<DBService>().retrieveLitPics();
     return;
   }
 

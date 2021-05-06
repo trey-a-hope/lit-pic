@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
-class Coupon {
+class CouponModel {
   final int amountOff;
   final DateTime created;
   final String id;
   final int percentOff;
   final String name;
 
-  Coupon(
+  CouponModel(
       {@required this.amountOff,
       @required this.created,
       @required this.id,
       @required this.percentOff,
       @required this.name});
 
-  factory Coupon.fromMap({@required Map map}) {
+  factory CouponModel.fromMap({@required Map map}) {
     return map == null
         ? map
-        : Coupon(
+        : CouponModel(
             amountOff: map['amount_off'],
             created: DateTime.fromMillisecondsSinceEpoch(map['created'] * 1000),
             id: map['id'],

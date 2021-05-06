@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/pages/profile/edit_basic_info_page.dart';
 import 'package:litpic/pages/profile/edit_shipping_info_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/customer.dart';
+import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/views/data_box_view.dart';
 import 'package:litpic/views/simple_title_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
+import '../../service_locator.dart';
 
 class ProfilePersonalInfoPage extends StatefulWidget {
   const ProfilePersonalInfoPage({Key key}) : super(key: key);
@@ -25,14 +27,13 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
   AnimationController animationController;
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
   final Color iconColor = Colors.amber[700];
 
-  User _currentUser;
+  UserModel _currentUser;
   bool _isLoading = false;
 
   bool loadCustomerInfoComplete = false;
@@ -206,13 +207,13 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
       loadCustomerInfoComplete = true;
       try {
         //Load user.
-        _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomerService>()
+        _currentUser = await locator<AuthService>().getCurrentUser();
+        _currentUser.customer = await locator<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
         return;
       } catch (e) {
-        getIt<ModalService>().showAlert(
+        locator<ModalService>().showAlert(
           context: context,
           title: 'Error',
           message: e.toString(),

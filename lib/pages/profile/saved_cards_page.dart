@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/credit_card.dart';
-import 'package:litpic/models/stripe/order.dart';
+import 'package:litpic/models/credit_card_model.dart';
+import 'package:litpic/models/order_model.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/pages/profile/add_card_page.dart';
+import 'package:litpic/service_locator.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/card.dart';
-import 'package:litpic/services/stripe/customer.dart';
+import 'package:litpic/services/stripe_card_service.dart';
+import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/views/credit_card_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -26,15 +27,14 @@ class _SavedCardsPageState extends State<SavedCardsPage>
 
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
   final Color iconColor = Colors.amber[700];
 
-  User _currentUser;
-  List<Order> orders = List<Order>();
+  UserModel _currentUser;
+  List<OrderModel> orders = [];
 
   bool loadCustomerInfoComplete = false;
   bool addAllListDataComplete = false;
@@ -106,11 +106,11 @@ class _SavedCardsPageState extends State<SavedCardsPage>
         );
       } else {
         for (int i = 0; i < _currentUser.customer.sources.length; i++) {
-          CreditCard creditCard = _currentUser.customer.sources[i];
+          CreditCardModel creditCard = _currentUser.customer.sources[i];
           listViews.add(
             CreditCardView(
               deleteCard: () async {
-                bool confirm = await getIt<ModalService>().showConfirmation(
+                bool confirm = await locator<ModalService>().showConfirmation(
                     context: context,
                     title: 'Delete Card - ${creditCard.last4}',
                     message: 'Are you sure?');
@@ -119,7 +119,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
                 }
               },
               makeDefaultCard: () async {
-                bool confirm = await getIt<ModalService>().showConfirmation(
+                bool confirm = await locator<ModalService>().showConfirmation(
                     context: context,
                     title: 'Make Default Card - ${creditCard.last4}',
                     message: 'Are you sure?');
@@ -146,15 +146,15 @@ class _SavedCardsPageState extends State<SavedCardsPage>
       loadCustomerInfoComplete = true;
       try {
         //Load user and orders.
-        _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomerService>()
+        _currentUser = await locator<AuthService>().getCurrentUser();
+        _currentUser.customer = await locator<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
         print(_currentUser.customer.defaultSource);
 
         return;
       } catch (e) {
-        getIt<ModalService>().showAlert(
+        locator<ModalService>().showAlert(
           context: context,
           title: 'Error',
           message: e.toString(),
@@ -164,14 +164,14 @@ class _SavedCardsPageState extends State<SavedCardsPage>
     }
   }
 
-  void deleteCard({@required CreditCard creditCard}) async {
+  void deleteCard({@required CreditCardModel creditCard}) async {
     try {
       setState(() {
         _isLoading = true;
         listViews.clear();
       });
 
-      getIt<StripeCardService>()
+      locator<StripeCardService>()
           .delete(customerID: _currentUser.customerID, cardID: creditCard.id);
 
       //Re add views with new data.
@@ -190,7 +190,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
         _isLoading = false;
       });
     } catch (e) {
-      getIt<ModalService>().showAlert(
+      locator<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),
@@ -198,14 +198,14 @@ class _SavedCardsPageState extends State<SavedCardsPage>
     }
   }
 
-  void makeDefaultCard({@required CreditCard creditCard}) async {
+  void makeDefaultCard({@required CreditCardModel creditCard}) async {
     try {
       setState(() {
         _isLoading = true;
         listViews.clear();
       });
 
-      getIt<StripeCustomerService>().update(
+      locator<StripeCustomerService>().update(
           customerID: _currentUser.customerID,
           defaultSource: creditCard.id,
           name: _currentUser.customer.name);
@@ -229,7 +229,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
       setState(() {
         _isLoading = false;
       });
-      getIt<ModalService>().showAlert(
+      locator<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.message,

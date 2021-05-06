@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/customer.dart';
+import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/views/profile_buttons_view.dart';
 import 'package:litpic/views/title_view.dart';
+
+import '../../service_locator.dart';
 
 class ProfilePage extends StatefulWidget {
   final AnimationController animationController;
@@ -21,14 +23,13 @@ class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
   final Color iconColor = Colors.amber[700];
 
-  User _currentUser;
+  UserModel _currentUser;
 
   bool addAllListDataComplete = false;
   bool loadCustomerInfoComplete = false;
@@ -103,13 +104,13 @@ class _ProfilePageState extends State<ProfilePage>
 
       try {
         //Load user.
-        _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomerService>()
+        _currentUser = await locator<AuthService>().getCurrentUser();
+        _currentUser.customer = await locator<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
         return;
       } catch (e) {
-        getIt<ModalService>().showAlert(
+        locator<ModalService>().showAlert(
           context: context,
           title: 'Error',
           message: e.toString(),

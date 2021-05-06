@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/pages/admin/admin_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/views/list_tile_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../service_locator.dart';
 
 class SettingsPage extends StatefulWidget {
   final AnimationController animationController;
@@ -22,13 +24,12 @@ class _SettingsPageState extends State<SettingsPage>
     with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
   final Color iconColor = Colors.amber[700];
-  User _currentUser;
+  UserModel _currentUser;
   bool addAllListDataComplete = false;
 
   @override
@@ -66,27 +67,6 @@ class _SettingsPageState extends State<SettingsPage>
     if (!addAllListDataComplete) {
       addAllListDataComplete = true;
       int count = 3;
-      //Help & Support
-      // listViews.add(
-      //   ListTile(
-      //     leading: Icon(
-      //       MdiIcons.helpNetwork,
-      //       color: iconColor,
-      //     ),
-      //     title: Text(
-      //       'Help/Support',
-      //       style: TextStyle(fontWeight: FontWeight.bold),
-      //     ),
-      //     subtitle: Text(
-      //       '24/7 assistance.',
-      //     ),
-      //     trailing: Icon(Icons.chevron_right),
-      //     onTap: () async {
-      //       getIt<ModalService>().showAlert(
-      //           context: context, title: 'Help/Support', message: 'TODO');
-      //     },
-      //   ),
-      // );
 
       //Admin
       if (_currentUser.isAdmin) {
@@ -141,7 +121,7 @@ class _SettingsPageState extends State<SettingsPage>
             if (await canLaunch(url)) {
               await launch(url);
             } else {
-              getIt<ModalService>().showAlert(
+              locator<ModalService>().showAlert(
                   context: context,
                   title: 'Error',
                   message: 'Could not launch $url.');
@@ -168,7 +148,7 @@ class _SettingsPageState extends State<SettingsPage>
           title: 'Delete Account',
           subTitle: 'Remove account from this app.',
           onTap: () async {
-            getIt<ModalService>().showAlert(
+            locator<ModalService>().showAlert(
                 context: context,
                 title: 'Delete Account',
                 message:
@@ -195,10 +175,10 @@ class _SettingsPageState extends State<SettingsPage>
           title: 'Sign Out',
           subTitle: 'Exit account temporarily.',
           onTap: () async {
-            bool confirm = await getIt<ModalService>().showConfirmation(
+            bool confirm = await locator<ModalService>().showConfirmation(
                 context: context, title: 'Sign Out', message: 'Are you sure?');
             if (confirm) {
-              await getIt<AuthService>().signOut();
+              await locator<AuthService>().signOut();
             }
           },
         ),
@@ -209,10 +189,10 @@ class _SettingsPageState extends State<SettingsPage>
   Future<void> load() async {
     try {
       //Load user.
-      _currentUser = await getIt<AuthService>().getCurrentUser();
+      _currentUser = await locator<AuthService>().getCurrentUser();
       return;
     } catch (e) {
-      getIt<ModalService>()
+      locator<ModalService>()
           .showAlert(context: context, title: 'Error', message: e.message);
       return;
     }

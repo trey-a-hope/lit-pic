@@ -3,23 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/cart_item.dart';
-import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/sku.dart';
+import 'package:litpic/models/cart_item_model.dart';
+import 'package:litpic/models/sku_model.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/pages/checkout/checkout_success_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/fcm_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/customer.dart';
-import 'package:litpic/services/stripe/order.dart';
-import 'package:litpic/services/stripe/sku.dart';
+import 'package:litpic/services/stripe_customer_service.dart';
+import 'package:litpic/services/stripe_order_service.dart';
+import 'package:litpic/services/stripe_sku_service.dart';
 import 'package:litpic/views/cart_item_bought_view.dart';
 import 'package:litpic/views/pay_flow_diagram_view.dart';
 import 'package:litpic/views/round_button_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../service_locator.dart';
 
 class CheckoutFinalPage extends StatefulWidget {
   const CheckoutFinalPage({Key key}) : super(key: key);
@@ -33,21 +35,20 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
 
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
-  List<CartItem> cartItems = List<CartItem>();
+  List<CartItemModel> cartItems = [];
 
-  User _currentUser;
+  UserModel _currentUser;
 
   bool fetchCartItemsComplete = false;
   bool loadCustomerInfoComplete = false;
   bool addAllListDataComplete = false;
 
   bool _isLoading = false;
-  Sku _sku;
+  SkuModel _sku;
   SharedPreferences prefs;
 
   double subTotal;
@@ -182,7 +183,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
               Text(
                 'Sub total',
               ),
-              Text(getIt<FormatterService>().money(amount: subTotal),
+              Text(locator<FormatterService>().money(amount: subTotal),
                   style: TextStyle(fontWeight: FontWeight.bold))
             ],
           ),
@@ -198,37 +199,12 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
               Text(
                 'Shipping',
               ),
-              Text(getIt<FormatterService>().money(amount: shippingFee),
+              Text(locator<FormatterService>().money(amount: shippingFee),
                   style: TextStyle(fontWeight: FontWeight.bold))
             ],
           ),
         ),
       );
-
-      // listViews.add(
-      //   Padding(
-      //     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-      //     child: Row(
-      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //       children: <Widget>[
-      //         Column(
-      //           // mainAxisAlignment: MainAxisAlignment.start,
-      //           crossAxisAlignment: CrossAxisAlignment.start,
-      //           children: <Widget>[
-      //             Text('Processing fee'),
-      //             Text(
-      //               '2.9% + \$0.30 per transaction',
-      //               style: TextStyle(color: Colors.grey),
-      //             )
-      //           ],
-      //         ),
-      //         Text(
-      //             '+${getIt<FormatterService>().money(amount: stripeProcessingFee)}',
-      //             style: TextStyle(fontWeight: FontWeight.bold))
-      //       ],
-      //     ),
-      //   ),
-      // );
 
       listViews.add(
         Divider(),
@@ -247,7 +223,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
                 style: orderTotalStyle,
               ),
               Text(
-                getIt<FormatterService>().money(amount: total),
+                locator<FormatterService>().money(amount: total),
                 style: orderTotalStyle,
               )
             ],
@@ -286,8 +262,8 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
 
       try {
         //Load user and orders.
-        _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomerService>()
+        _currentUser = await locator<AuthService>().getCurrentUser();
+        _currentUser.customer = await locator<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
         await fetchCartItems();
 
@@ -297,7 +273,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
 
         return;
       } catch (e) {
-        getIt<ModalService>().showAlert(
+        locator<ModalService>().showAlert(
           context: context,
           title: 'Error',
           message: e.toString(),
@@ -329,29 +305,29 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
       //Add cart items to list.
       for (int i = 0; i < docs.length; i++) {
         cartItems.add(
-          CartItem.fromDoc(doc: docs[i]),
+          CartItemModel.fromDoc(doc: docs[i]),
         );
       }
     }
   }
 
   Future<void> fetchLithophaneSku() async {
-    final String skuID = await getIt<DBService>().retrieveSkuID();
-    _sku = await getIt<StripeSkuService>().retrieve(skuID: skuID);
+    final String skuID = await locator<DBService>().retrieveSkuID();
+    _sku = await locator<StripeSkuService>().retrieve(skuID: skuID);
     return;
   }
 
   Future<void> fetchAdminDocID() async {
-    adminDocID = await getIt<DBService>().retrieveAdminDocID();
+    adminDocID = await locator<DBService>().retrieveAdminDocID();
     return;
   }
 
   void _submit() async {
-    bool confirm = await getIt<ModalService>().showConfirmation(
+    bool confirm = await locator<ModalService>().showConfirmation(
         context: context,
         title: 'Are you sure?',
         message:
-            'Your default card will be charged ${getIt<FormatterService>().money(amount: total)}');
+            'Your default card will be charged ${locator<FormatterService>().money(amount: total)}');
     if (confirm) {
       try {
         setState(() {
@@ -359,7 +335,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
         });
 
         //Create order.
-        final String orderID = await getIt<StripeOrderService>().create(
+        final String orderID = await locator<StripeOrderService>().create(
             line1: _currentUser.customer.shipping.address.line1,
             name: _currentUser.customer.shipping.name,
             email: _currentUser.customer.email,
@@ -372,7 +348,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
             cartItems: cartItems);
 
         //Pay order.
-        await getIt<StripeOrderService>().pay(
+        await locator<StripeOrderService>().pay(
             orderID: orderID,
             source: _currentUser.customer.defaultSource,
             customerID: _currentUser.customerID);
@@ -404,8 +380,9 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
         }
 
         //Send notification to myself of new order created.
-        User treyHope = await getIt<DBService>().retrieveUser(id: adminDocID);
-        await getIt<FCMService>().sendNotificationToUser(
+        UserModel treyHope =
+            await locator<DBService>().retrieveUser(id: adminDocID);
+        await locator<FCMService>().sendNotificationToUser(
             fcmToken: treyHope.fcmToken,
             title: 'NEW ORDER',
             body: 'From ${_currentUser.customer.name}');
@@ -423,7 +400,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
             _isLoading = false;
           },
         );
-        getIt<ModalService>().showAlert(
+        locator<ModalService>().showAlert(
           context: context,
           title: 'Error',
           message: e.toString(),

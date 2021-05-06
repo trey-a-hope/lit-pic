@@ -6,12 +6,14 @@ import 'package:get_it/get_it.dart';
 import 'package:litpic/asset_images.dart';
 import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
-import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/customer.dart';
+import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/services/validater_service.dart';
+
+import '../../service_locator.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -27,7 +29,6 @@ class SignUpPageState extends State<SignUpPage>
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
   bool _isLoading = false;
-  final GetIt getIt = GetIt.I;
   final double _containerHeight = 350.0;
 
   @override
@@ -39,7 +40,7 @@ class SignUpPageState extends State<SignUpPage>
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      bool confirm = await getIt<ModalService>().showConfirmation(
+      bool confirm = await locator<ModalService>().showConfirmation(
           context: context,
           title: 'Submit',
           message: 'Create my account with the following information.');
@@ -52,7 +53,7 @@ class SignUpPageState extends State<SignUpPage>
           );
 
           //Create customer in Stripe.
-          String customerID = await getIt<StripeCustomerService>().create(
+          String customerID = await locator<StripeCustomerService>().create(
             email: _emailController.text,
             name: _nameController.text,
             description: '',
@@ -60,14 +61,14 @@ class SignUpPageState extends State<SignUpPage>
 
           //Create user in Auth.
           AuthResult authResult =
-              await getIt<AuthService>().createUserWithEmailAndPassword(
+              await locator<AuthService>().createUserWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
           );
 
           //Create user in Database.
           final FirebaseUser firebaseUser = authResult.user;
-          User user = User(
+          UserModel user = UserModel(
               id: null,
               isAdmin: false,
               fcmToken: null,
@@ -76,7 +77,7 @@ class SignUpPageState extends State<SignUpPage>
               ),
               uid: firebaseUser.uid,
               customerID: customerID);
-          await getIt<DBService>().createUser(user: user);
+          await locator<DBService>().createUser(user: user);
 
           Navigator.of(context).pop();
         } on PlatformException catch (e) {
@@ -85,7 +86,7 @@ class SignUpPageState extends State<SignUpPage>
               _isLoading = false;
             },
           );
-          getIt<ModalService>().showAlert(
+          locator<ModalService>().showAlert(
             context: context,
             title: 'Error',
             message: e.message,
@@ -268,7 +269,7 @@ class SignUpPageState extends State<SignUpPage>
 
   Widget nameFormField() {
     return TextFormField(
-      validator: getIt<ValidatorService>().isEmpty,
+      validator: locator<ValidatorService>().isEmpty,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.done,
       controller: _nameController,
@@ -283,7 +284,7 @@ class SignUpPageState extends State<SignUpPage>
 
   Widget emailFormField() {
     return TextFormField(
-      validator: getIt<ValidatorService>().email,
+      validator: locator<ValidatorService>().email,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.done,
       controller: _emailController,
@@ -298,7 +299,7 @@ class SignUpPageState extends State<SignUpPage>
 
   Widget passwordFormField() {
     return TextFormField(
-      validator: getIt<ValidatorService>().password,
+      validator: locator<ValidatorService>().password,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.done,
       controller: _passwordController,

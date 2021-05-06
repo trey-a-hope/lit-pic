@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/customer.dart';
+import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/services/validater_service.dart';
 import 'package:litpic/views/round_button_view.dart';
 import 'package:litpic/views/text_form_field_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
+import '../../service_locator.dart';
 
 class EditBasicInfoPage extends StatefulWidget {
   const EditBasicInfoPage({Key key}) : super(key: key);
@@ -23,14 +25,13 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
 
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
   final Color iconColor = Colors.amber[700];
 
-  User _currentUser;
+  UserModel _currentUser;
 
   bool addAllListDataComplete = false;
   bool loadCustomerInfoComplete = false;
@@ -103,7 +104,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
                 child: TextFormFieldView(
                   keyboardType: TextInputType.text,
                   labelText: 'Name',
-                  validator: getIt<ValidatorService>().isEmpty,
+                  validator: locator<ValidatorService>().isEmpty,
                   textEditingController: _nameController,
                   iconData: Icons.face,
                   animation: Tween(begin: 0.0, end: 1.0).animate(
@@ -119,7 +120,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
                 child: TextFormFieldView(
                   keyboardType: TextInputType.text,
                   labelText: 'Email',
-                  validator: getIt<ValidatorService>().email,
+                  validator: locator<ValidatorService>().email,
                   textEditingController: _emailController,
                   iconData: Icons.email,
                   animation: Tween(begin: 0.0, end: 1.0).animate(
@@ -163,8 +164,8 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
 
       try {
         //Load user.
-        _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomerService>()
+        _currentUser = await locator<AuthService>().getCurrentUser();
+        _currentUser.customer = await locator<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
         _nameController.text = _currentUser.customer.name;
@@ -172,7 +173,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
 
         return;
       } catch (e) {
-        getIt<ModalService>().showAlert(
+        locator<ModalService>().showAlert(
           context: context,
           title: 'Error',
           message: e.toString(),
@@ -184,7 +185,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
 
   _save() async {
     if (_formKey.currentState.validate()) {
-      bool confirm = await getIt<ModalService>().showConfirmation(
+      bool confirm = await locator<ModalService>().showConfirmation(
           context: context, title: 'Submit', message: 'Are you sure?');
 
       if (confirm) {
@@ -200,14 +201,14 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
           final String updatedName = _nameController.text;
 
           //Attempt to update email first.
-          await getIt<AuthService>().updateEmail(email: updatedEmail);
+          await locator<AuthService>().updateEmail(email: updatedEmail);
 
           //Update email.
-          await getIt<StripeCustomerService>()
+          await locator<StripeCustomerService>()
               .update(customerID: _currentUser.customerID, email: updatedEmail);
 
           //Update name.
-          await getIt<StripeCustomerService>()
+          await locator<StripeCustomerService>()
               .update(customerID: _currentUser.customerID, name: updatedName);
 
           setState(
@@ -216,7 +217,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
             },
           );
 
-          getIt<ModalService>().showAlert(
+          locator<ModalService>().showAlert(
             context: context,
             title: 'Success',
             message: 'Basic Info Updated',
@@ -227,7 +228,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
               _isLoading = false;
             },
           );
-          getIt<ModalService>().showAlert(
+          locator<ModalService>().showAlert(
             context: context,
             title: 'Error',
             message: e.message,

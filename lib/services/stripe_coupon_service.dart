@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:litpic/models/stripe/coupon.dart';
+import 'package:litpic/models/coupon_model.dart';
 import 'dart:convert' show json;
 
-import '../../constants.dart';
+import '../constants.dart';
 
 abstract class IStripeCouponService {
-  Future<Coupon> retrieve({@required String couponID});
+  Future<CouponModel> retrieve({@required String couponID});
 }
 
 class StripeCouponService extends IStripeCouponService {
   @override
-  Future<Coupon> retrieve({String couponID}) async {
+  Future<CouponModel> retrieve({String couponID}) async {
     Map data = {'couponID': couponID};
 
     http.Response response = await http.post(
@@ -23,7 +23,7 @@ class StripeCouponService extends IStripeCouponService {
 
     Map map = json.decode(response.body);
     if (map['statusCode'] == null) {
-      return Coupon.fromMap(map: map);
+      return CouponModel.fromMap(map: map);
     } else {
       throw PlatformException(
           message: map['raw']['message'], code: map['raw']['code']);

@@ -1,23 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:litpic/common/good_button.dart';
-import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/cart_item.dart';
-import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/sku.dart';
-import 'package:litpic/pages/checkout/checkout_shipping_page.dart';
-import 'package:litpic/services/auth_service.dart';
-import 'package:litpic/services/db_service.dart';
-import 'package:litpic/services/formatter_service.dart';
-import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/storage_service.dart';
-import 'package:litpic/services/stripe/sku.dart';
-import 'package:litpic/views/cart_item_view.dart';
-import 'package:litpic/views/round_button_view.dart';
-import 'package:litpic/views/title_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ExampleWidget extends StatefulWidget {
   ExampleWidget({Key key}) : super(key: key);
@@ -44,7 +27,10 @@ class ExampleWidgetState extends State<ExampleWidget>
     super.initState();
   }
 
-  Widget buildCartView({@required String imgUrl, @required String name, @required String price}) {
+  Widget buildCartView(
+      {@required String imgUrl,
+      @required String name,
+      @required String price}) {
     return SizedBox(
       height: 170,
       child: Stack(
@@ -221,9 +207,11 @@ class ExampleWidgetState extends State<ExampleWidget>
             ),
             verticalPadding,
             verticalPadding,
-            buildCartView(imgUrl: img1Url, name: 'Purple Flowers', price: '\$24.99'),
+            buildCartView(
+                imgUrl: img1Url, name: 'Purple Flowers', price: '\$24.99'),
             verticalPadding,
-            buildCartView(imgUrl: img2Url, name: 'Yellow Leaf', price: '\$34.99'),
+            buildCartView(
+                imgUrl: img2Url, name: 'Yellow Leaf', price: '\$34.99'),
             verticalPadding,
             Spacer(),
             Divider(),

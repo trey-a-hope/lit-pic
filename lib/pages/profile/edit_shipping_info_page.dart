@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
-import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/customer.dart';
+import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/services/validater_service.dart';
 import 'package:litpic/views/round_button_view.dart';
 import 'package:litpic/views/text_form_field_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
+import '../../service_locator.dart';
 
 class EditShippingInfoPage extends StatefulWidget {
   const EditShippingInfoPage({Key key}) : super(key: key);
@@ -25,14 +26,13 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
 
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
   final Color iconColor = Colors.amber[700];
 
-  User _currentUser;
+  UserModel _currentUser;
 
   bool addAllListDataComplete = false;
   bool loadCustomerInfoComplete = false;
@@ -97,7 +97,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
                 child: TextFormFieldView(
                   keyboardType: TextInputType.text,
                   labelText: 'Address',
-                  validator: getIt<ValidatorService>().isEmpty,
+                  validator: locator<ValidatorService>().isEmpty,
                   textEditingController: _addressController,
                   iconData: Icons.location_on,
                   animation: Tween(begin: 0.0, end: 1.0).animate(
@@ -113,7 +113,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
                 child: TextFormFieldView(
                   keyboardType: TextInputType.text,
                   labelText: 'City',
-                  validator: getIt<ValidatorService>().isEmpty,
+                  validator: locator<ValidatorService>().isEmpty,
                   textEditingController: _cityController,
                   iconData: Icons.location_city,
                   animation: Tween(begin: 0.0, end: 1.0).animate(
@@ -129,7 +129,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
                 child: TextFormFieldView(
                   keyboardType: TextInputType.text,
                   labelText: 'State',
-                  validator: getIt<ValidatorService>().state,
+                  validator: locator<ValidatorService>().state,
                   textEditingController: _stateController,
                   iconData: Icons.my_location,
                   animation: Tween(begin: 0.0, end: 1.0).animate(
@@ -145,7 +145,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
                 child: TextFormFieldView(
                   keyboardType: TextInputType.number,
                   labelText: 'ZIP',
-                  validator: getIt<ValidatorService>().zip,
+                  validator: locator<ValidatorService>().zip,
                   textEditingController: _zipController,
                   iconData: Icons.contact_mail,
                   animation: Tween(begin: 0.0, end: 1.0).animate(
@@ -186,8 +186,8 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
 
       try {
         //Load user.
-        _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomerService>()
+        _currentUser = await locator<AuthService>().getCurrentUser();
+        _currentUser.customer = await locator<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
         if (_currentUser.customer.shipping != null) {
@@ -201,7 +201,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
 
         return;
       } catch (e) {
-        getIt<ModalService>().showAlert(
+        locator<ModalService>().showAlert(
           context: context,
           title: 'Error',
           message: e.toString(),
@@ -213,7 +213,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
 
   _save() async {
     if (_formKey.currentState.validate()) {
-      bool confirm = await getIt<ModalService>().showConfirmation(
+      bool confirm = await locator<ModalService>().showConfirmation(
           context: context, title: 'Submit', message: 'Are you sure?');
       if (confirm) {
         _formKey.currentState.save();
@@ -226,7 +226,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
           );
 
           //Update address info.
-          await getIt<StripeCustomerService>().update(
+          await locator<StripeCustomerService>().update(
               name: _currentUser.customer.name,
               customerID: _currentUser.customerID,
               line1: _addressController.text,
@@ -240,7 +240,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
               _isLoading = false;
             },
           );
-          getIt<ModalService>().showAlert(
+          locator<ModalService>().showAlert(
             context: context,
             title: 'Success',
             message: 'Shipping Info Updated',
@@ -251,7 +251,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
               _isLoading = false;
             },
           );
-          getIt<ModalService>().showAlert(
+          locator<ModalService>().showAlert(
             context: context,
             title: 'Error',
             message: e.message,

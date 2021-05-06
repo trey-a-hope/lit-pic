@@ -4,30 +4,27 @@ import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/cart_item.dart';
-import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/order.dart';
-import 'package:litpic/models/stripe/sku.dart';
-import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/models/cart_item_model.dart';
+import 'package:litpic/models/order_model.dart';
+import 'package:litpic/models/sku_model.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/fcm_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/order.dart';
-import 'package:litpic/services/stripe/sku.dart';
+import 'package:litpic/services/stripe_order_service.dart';
+import 'package:litpic/services/stripe_sku_service.dart';
 import 'package:litpic/services/validater_service.dart';
 import 'package:litpic/views/cart_item_bought_view.dart';
-import 'package:litpic/views/cart_item_view.dart';
-import 'package:litpic/views/list_tile_view.dart';
-import 'package:litpic/views/order_view.dart';
 import 'package:litpic/views/round_button_view.dart';
 import 'package:litpic/views/simple_title_view.dart';
 import 'package:litpic/views/text_form_field_view.dart';
-import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+import '../../service_locator.dart';
+
 class AdminOrderDetailsPage extends StatefulWidget {
-  final Order order;
+  final OrderModel order;
   final bool openOrders;
   const AdminOrderDetailsPage(
       {Key key, @required this.order, @required this.openOrders})
@@ -39,7 +36,7 @@ class AdminOrderDetailsPage extends StatefulWidget {
 
 class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
     with TickerProviderStateMixin {
-  final Order order;
+  final OrderModel order;
   final bool openOrders;
 
   _AdminOrderDetailsPageState(
@@ -48,11 +45,9 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
 
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
-
-  final GetIt getIt = GetIt.I;
 
   bool addAllListDataComplete = false;
   bool fetchLithophaneSkuComplete = false;
@@ -60,12 +55,12 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
   bool _isLoading = false;
 
   final String timeFormat = 'MMM d, yyyy @ h:mm a';
-  Sku _sku;
+  SkuModel _sku;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
 
-  List<CartItem> cartItems = List<CartItem>();
+  List<CartItemModel> cartItems = [];
 
   TextEditingController _carrierController =
       TextEditingController(text: 'USPS');
@@ -216,7 +211,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'Amount',
-          subTxt: getIt<FormatterService>().money(amount: order.amount),
+          subTxt: locator<FormatterService>().money(amount: order.amount),
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -312,7 +307,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
                     iconData: MdiIcons.clipboardList,
                     labelText: 'Carrier',
                     textEditingController: _carrierController,
-                    validator: getIt<ValidatorService>().isEmpty,
+                    validator: locator<ValidatorService>().isEmpty,
                     animation: Tween(begin: 0.0, end: 1.0).animate(
                       CurvedAnimation(
                         parent: animationController,
@@ -330,7 +325,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
                     iconData: MdiIcons.clipboardList,
                     labelText: 'Tracking Number',
                     textEditingController: _trackingNumberController,
-                    validator: getIt<ValidatorService>().trackingNumber,
+                    validator: locator<ValidatorService>().trackingNumber,
                     animation: Tween(begin: 0.0, end: 1.0).animate(
                       CurvedAnimation(
                         parent: animationController,
@@ -390,8 +385,8 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
   Future<void> fetchLithophaneSku() async {
     if (!fetchLithophaneSkuComplete) {
       fetchLithophaneSkuComplete = true;
-      final String skuID = await getIt<DBService>().retrieveSkuID();
-      _sku = await getIt<StripeSkuService>().retrieve(skuID: skuID);
+      final String skuID = await locator<DBService>().retrieveSkuID();
+      _sku = await locator<StripeSkuService>().retrieve(skuID: skuID);
       return;
     } else {
       return;
@@ -421,7 +416,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
       //Add cart items to list.
       for (int i = 0; i < docs.length; i++) {
         cartItems.add(
-          CartItem.fromDoc(doc: docs[i]),
+          CartItemModel.fromDoc(doc: docs[i]),
         );
       }
     }
@@ -431,7 +426,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      bool confirm = await getIt<ModalService>().showConfirmation(
+      bool confirm = await locator<ModalService>().showConfirmation(
           context: context, title: 'Are you sure?', message: '');
       if (confirm) {
         try {
@@ -440,22 +435,22 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
           });
 
           //Update order to fulfilled status.
-          await getIt<StripeOrderService>().update(
+          await locator<StripeOrderService>().update(
               orderID: order.id,
               carrier: _carrierController.text,
               status: 'fulfilled',
               trackingNumber: _trackingNumberController.text);
 
           //Send notification to user of complete order.
-          User user = await getIt<DBService>()
+          UserModel user = await locator<DBService>()
               .retrieveUser(customerID: order.customerID);
-          await getIt<FCMService>().sendNotificationToUser(
+          await locator<FCMService>().sendNotificationToUser(
               fcmToken: user.fcmToken,
               title: 'ORDER SHIPPED',
               body: 'View details now.');
 
           //Display success modal.
-          getIt<ModalService>().showAlert(
+          locator<ModalService>().showAlert(
               context: context,
               title: 'Success',
               message: 'Order ${order.id} has been updated.');
@@ -469,7 +464,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
               _isLoading = false;
             },
           );
-          getIt<ModalService>().showAlert(
+          locator<ModalService>().showAlert(
             context: context,
             title: 'Error',
             message: e.toString(),

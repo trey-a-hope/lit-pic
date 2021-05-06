@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class LitPic {
+class LitPicModel {
   final String dimensions;
   final String endColor;
   final String id;
@@ -10,7 +10,7 @@ class LitPic {
   final String startColor;
   final String title;
 
-  LitPic(
+  LitPicModel(
       {@required this.dimensions,
       @required this.endColor,
       @required this.id,
@@ -19,8 +19,8 @@ class LitPic {
       @required this.startColor,
       @required this.title});
 
-  factory LitPic.fromDoc({@required DocumentSnapshot doc}) {
-    return LitPic(
+  factory LitPicModel.fromDoc({@required DocumentSnapshot doc}) {
+    return LitPicModel(
       dimensions: doc.data['dimensions'],
       endColor: doc.data['endColor'],
       id: doc.data['id'],

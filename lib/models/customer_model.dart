@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:litpic/models/stripe/credit_card.dart';
-import 'package:litpic/models/stripe/shipping.dart';
+import 'package:litpic/models/credit_card_model.dart';
+import 'package:litpic/models/shipping_model.dart';
 
-class Customer {
+class CustomerModel {
   final String id;
   final String email;
   final String defaultSource;
-  final CreditCard card;
+  final CreditCardModel card;
   final String name;
-  final Shipping shipping;
-  final List<CreditCard> sources;
+  final ShippingModel shipping;
+  final List<CreditCardModel> sources;
 
-  Customer(
+  CustomerModel(
       {@required this.id,
       @required this.defaultSource,
       @required this.card,
@@ -20,4 +20,3 @@ class Customer {
       @required this.shipping,
       @required this.sources});
 }
-

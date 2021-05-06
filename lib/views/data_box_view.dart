@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'dart:math' as math;
 
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/main.dart';
-import 'package:litpic/models/stripe/customer.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class DataBoxData {
   final List<DataBoxChild> dataBoxes;
@@ -46,7 +42,10 @@ class DataBoxChildView extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(right: 10),
-                child: Icon(dataBoxChildren[i].iconData, color: dataBoxChildren[i].color,),
+                child: Icon(
+                  dataBoxChildren[i].iconData,
+                  color: dataBoxChildren[i].color,
+                ),
               ),
               Container(
                 height: 48,

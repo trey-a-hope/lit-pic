@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show Encoding, json;
 
-import '../../constants.dart';
+import 'package:litpic/constants.dart';
 
 abstract class IStripeCardService {
   Future<String> create({@required String customerID, @required String token});

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
-import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/user_model.dart';
 
-class Conversation {
+class ConversationModel {
   DocumentReference reference;
   String imageUrl;
   String lastMessage;
@@ -13,7 +13,7 @@ class Conversation {
   ChatUser sendee;
   ChatUser sender;
 
-  Conversation(
+  ConversationModel(
       {@required String title,
       @required String lastMessage,
       @required String imageUrl,
@@ -22,7 +22,7 @@ class Conversation {
       DocumentReference reference,
       @required DateTime time,
       bool read,
-      User oppositeUser}) {
+      UserModel oppositeUser}) {
     this.title = title;
     this.lastMessage = lastMessage;
     this.imageUrl = imageUrl;
@@ -33,9 +33,9 @@ class Conversation {
     this.read = read;
   }
 
-  static Conversation extractDocument(DocumentSnapshot ds) {
+  static ConversationModel extractDocument(DocumentSnapshot ds) {
     Map<String, dynamic> data = ds.data;
-    return Conversation(
+    return ConversationModel(
       title: data['title'],
       lastMessage: data['lastMessage'],
       imageUrl: data['imageUrl'],

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:litpic/asset_images.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/stripe/credit_card.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:litpic/models/credit_card_model.dart';
 
 class CreditCardView extends StatelessWidget {
   final AnimationController animationController;
   final Animation animation;
-  final CreditCard creditCard;
+  final CreditCardModel creditCard;
   final bool isDefault;
   final Function makeDefaultCard;
   final Function deleteCard;

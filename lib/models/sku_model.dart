@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
-class Sku {
+class SkuModel {
   final DateTime created;
   final String id;
   final String product;
   final double price;
   final DateTime updated;
 
-  Sku(
+  SkuModel(
       {@required this.created,
       @required this.id,
       @required this.product,
       @required this.price,
       @required this.updated});
 
-  factory Sku.fromMap({@required Map map}) {
+  factory SkuModel.fromMap({@required Map map}) {
     return map == null
         ? map
-        : Sku(
+        : SkuModel(
             created: DateTime.fromMillisecondsSinceEpoch(map['created'] * 1000),
             id: map['id'],
             product: map['product'],

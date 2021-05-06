@@ -3,20 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/cart_item.dart';
-import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/sku.dart';
+import 'package:litpic/models/cart_item_model.dart';
+import 'package:litpic/models/sku_model.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/pages/checkout/checkout_shipping_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/storage_service.dart';
-import 'package:litpic/services/stripe/sku.dart';
+import 'package:litpic/services/stripe_sku_service.dart';
 import 'package:litpic/views/cart_item_view.dart';
 import 'package:litpic/views/round_button_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../service_locator.dart';
 
 class CartPage extends StatefulWidget {
   final AnimationController animationController;
@@ -29,24 +31,22 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
-
   //Properties
   final Color iconColor = Colors.amber[700];
-  User _currentUser;
+  UserModel _currentUser;
   SharedPreferences prefs;
   bool loadComplete = false;
   bool addAllListDataComplete = false;
   bool calculateTotalsComplete = false;
 
   //Data
-  List<CartItem> cartItems = List<CartItem>();
+  List<CartItemModel> cartItems = [];
   int totalLithophanes = 0;
-  Sku _sku;
+  SkuModel _sku;
 
   //Prices
   double subTotal = 0.0;
@@ -150,7 +150,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                 Text(
                   'Sub total',
                 ),
-                Text(getIt<FormatterService>().money(amount: subTotal),
+                Text(locator<FormatterService>().money(amount: subTotal),
                     style: TextStyle(fontWeight: FontWeight.bold))
               ],
             ),
@@ -166,37 +166,13 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                 Text(
                   'Shipping',
                 ),
-                Text(getIt<FormatterService>().money(amount: shippingFee),
+                Text(locator<FormatterService>().money(amount: shippingFee),
                     style: TextStyle(fontWeight: FontWeight.bold))
               ],
             ),
           ),
         );
 
-        // listViews.add(
-        //   Padding(
-        //     padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-        //     child: Row(
-        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //       children: <Widget>[
-        //         Column(
-        //           // mainAxisAlignment: MainAxisAlignment.start,
-        //           crossAxisAlignment: CrossAxisAlignment.start,
-        //           children: <Widget>[
-        //             Text('Processing fee'),
-        //             Text(
-        //               '2.9% + \$0.30 per transaction',
-        //               style: TextStyle(color: Colors.grey),
-        //             )
-        //           ],
-        //         ),
-        //         Text(
-        //             '+${getIt<FormatterService>().money(amount: stripeProcessingFee)}',
-        //             style: TextStyle(fontWeight: FontWeight.bold))
-        //       ],
-        //     ),
-        //   ),
-        // );
         listViews.add(Divider());
 
         TextStyle orderTotalStyle = TextStyle(
@@ -212,7 +188,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
                   style: orderTotalStyle,
                 ),
                 Text(
-                  getIt<FormatterService>().money(amount: total),
+                  locator<FormatterService>().money(amount: total),
                   style: orderTotalStyle,
                 )
               ],
@@ -295,7 +271,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       //Add cart items to list.
       for (int i = 0; i < docs.length; i++) {
         cartItems.add(
-          CartItem.fromDoc(doc: docs[i]),
+          CartItemModel.fromDoc(doc: docs[i]),
         );
 
         //Calculate total number of lithophanes for this order.
@@ -320,11 +296,11 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       loadComplete = true;
       prefs = await SharedPreferences.getInstance();
       try {
-        _currentUser = await getIt<AuthService>().getCurrentUser();
+        _currentUser = await locator<AuthService>().getCurrentUser();
         await fetchCartItems();
         return;
       } catch (e) {
-        getIt<ModalService>().showAlert(
+        locator<ModalService>().showAlert(
           context: context,
           title: 'Error',
           message: e.toString(),
@@ -334,15 +310,9 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     }
   }
 
-  // Future<void> fetchMonthlyCoupon() async {
-  //   final String couponID = await getIt<DBService>().retrieveCouponID();
-  //   _coupon = await getIt<StripeCoupon>().retrieve(couponID: couponID);
-  //   return;
-  // }
-
   Future<void> fetchLithophaneSku() async {
-    final String skuID = await getIt<DBService>().retrieveSkuID();
-    _sku = await getIt<StripeSkuService>().retrieve(skuID: skuID);
+    final String skuID = await locator<DBService>().retrieveSkuID();
+    _sku = await locator<StripeSkuService>().retrieve(skuID: skuID);
     return;
   }
 
@@ -496,8 +466,8 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     );
   }
 
-  _deleteCartItem({@required CartItem cartItem}) async {
-    bool confirm = await getIt<ModalService>().showConfirmation(
+  _deleteCartItem({@required CartItemModel cartItem}) async {
+    bool confirm = await locator<ModalService>().showConfirmation(
         context: context,
         title: 'Remove Item From Cart',
         message: 'Are you sure.');
@@ -507,11 +477,11 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       });
 
       //Remove cart item from database.
-      await getIt<DBService>()
+      await locator<DBService>()
           .deleteCartItem(userID: _currentUser.id, cartItemID: cartItem.id);
 
       //Remove image of cart item from storage.
-      await getIt<StorageService>().deleteImage(imgPath: cartItem.imgPath);
+      await locator<StorageService>().deleteImage(imgPath: cartItem.imgPath);
 
       //Refresh cart data.
       fetchCartItemsComplete = false;
@@ -532,12 +502,12 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     }
   }
 
-  _incrementQuantity({@required CartItem cartItem}) async {
+  _incrementQuantity({@required CartItemModel cartItem}) async {
     setState(() {
       _isLoading = true;
     });
 
-    await getIt<DBService>().updateCartItem(
+    await locator<DBService>().updateCartItem(
         userID: _currentUser.id,
         cartItemID: cartItem.id,
         data: {'quantity': cartItem.quantity + 1});
@@ -560,7 +530,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     });
   }
 
-  _decrementQuantity({@required CartItem cartItem}) async {
+  _decrementQuantity({@required CartItemModel cartItem}) async {
     if (cartItem.quantity == 1) {
       return;
     }
@@ -569,7 +539,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       _isLoading = true;
     });
 
-    await getIt<DBService>().updateCartItem(
+    await locator<DBService>().updateCartItem(
         userID: _currentUser.id,
         cartItemID: cartItem.id,
         data: {'quantity': cartItem.quantity - 1});

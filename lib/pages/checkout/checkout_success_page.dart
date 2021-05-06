@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/views/pay_flow_diagram_view.dart';
 import 'package:litpic/views/round_button_view.dart';
 
@@ -18,13 +18,11 @@ class _CheckoutSuccessPageState extends State<CheckoutSuccessPage>
 
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
-
-  User _currentUser;
+  UserModel _currentUser;
 
   bool loadCustomerInfoComplete = false;
   bool addAllListDataComplete = false;
@@ -90,37 +88,42 @@ class _CheckoutSuccessPageState extends State<CheckoutSuccessPage>
       listViews.add(
         Padding(
           padding: EdgeInsets.only(top: 20),
-          child: Text('Thank you for shopping with us.', textAlign: TextAlign.center,),
-        ),
-      );
-
-            listViews.add(
-        Padding(
-          padding: EdgeInsets.only(top: 20),
-          child: Text('We\'re getting started on your order now.', textAlign: TextAlign.center,),
+          child: Text(
+            'Thank you for shopping with us.',
+            textAlign: TextAlign.center,
+          ),
         ),
       );
 
       listViews.add(
         Padding(
-          padding: EdgeInsets.all(20),
-          child: RoundButtonView(
-            text: 'RETURN HOME',
-            buttonColor: Colors.amber,
-            textColor: Colors.white,
-            onPressed: (){
-              Navigator.popUntil(
-                context,
-                ModalRoute.withName(Navigator.defaultRouteName),
-              );
-            },
-                        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-                parent: animationController,
-                curve: Interval((1 / count) * 0, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-            animationController: animationController,
-          )
+          padding: EdgeInsets.only(top: 20),
+          child: Text(
+            'We\'re getting started on your order now.',
+            textAlign: TextAlign.center,
+          ),
         ),
+      );
+
+      listViews.add(
+        Padding(
+            padding: EdgeInsets.all(20),
+            child: RoundButtonView(
+              text: 'RETURN HOME',
+              buttonColor: Colors.amber,
+              textColor: Colors.white,
+              onPressed: () {
+                Navigator.popUntil(
+                  context,
+                  ModalRoute.withName(Navigator.defaultRouteName),
+                );
+              },
+              animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                  parent: animationController,
+                  curve: Interval((1 / count) * 0, 1.0,
+                      curve: Curves.fastOutSlowIn))),
+              animationController: animationController,
+            )),
       );
 
       // ,

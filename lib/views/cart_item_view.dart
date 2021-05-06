@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:litpic/common/hero_screen.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/cart_item.dart';
+import 'package:litpic/models/cart_item_model.dart';
 import 'package:litpic/services/formatter_service.dart';
 
+import '../service_locator.dart';
+
 class CartItemView extends StatelessWidget {
-  final CartItem cartItem;
+  final CartItemModel cartItem;
   final AnimationController animationController;
   final Animation animation;
   final VoidCallback delete;
   final VoidCallback increment;
   final VoidCallback decrement;
   final double price;
-  final GetIt getIt = GetIt.I;
 
   CartItemView(
       {Key key,
@@ -119,7 +119,7 @@ class CartItemView extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  getIt<FormatterService>()
+                                                  locator<FormatterService>()
                                                       .money(
                                                           amount: cartItem
                                                                   .quantity *

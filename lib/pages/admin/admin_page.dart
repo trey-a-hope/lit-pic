@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/user.dart';
 import 'package:litpic/pages/admin/admin_complete_orders.dart';
 import 'package:litpic/pages/admin/admin_open_orders.dart';
-import 'package:litpic/services/auth_service.dart';
-import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/views/list_tile_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -21,11 +18,10 @@ class AdminPage extends StatefulWidget {
 class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
   final Color iconColor = Colors.amber[700];
 
   bool addAllListDataComplete = false;
@@ -95,7 +91,7 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
         ),
       );
 
-            //Complete Orders
+      //Complete Orders
       listViews.add(
         ListTileView(
           animationController: widget.animationController,

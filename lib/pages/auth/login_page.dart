@@ -9,6 +9,8 @@ import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/validater_service.dart';
 
+import '../../service_locator.dart';
+
 class LoginPage extends StatefulWidget {
   @override
   State createState() => LoginPageState();
@@ -22,7 +24,6 @@ class LoginPageState extends State<LoginPage>
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
   bool _isLoading = false;
-  final GetIt getIt = GetIt.I;
   final double _containerHeight = 350.0;
 
   _login() async {
@@ -35,7 +36,7 @@ class LoginPageState extends State<LoginPage>
             _isLoading = true;
           },
         );
-        await getIt<AuthService>().signInWithEmailAndPassword(
+        await locator<AuthService>().signInWithEmailAndPassword(
             email: _emailController.text, password: _passwordController.text);
         // Navigator.pop(context);
       } catch (e) {
@@ -44,7 +45,7 @@ class LoginPageState extends State<LoginPage>
             _isLoading = false;
           },
         );
-        getIt<ModalService>().showAlert(
+        locator<ModalService>().showAlert(
           context: context,
           title: 'Error',
           message: e.message,
@@ -223,7 +224,7 @@ class LoginPageState extends State<LoginPage>
 
   Widget emailFormField() {
     return TextFormField(
-      validator: getIt<ValidatorService>().email,
+      validator: locator<ValidatorService>().email,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.done,
       controller: _emailController,
@@ -238,7 +239,7 @@ class LoginPageState extends State<LoginPage>
 
   Widget passwordFormField() {
     return TextFormField(
-      validator: getIt<ValidatorService>().password,
+      validator: locator<ValidatorService>().password,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.done,
       controller: _passwordController,

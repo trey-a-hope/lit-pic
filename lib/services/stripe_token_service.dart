@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show Encoding, json;
 
-import '../../constants.dart';
+import '../constants.dart';
 
 abstract class IStripeTokenService extends ChangeNotifier {
   Future<String> create(

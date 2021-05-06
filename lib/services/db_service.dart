@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:litpic/models/database/cart_item.dart';
-import 'package:litpic/models/database/lit_pic.dart';
-import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/cart_item_model.dart';
+import 'package:litpic/models/litpic_model.dart';
+import 'package:litpic/models/user_model.dart';
 
 abstract class IDBService {
   //Admin
@@ -10,8 +10,8 @@ abstract class IDBService {
 
   //Cart Item
   Future<void> createCartItem(
-      {@required String userID, @required CartItem cartItem});
-  Future<List<CartItem>> retrieveCartItems({@required String userID});
+      {@required String userID, @required CartItemModel cartItem});
+  Future<List<CartItemModel>> retrieveCartItems({@required String userID});
   Future<void> updateCartItem(
       {@required String userID,
       @required String cartItemID,
@@ -20,7 +20,7 @@ abstract class IDBService {
       {@required String userID, @required String cartItemID});
 
   //Lit Pic
-  Future<List<LitPic>> retrieveLitPics();
+  Future<List<LitPicModel>> retrieveLitPics();
 
   //Miscellanious
   Future<void> addPropertyToDocuments(
@@ -29,10 +29,10 @@ abstract class IDBService {
       @required dynamic value});
 
   //Users
-  Future<void> createUser({@required User user});
+  Future<void> createUser({@required UserModel user});
   Future<void> deleteUser({@required String id});
-  Future<User> retrieveUser({String id, String customerID});
-  Future<List<User>> retrieveUsers({bool isAdmin, int limit});
+  Future<UserModel> retrieveUser({String id, String customerID});
+  Future<List<UserModel>> retrieveUsers({bool isAdmin, int limit});
   Future<void> updateUser(
       {@required String userID, @required Map<String, dynamic> data});
 
@@ -48,7 +48,7 @@ class DBService extends IDBService {
       Firestore.instance.collection('Lit Pics');
 
   @override
-  Future<void> createUser({User user}) async {
+  Future<void> createUser({UserModel user}) async {
     try {
       DocumentReference docRef = await _usersDB.add(
         user.toMap(),
@@ -65,18 +65,18 @@ class DBService extends IDBService {
   }
 
   @override
-  Future<User> retrieveUser({String id, String customerID}) async {
+  Future<UserModel> retrieveUser({String id, String customerID}) async {
     try {
       if (id != null) {
         DocumentSnapshot documentSnapshot = await _usersDB.document(id).get();
-        return User.fromDoc(doc: documentSnapshot);
+        return UserModel.fromDoc(doc: documentSnapshot);
       } else if (customerID != null) {
         DocumentSnapshot documentSnapshot = (await _usersDB
                 .where('customerID', isEqualTo: customerID)
                 .getDocuments())
             .documents
             .first;
-        return User.fromDoc(doc: documentSnapshot);
+        return UserModel.fromDoc(doc: documentSnapshot);
       } else {
         throw Exception();
       }
@@ -118,7 +118,7 @@ class DBService extends IDBService {
   }
 
   @override
-  Future<List<User>> retrieveUsers({bool isAdmin, int limit}) async {
+  Future<List<UserModel>> retrieveUsers({bool isAdmin, int limit}) async {
     try {
       Query query = _usersDB;
 
@@ -131,10 +131,10 @@ class DBService extends IDBService {
       }
 
       List<DocumentSnapshot> docs = (await query.getDocuments()).documents;
-      List<User> users = List<User>();
+      List<UserModel> users = [];
       for (int i = 0; i < docs.length; i++) {
         users.add(
-          User.fromDoc(doc: docs[i]),
+          UserModel.fromDoc(doc: docs[i]),
         );
       }
 
@@ -145,7 +145,7 @@ class DBService extends IDBService {
   }
 
   @override
-  Future<void> createCartItem({String userID, CartItem cartItem}) async {
+  Future<void> createCartItem({String userID, CartItemModel cartItem}) async {
     try {
       CollectionReference colRef =
           _usersDB.document(userID).collection('Cart Items');
@@ -165,15 +165,15 @@ class DBService extends IDBService {
   }
 
   @override
-  Future<List<CartItem>> retrieveCartItems({String userID}) async {
+  Future<List<CartItemModel>> retrieveCartItems({String userID}) async {
     try {
       CollectionReference colRef =
           _usersDB.document(userID).collection('Cart Items');
       List<DocumentSnapshot> docs = (await colRef.getDocuments()).documents;
-      List<CartItem> cartItems = List<CartItem>();
+      List<CartItemModel> cartItems = [];
       for (int i = 0; i < docs.length; i++) {
         cartItems.add(
-          CartItem.fromDoc(doc: docs[i]),
+          CartItemModel.fromDoc(doc: docs[i]),
         );
       }
       return cartItems;
@@ -236,13 +236,13 @@ class DBService extends IDBService {
   }
 
   @override
-  Future<List<LitPic>> retrieveLitPics() async {
+  Future<List<LitPicModel>> retrieveLitPics() async {
     try {
       List<DocumentSnapshot> docs = (await _litPicsDB.getDocuments()).documents;
-      List<LitPic> litPics = List<LitPic>();
+      List<LitPicModel> litPics = [];
       for (int i = 0; i < docs.length; i++) {
         litPics.add(
-          LitPic.fromDoc(doc: docs[i]),
+          LitPicModel.fromDoc(doc: docs[i]),
         );
       }
 

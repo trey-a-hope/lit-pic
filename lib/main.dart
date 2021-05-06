@@ -4,21 +4,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
-import 'package:get_it/get_it.dart';
 import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/pages/auth/login_page.dart';
 import 'package:litpic/pages/cart_page.dart';
-import 'package:litpic/pages/exampleWidget.dart';
 import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/make_lithophane_page.dart';
 import 'package:litpic/pages/profile/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
 import 'package:litpic/service_locator.dart';
 import 'package:package_info/package_info.dart';
-
-final GetIt getIt = GetIt.instance;
 
 class CommonThings {
   static double width;

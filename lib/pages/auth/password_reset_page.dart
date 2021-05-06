@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/order.dart';
+import 'package:litpic/models/order_model.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/validater_service.dart';
 import 'package:litpic/views/round_button_view.dart';
 import 'package:litpic/views/text_form_field_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
+import '../../service_locator.dart';
 
 class PasswordResetPage extends StatefulWidget {
   const PasswordResetPage({Key key}) : super(key: key);
@@ -23,15 +25,14 @@ class _PasswordResetPageState extends State<PasswordResetPage>
 
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
   final Color iconColor = Colors.amber[700];
 
-  User _currentUser;
-  List<Order> orders = List<Order>();
+  UserModel _currentUser;
+  List<OrderModel> orders = [];
 
   bool addAllListDataComplete = false;
 
@@ -102,7 +103,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
               labelText: 'Email',
               textEditingController: _emailController,
               iconData: Icons.email,
-              validator: getIt<ValidatorService>().email,
+              validator: locator<ValidatorService>().email,
             ),
           ),
         ),
@@ -132,7 +133,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
 
   void submit() async {
     if (_formKey.currentState.validate()) {
-      bool confirm = await getIt<ModalService>().showConfirmation(
+      bool confirm = await locator<ModalService>().showConfirmation(
           context: context,
           title: 'Submit',
           message:
@@ -147,7 +148,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
             },
           );
 
-          getIt<AuthService>()
+          locator<AuthService>()
               .sendPasswordResetEmail(email: _emailController.text);
 
           setState(
@@ -156,7 +157,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
             },
           );
 
-          getIt<ModalService>().showAlert(
+          locator<ModalService>().showAlert(
             context: context,
             title: 'Success',
             message: 'Check your email.',
@@ -167,7 +168,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
               _isLoading = false;
             },
           );
-          getIt<ModalService>().showAlert(
+          locator<ModalService>().showAlert(
             context: context,
             title: 'Error',
             message: e.toString(),

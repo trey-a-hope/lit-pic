@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:litpic/models/database/cart_item.dart';
-import 'package:litpic/models/stripe/order.dart';
+import 'package:litpic/models/cart_item_model.dart';
+import 'package:litpic/models/order_model.dart';
+import 'package:litpic/models/sku_model.dart';
 import 'dart:convert' show json;
 
-import 'package:litpic/models/stripe/sku.dart';
-
-import '../../constants.dart';
+import '../constants.dart';
 
 abstract class IStripeOrderService {
-  Future<List<Order>> list({String customerID, @required String status});
+  Future<List<OrderModel>> list({String customerID, @required String status});
 
   Future<String> create(
       {@required String customerID,
@@ -21,8 +20,8 @@ abstract class IStripeOrderService {
       @required String state,
       @required String country,
       @required String postalCode,
-      @required List<CartItem> cartItems,
-      @required Sku sku});
+      @required List<CartItemModel> cartItems,
+      @required SkuModel sku});
 
   Future<void> update(
       {@required String orderID,
@@ -38,7 +37,7 @@ abstract class IStripeOrderService {
 
 class StripeOrderService extends IStripeOrderService {
   @override
-  Future<List<Order>> list({String customerID, String status}) async {
+  Future<List<OrderModel>> list({String customerID, String status}) async {
     Map data = {};
 
     if (customerID != null) {
@@ -58,10 +57,10 @@ class StripeOrderService extends IStripeOrderService {
     try {
       Map map = json.decode(response.body);
       if (map['statusCode'] == null) {
-        List<Order> orders = [];
+        List<OrderModel> orders = [];
         Map map = json.decode(response.body);
         for (int i = 0; i < map['data'].length; i++) {
-          Order order = Order.fromMap(map: map['data'][i]);
+          OrderModel order = OrderModel.fromMap(map: map['data'][i]);
           orders.add(order);
         }
         return orders;
@@ -84,8 +83,8 @@ class StripeOrderService extends IStripeOrderService {
       String state,
       String country,
       String postalCode,
-      List<CartItem> cartItems,
-      Sku sku}) async {
+      List<CartItemModel> cartItems,
+      SkuModel sku}) async {
     int totalLithophanes = 0;
     for (int i = 0; i < cartItems.length; i++) {
       totalLithophanes += cartItems[i].quantity;

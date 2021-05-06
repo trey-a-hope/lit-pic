@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:litpic/models/database/user.dart';
+import 'package:litpic/models/user_model.dart';
 
 abstract class IAuthService {
-  Future<User> getCurrentUser();
+  Future<UserModel> getCurrentUser();
   Future<void> signOut();
   Stream<FirebaseUser> onAuthStateChanged();
   Future<AuthResult> signInWithEmailAndPassword(
@@ -25,14 +25,14 @@ class AuthService extends IAuthService {
   final CollectionReference _usersDB = Firestore.instance.collection('Users');
 
   @override
-  Future<User> getCurrentUser() async {
+  Future<UserModel> getCurrentUser() async {
     try {
       FirebaseUser firebaseUser = await _auth.currentUser();
       QuerySnapshot querySnapshot = await _usersDB
           .where('uid', isEqualTo: firebaseUser.uid)
           .getDocuments();
       DocumentSnapshot documentSnapshot = querySnapshot.documents.first;
-      return User.fromDoc(doc: documentSnapshot);
+      return UserModel.fromDoc(doc: documentSnapshot);
     } catch (e) {
       throw Exception('Could not fetch user at this time.');
     }

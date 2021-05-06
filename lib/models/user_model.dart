@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:litpic/models/stripe/customer.dart';
+import 'package:litpic/models/customer_model.dart';
 
-class User {
-
+class UserModel {
   final String id;
   final String uid;
   final String customerID;
@@ -11,19 +10,18 @@ class User {
   final Timestamp timestamp;
   final bool isAdmin;
 
-  Customer customer; //Not saved to database, used strictly on FE.
+  CustomerModel customer; //Not saved to database, used strictly on FE.
 
-  User(
-      {
-      @required this.id,
+  UserModel(
+      {@required this.id,
       @required this.customerID,
       @required this.fcmToken,
       @required this.timestamp,
       @required this.uid,
       @required this.isAdmin});
 
-  factory User.fromDoc({@required DocumentSnapshot doc}) {
-    return User(
+  factory UserModel.fromDoc({@required DocumentSnapshot doc}) {
+    return UserModel(
         id: doc.data['id'],
         fcmToken: doc.data['fcmToken'],
         isAdmin: doc.data['isAdmin'],

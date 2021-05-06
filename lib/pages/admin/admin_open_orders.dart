@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/order.dart';
+import 'package:litpic/models/order_model.dart';
 import 'package:litpic/pages/admin/admin_order_details.dart';
-import 'package:litpic/pages/profile/order_details_page.dart';
-import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/order.dart';
+import 'package:litpic/services/stripe_order_service.dart';
 import 'package:litpic/views/list_tile_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
+import '../../service_locator.dart';
 
 class AdminOpenOrdersPage extends StatefulWidget {
   const AdminOpenOrdersPage({Key key}) : super(key: key);
@@ -26,13 +25,12 @@ class _AdminOpenOrdersPageState extends State<AdminOpenOrdersPage>
 
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
   final Color iconColor = Colors.amber[700];
-  List<Order> orders = List<Order>();
+  List<OrderModel> orders = [];
 
   bool addAllListDataComplete = false;
 
@@ -103,7 +101,7 @@ class _AdminOpenOrdersPageState extends State<AdminOpenOrdersPage>
         );
       } else {
         for (int i = 0; i < orders.length; i++) {
-          Order order = orders[i];
+          OrderModel order = orders[i];
           listViews.add(
             ListTileView(
               icon: Icon(
@@ -112,7 +110,7 @@ class _AdminOpenOrdersPageState extends State<AdminOpenOrdersPage>
               ),
               subTitle: 'ID: ${order.id}',
               title:
-                  '${order.quantity} ${order.description}(s) - ${getIt<FormatterService>().money(amount: order.amount)}',
+                  '${order.quantity} ${order.description}(s) - ${locator<FormatterService>().money(amount: order.amount)}',
               onTap: () {
                 Navigator.push(
                   context,
@@ -136,12 +134,12 @@ class _AdminOpenOrdersPageState extends State<AdminOpenOrdersPage>
 
   Future<void> loadCustomerInfo() async {
     try {
-      orders = await getIt<StripeOrderService>().list(status: 'paid');
+      orders = await locator<StripeOrderService>().list(status: 'paid');
       orders.sort((a, b) => b.updated.compareTo(a.updated));
 
       return;
     } catch (e) {
-      getIt<ModalService>().showAlert(
+      locator<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),

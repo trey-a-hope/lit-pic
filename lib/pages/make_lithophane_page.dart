@@ -7,19 +7,21 @@ import 'package:image_picker/image_picker.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/main.dart';
-import 'package:litpic/models/database/cart_item.dart';
-import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/sku.dart';
+import 'package:litpic/models/cart_item_model.dart';
+import 'package:litpic/models/sku_model.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/image_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/storage_service.dart';
-import 'package:litpic/services/stripe/sku.dart';
+import 'package:litpic/services/stripe_sku_service.dart';
 import 'package:litpic/views/round_button_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:uuid/uuid.dart';
+
+import '../service_locator.dart';
 
 class MakeLithophanePage extends StatefulWidget {
   final AnimationController animationController;
@@ -34,15 +36,14 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
     with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
-  final GetIt getIt = GetIt.I;
   int quantity = 1;
   File _image;
   bool _isLoading = false;
-  User _currentUser;
-  Sku _sku;
+  UserModel _currentUser;
+  SkuModel _sku;
 
   @override
   void initState() {
@@ -190,7 +191,7 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
           },
           buttonColor: Colors.amber,
           text:
-              'ADD LITHOPHANE${quantity == 1 ? '' : 'S'} TO CART - ${getIt<FormatterService>().money(amount: _sku.price * quantity)}',
+              'ADD LITHOPHANE${quantity == 1 ? '' : 'S'} TO CART - ${locator<FormatterService>().money(amount: _sku.price * quantity)}',
           textColor: Colors.white,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: widget.animationController,
@@ -264,7 +265,7 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
     Navigator.pop(context);
     File imageFile = await ImagePicker.pickImage(source: source);
     if (imageFile != null) {
-      imageFile = await getIt<ImageService>().cropImage(imageFile: imageFile);
+      imageFile = await locator<ImageService>().cropImage(imageFile: imageFile);
       setState(() {
         _image = imageFile;
       });
@@ -273,7 +274,7 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
 
   _addImageToCart() async {
     if (_image == null) {
-      getIt<ModalService>().showAlert(
+      locator<ModalService>().showAlert(
           context: context,
           title: 'Error',
           message: 'Please select an image first.');
@@ -289,13 +290,13 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
       //Upload image to storage.
       final String photoID = Uuid().v1();
       final String imgPath = 'Users/${_currentUser.id}/Orders/$photoID';
-      String imgUrl = await getIt<StorageService>()
+      String imgUrl = await locator<StorageService>()
           .uploadImage(file: _image, imgPath: imgPath);
 
       //Save cart item to database.
-      getIt<DBService>().createCartItem(
+      locator<DBService>().createCartItem(
         userID: _currentUser.id,
-        cartItem: CartItem(
+        cartItem: CartItemModel(
             id: null, imgUrl: imgUrl, imgPath: imgPath, quantity: quantity),
       );
 
@@ -306,7 +307,7 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
       });
 
       //Display success modal.
-      getIt<ModalService>().showAlert(
+      locator<ModalService>().showAlert(
         context: context,
         title: 'Got It',
         message: 'This item has been added to your shopping cart.',
@@ -315,7 +316,7 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
       setState(() {
         _isLoading = false;
       });
-      getIt<ModalService>().showAlert(
+      locator<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),
@@ -388,11 +389,11 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
   Future<bool> load() async {
     try {
       //Load user.
-      _currentUser = await getIt<AuthService>().getCurrentUser();
+      _currentUser = await locator<AuthService>().getCurrentUser();
 
       return true;
     } catch (e) {
-      getIt<ModalService>().showAlert(
+      locator<ModalService>().showAlert(
         context: context,
         title: 'Error',
         message: e.toString(),
@@ -402,8 +403,8 @@ class _MakeLithophanePageState extends State<MakeLithophanePage>
   }
 
   Future<void> fetchLithophaneSku() async {
-    final String skuID = await getIt<DBService>().retrieveSkuID();
-    _sku = await getIt<StripeSkuService>().retrieve(skuID: skuID);
+    final String skuID = await locator<DBService>().retrieveSkuID();
+    _sku = await locator<StripeSkuService>().retrieve(skuID: skuID);
     return;
   }
 

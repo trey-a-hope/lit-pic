@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/database/user.dart';
-import 'package:litpic/models/stripe/credit_card.dart';
+import 'package:litpic/models/credit_card_model.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/pages/checkout/checkout_final_page.dart';
 import 'package:litpic/pages/profile/saved_cards_page.dart';
+import 'package:litpic/service_locator.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe/customer.dart';
+import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/views/credit_card_view.dart';
 import 'package:litpic/views/pay_flow_diagram_view.dart';
 import 'package:litpic/views/round_button_view.dart';
@@ -27,13 +28,11 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
   Animation<double> topBarAnimation;
 
-  List<Widget> listViews = List<Widget>();
+  List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final GetIt getIt = GetIt.I;
-
-  User _currentUser;
+  UserModel _currentUser;
 
   bool loadCustomerInfoComplete = false;
   bool addAllListDataComplete = false;
@@ -132,17 +131,17 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
           ),
         );
       } else {
-        CreditCard creditCard = _currentUser.customer.card;
+        CreditCardModel creditCard = _currentUser.customer.card;
         listViews.add(
           CreditCardView(
             deleteCard: () async {
-              getIt<ModalService>().showAlert(
+              locator<ModalService>().showAlert(
                   context: context,
                   title: 'Error',
                   message: 'Click edit to make changes to this card.');
             },
             makeDefaultCard: () async {
-              getIt<ModalService>().showAlert(
+              locator<ModalService>().showAlert(
                   context: context,
                   title: 'Error',
                   message: 'Click edit to make changes to this card.');
@@ -195,13 +194,13 @@ class _CheckoutPaymentPageState extends State<CheckoutPaymentPage>
 
       try {
         //Load user and orders.
-        _currentUser = await getIt<AuthService>().getCurrentUser();
-        _currentUser.customer = await getIt<StripeCustomerService>()
+        _currentUser = await locator<AuthService>().getCurrentUser();
+        _currentUser.customer = await locator<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
         return;
       } catch (e) {
-        getIt<ModalService>().showAlert(
+        locator<ModalService>().showAlert(
           context: context,
           title: 'Error',
           message: e.toString(),
