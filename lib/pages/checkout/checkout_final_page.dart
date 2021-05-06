@@ -312,14 +312,14 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
   }
 
   Future<void> fetchLithophaneSku() async {
-    final String skuID = await locator<DBService>().retrieveSkuID();
-    _sku = await locator<StripeSkuService>().retrieve(skuID: skuID);
-    return;
+    // final String skuID = await locator<DBService>().retrieveSkuID();
+    // _sku = await locator<StripeSkuService>().retrieve(skuID: skuID);
+    // return;
   }
 
   Future<void> fetchAdminDocID() async {
-    adminDocID = await locator<DBService>().retrieveAdminDocID();
-    return;
+    // adminDocID = await locator<DBService>().retrieveAdminDocID();
+    // return;
   }
 
   void _submit() async {

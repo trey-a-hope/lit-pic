@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class CartItemModel {
-  final String id;
-  final String imgUrl;
-  final String imgPath;
-  final int quantity;
+  String id;
+  String imgUrl;
+  String imgPath;
+  int quantity;
 
   CartItemModel(
       {@required this.id,

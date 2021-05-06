@@ -3,14 +3,15 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:litpic/blocs/bloc/create_lithophane_bloc.dart';
 import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/pages/auth/login_page.dart';
 import 'package:litpic/pages/cart_page.dart';
 import 'package:litpic/pages/home_page.dart';
-import 'package:litpic/pages/make_lithophane_page.dart';
 import 'package:litpic/pages/profile/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
 import 'package:litpic/service_locator.dart';
@@ -150,13 +151,20 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                 });
                 break;
               case 1:
-                animationController.reverse().then((data) {
-                  if (!mounted) return;
-                  setState(() {
-                    tabBody = MakeLithophanePage(
-                        animationController: animationController);
-                  });
-                });
+                animationController.reverse().then(
+                  (data) {
+                    if (!mounted) return;
+                    setState(
+                      () {
+                        tabBody = BlocProvider(
+                          create: (context) =>
+                              CreateLithophaneBloc()..add(LoadPageEvent()),
+                          child: CreateLithophanePage(),
+                        );
+                      },
+                    );
+                  },
+                );
                 break;
               case 2:
                 animationController.reverse().then((data) {

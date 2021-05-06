@@ -384,10 +384,10 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
 
   Future<void> fetchLithophaneSku() async {
     if (!fetchLithophaneSkuComplete) {
-      fetchLithophaneSkuComplete = true;
-      final String skuID = await locator<DBService>().retrieveSkuID();
-      _sku = await locator<StripeSkuService>().retrieve(skuID: skuID);
-      return;
+      // fetchLithophaneSkuComplete = true;
+      // final String skuID = await locator<DBService>().retrieveSkuID();
+      // _sku = await locator<StripeSkuService>().retrieve(skuID: skuID);
+      // return;
     } else {
       return;
     }

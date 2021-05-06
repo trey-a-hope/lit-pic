@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:litpic/models/customer_model.dart';
 
 class UserModel {
-  final String id;
+  final String id; //delete
   final String uid;
   final String customerID;
   final String fcmToken;
-  final Timestamp timestamp;
-  final bool isAdmin;
+  final Timestamp timestamp; //call created, make DateTime.
+  //add modified, make DateTime.
+  final bool isAdmin; //delete
 
   CustomerModel customer; //Not saved to database, used strictly on FE.
 

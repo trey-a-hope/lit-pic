@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 
 import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/services/cart_item_service.dart';
 import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/fcm_service.dart';
 import 'package:litpic/services/formatter_service.dart';
@@ -21,6 +22,7 @@ GetIt locator = GetIt.I;
 
 void setUpLocater() {
   locator.registerLazySingleton(() => AuthService());
+  locator.registerLazySingleton(() => CartItemService());
   locator.registerLazySingleton(() => DBService());
   locator.registerLazySingleton(() => FCMService());
   locator.registerLazySingleton(() => FormatterService());

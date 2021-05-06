@@ -3,16 +3,17 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class IImageService {
-  Future<File> cropImage({@required File imageFile});
+  Future<PickedFile> cropImage({@required PickedFile imageFile});
 }
 
 class ImageService extends IImageService {
   @override
-  Future<File> cropImage({File imageFile}) async {
+  Future<PickedFile> cropImage({@required PickedFile imageFile}) async {
     File croppedImage =
         await ImageCropper.cropImage(sourcePath: imageFile.path);
-    return croppedImage;
+    return PickedFile(croppedImage.path);
   }
 }

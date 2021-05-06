@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
+import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/cart_item_model.dart';
 import 'package:litpic/models/sku_model.dart';
 import 'package:litpic/models/user_model.dart';
 import 'package:litpic/pages/checkout/checkout_shipping_page.dart';
 import 'package:litpic/services/auth_service.dart';
-import 'package:litpic/services/db_service.dart';
+import 'package:litpic/services/cart_item_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/storage_service.dart';
@@ -311,8 +311,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   }
 
   Future<void> fetchLithophaneSku() async {
-    final String skuID = await locator<DBService>().retrieveSkuID();
-    _sku = await locator<StripeSkuService>().retrieve(skuID: skuID);
+    _sku = await locator<StripeSkuService>().retrieve(skuID: SKU_UD);
     return;
   }
 
@@ -477,7 +476,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       });
 
       //Remove cart item from database.
-      await locator<DBService>()
+      await locator<CartItemService>()
           .deleteCartItem(userID: _currentUser.id, cartItemID: cartItem.id);
 
       //Remove image of cart item from storage.
@@ -507,7 +506,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       _isLoading = true;
     });
 
-    await locator<DBService>().updateCartItem(
+    await locator<CartItemService>().updateCartItem(
         userID: _currentUser.id,
         cartItemID: cartItem.id,
         data: {'quantity': cartItem.quantity + 1});
@@ -539,7 +538,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       _isLoading = true;
     });
 
-    await locator<DBService>().updateCartItem(
+    await locator<CartItemService>().updateCartItem(
         userID: _currentUser.id,
         cartItemID: cartItem.id,
         data: {'quantity': cartItem.quantity - 1});

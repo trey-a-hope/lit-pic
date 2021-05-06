@@ -1,24 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:litpic/models/cart_item_model.dart';
 import 'package:litpic/models/litpic_model.dart';
 import 'package:litpic/models/user_model.dart';
 
 abstract class IDBService {
-  //Admin
-  Future<String> retrieveAdminDocID();
-
-  //Cart Item
-  Future<void> createCartItem(
-      {@required String userID, @required CartItemModel cartItem});
-  Future<List<CartItemModel>> retrieveCartItems({@required String userID});
-  Future<void> updateCartItem(
-      {@required String userID,
-      @required String cartItemID,
-      @required Map<String, dynamic> data});
-  Future<void> deleteCartItem(
-      {@required String userID, @required String cartItemID});
-
   //Lit Pic
   Future<List<LitPicModel>> retrieveLitPics();
 
@@ -35,9 +20,6 @@ abstract class IDBService {
   Future<List<UserModel>> retrieveUsers({bool isAdmin, int limit});
   Future<void> updateUser(
       {@required String userID, @required Map<String, dynamic> data});
-
-  //Sku
-  Future<String> retrieveSkuID();
 }
 
 class DBService extends IDBService {
@@ -145,75 +127,6 @@ class DBService extends IDBService {
   }
 
   @override
-  Future<void> createCartItem({String userID, CartItemModel cartItem}) async {
-    try {
-      CollectionReference colRef =
-          _usersDB.document(userID).collection('Cart Items');
-
-      DocumentReference docRef = await colRef.add(
-        cartItem.toMap(),
-      );
-      await colRef.document(docRef.documentID).updateData(
-        {'id': docRef.documentID},
-      );
-      return;
-    } catch (e) {
-      throw Exception(
-        e.toString(),
-      );
-    }
-  }
-
-  @override
-  Future<List<CartItemModel>> retrieveCartItems({String userID}) async {
-    try {
-      CollectionReference colRef =
-          _usersDB.document(userID).collection('Cart Items');
-      List<DocumentSnapshot> docs = (await colRef.getDocuments()).documents;
-      List<CartItemModel> cartItems = [];
-      for (int i = 0; i < docs.length; i++) {
-        cartItems.add(
-          CartItemModel.fromDoc(doc: docs[i]),
-        );
-      }
-      return cartItems;
-    } catch (e) {
-      throw Exception(e.toString());
-    }
-  }
-
-  @override
-  Future<void> updateCartItem(
-      {String userID, String cartItemID, Map<String, dynamic> data}) async {
-    try {
-      CollectionReference colRef =
-          _usersDB.document(userID).collection('Cart Items');
-      DocumentReference docRef = colRef.document(cartItemID);
-      await docRef.updateData(data);
-      return;
-    } catch (e) {
-      throw Exception(
-        e.toString(),
-      );
-    }
-  }
-
-  @override
-  Future<void> deleteCartItem({String userID, String cartItemID}) async {
-    try {
-      //Delete cart item from database.
-      CollectionReference colRef =
-          _usersDB.document(userID).collection('Cart Items');
-      await colRef.document(cartItemID).delete();
-      return;
-    } catch (e) {
-      throw Exception(
-        e.toString(),
-      );
-    }
-  }
-
-  @override
   Future<void> deleteUser({String id}) async {
     try {
       await _usersDB.document(id).delete();
@@ -223,16 +136,6 @@ class DBService extends IDBService {
         e.toString(),
       );
     }
-  }
-
-  @override
-  Future<String> retrieveSkuID() async {
-    return (await _dataDB.get()).data['skuID'];
-  }
-
-  @override
-  Future<String> retrieveAdminDocID() async {
-    return (await _dataDB.get()).data['adminDocID'];
   }
 
   @override

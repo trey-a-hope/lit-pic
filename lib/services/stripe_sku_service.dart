@@ -13,7 +13,7 @@ abstract class IStripeSkuService {
 
 class StripeSkuService extends IStripeSkuService {
   @override
-  Future<SkuModel> retrieve({String skuID}) async {
+  Future<SkuModel> retrieve({@required String skuID}) async {
     Map data = {'skuID': skuID};
 
     http.Response response = await http.post(
