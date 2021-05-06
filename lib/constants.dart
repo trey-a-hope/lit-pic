@@ -7,7 +7,7 @@ const String GCF_ENDPOINT =
     'https://us-central1-litpic-f293c.cloudfunctions.net/';
 
 const String SKU_UD = 'sku_GATEGxr1FwZMJQ';
-const String ADMIN_DOC_ID = '6XKNQczVxE0MsAmybrSU';
+const String ADMIN_DOC_ID = 'jFPx3bn9asN7UlIaWSlVi9W37bh2';
 
 //These are set in main().
 String version;
