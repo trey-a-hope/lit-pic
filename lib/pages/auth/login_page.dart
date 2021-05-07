@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:litpic/asset_images.dart';
+import 'package:litpic/blocs/signup/signup_bloc.dart';
+import 'package:litpic/blocs/signup/signup_page.dart';
 import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/pages/auth/password_reset_page.dart';
-import 'package:litpic/pages/auth/sign_up_page.dart';
+import 'package:litpic/service_locator.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/validater_service.dart';
-
-import '../../service_locator.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -179,12 +179,14 @@ class LoginPageState extends State<LoginPage>
                               Center(
                                 child: InkWell(
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SignUpPage(),
+                                    Route route = MaterialPageRoute(
+                                      builder: (context) => BlocProvider(
+                                        create: (context) =>
+                                            SignupBloc()..add(LoadPageEvent()),
+                                        child: SignupPage(),
                                       ),
                                     );
+                                    Navigator.push(context, route);
                                   },
                                   child: RichText(
                                     text: TextSpan(children: [

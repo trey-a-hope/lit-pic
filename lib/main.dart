@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
-import 'package:litpic/blocs/bloc/create_lithophane_bloc.dart';
 import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
@@ -16,6 +16,8 @@ import 'package:litpic/pages/profile/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
 import 'package:litpic/service_locator.dart';
 import 'package:package_info/package_info.dart';
+
+import 'blocs/create_lithophane/create_lithophane_bloc.dart';
 
 class CommonThings {
   static double width;
@@ -45,7 +47,7 @@ void main() async {
   buildNumber = packageInfo.buildNumber;
 
   runApp(
-    MyApp(),
+    Phoenix(child: MyApp()),
   );
 }
 
