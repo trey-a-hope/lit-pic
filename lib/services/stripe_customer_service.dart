@@ -45,7 +45,7 @@ class StripeCustomerService extends IStripeCustomerService {
     }
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripeCreateCustomer',
+      Uri.parse('${GCF_ENDPOINT}StripeCreateCustomer'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -68,7 +68,7 @@ class StripeCustomerService extends IStripeCustomerService {
     Map data = {'customerID': customerID};
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripeRetrieveCustomer',
+      Uri.parse('${GCF_ENDPOINT}StripeRetrieveCustomer'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -176,7 +176,7 @@ class StripeCustomerService extends IStripeCustomerService {
     }
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripeUpdateCustomer',
+      Uri.parse('${GCF_ENDPOINT}StripeUpdateCustomer'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -199,7 +199,7 @@ class StripeCustomerService extends IStripeCustomerService {
     Map data = {'customerID': customerID};
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripeDeleteCustomer',
+      Uri.parse('${GCF_ENDPOINT}StripeDeleteCustomer'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );

@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
   UserModel _currentUser;
-  final FirebaseMessaging _fcm = FirebaseMessaging();
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   // Coupon _coupon;
   bool addAllListDataComplete = false;
   // String youtubeVideoID;
@@ -222,9 +222,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
       //Request permission on iOS device.
       if (Platform.isIOS) {
-        _fcm.requestNotificationPermissions(
-          IosNotificationSettings(),
-        );
+        _fcm.requestPermission();
       }
 
       //Update user's fcm token.
@@ -235,27 +233,27 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }
 
       //Configure notifications for several action types.
-      _fcm.configure(
-        onMessage: (Map<String, dynamic> message) async {
-          print("onMessage: $message");
-          locator<ModalService>().showAlert(
-              context: context,
-              title: message['notification']['title'],
-              message: '');
-        },
-        onLaunch: (Map<String, dynamic> message) async {
-          locator<ModalService>().showAlert(
-              context: context,
-              title: message['notification']['title'],
-              message: '');
-        },
-        onResume: (Map<String, dynamic> message) async {
-          locator<ModalService>().showAlert(
-              context: context,
-              title: message['notification']['title'],
-              message: '');
-        },
-      );
+      // _fcm.configure(
+      //   onMessage: (Map<String, dynamic> message) async {
+      //     print("onMessage: $message");
+      //     locator<ModalService>().showAlert(
+      //         context: context,
+      //         title: message['notification']['title'],
+      //         message: '');
+      //   },
+      //   onLaunch: (Map<String, dynamic> message) async {
+      //     locator<ModalService>().showAlert(
+      //         context: context,
+      //         title: message['notification']['title'],
+      //         message: '');
+      //   },
+      //   onResume: (Map<String, dynamic> message) async {
+      //     locator<ModalService>().showAlert(
+      //         context: context,
+      //         title: message['notification']['title'],
+      //         message: '');
+      //   },
+      // );
 
       return;
     } catch (e) {

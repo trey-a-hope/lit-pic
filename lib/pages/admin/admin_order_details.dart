@@ -406,13 +406,13 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
       cartItems.clear();
 
       //Fetch cart item documents.
-      QuerySnapshot querySnapshot = await Firestore.instance
-          .collection('Orders')
-          .document(order.id)
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(order.id)
           .collection('cartItems')
-          .getDocuments();
+          .get();
 
-      List<DocumentSnapshot> docs = querySnapshot.documents;
+      List<DocumentSnapshot> docs = querySnapshot.docs;
 
       //Add cart items to list.
       for (int i = 0; i < docs.length; i++) {

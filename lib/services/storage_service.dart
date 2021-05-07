@@ -16,9 +16,9 @@ class StorageService extends IStorageService {
   Future<String> uploadImage(
       {@required PickedFile file, @required String imgPath}) async {
     try {
-      final StorageReference ref = FirebaseStorage().ref().child(imgPath);
-      final StorageUploadTask uploadTask = ref.putFile(File(file.path));
-      StorageReference sr = (await uploadTask.onComplete).ref;
+      final Reference ref = FirebaseStorage.instance.ref().child(imgPath);
+      final UploadTask uploadTask = ref.putFile(File(file.path));
+      final Reference sr = (await uploadTask).ref;
       return (await sr.getDownloadURL()).toString();
     } catch (e) {
       throw Exception(
@@ -30,7 +30,7 @@ class StorageService extends IStorageService {
   @override
   Future<void> deleteImage({String imgPath}) async {
     try {
-      final StorageReference ref = FirebaseStorage().ref().child(imgPath);
+      final Reference ref = FirebaseStorage.instance.ref().child(imgPath);
       await ref.delete();
       return;
     } catch (e) {

@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+//import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
@@ -15,25 +16,24 @@ import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/profile/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
 import 'package:litpic/service_locator.dart';
+import 'package:litpic/services/auth_service.dart';
 import 'package:package_info/package_info.dart';
 
 import 'blocs/create_lithophane/create_lithophane_bloc.dart';
 
-class CommonThings {
-  static double width;
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
 
   SystemChrome.setPreferredOrientations(
     [DeviceOrientation.portraitUp],
   );
 
   if (Platform.isAndroid) {
-    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+    //FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
   } else {
-    FlutterStatusbarcolor.setStatusBarColor(Colors.white);
+    //FlutterStatusbarcolor.setStatusBarColor(Colors.white);
   }
 
   //Make status bar in Android transparent.
@@ -71,12 +71,13 @@ class MyApp extends StatelessWidget {
 class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    CommonThings.width = MediaQuery.of(context).size.width;
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
 
-    return StreamBuilder<FirebaseUser>(
-      stream: FirebaseAuth.instance.onAuthStateChanged,
+    return StreamBuilder(
+      stream: locator<AuthService>().onAuthStateChanged(),
       builder: (context, snapshot) {
-        FirebaseUser user = snapshot.data;
+        User user = snapshot.data;
         return user == null ? LoginPage() : MainApp();
       },
     );

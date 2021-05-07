@@ -13,10 +13,10 @@ import 'package:litpic/services/validater_service.dart';
 
 class LoginPage extends StatefulWidget {
   @override
-  State createState() => LoginPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class LoginPageState extends State<LoginPage>
+class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -25,6 +25,8 @@ class LoginPageState extends State<LoginPage>
   bool _autoValidate = false;
   bool _isLoading = false;
   final double _containerHeight = 350.0;
+
+  bool _obscureText = true;
 
   _login() async {
     if (_formKey.currentState.validate()) {
@@ -245,13 +247,22 @@ class LoginPageState extends State<LoginPage>
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.done,
       controller: _passwordController,
-      obscureText: true,
+      obscureText: _obscureText,
       style: TextStyle(color: Colors.black, fontFamily: 'SFUIDisplay'),
       decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Password',
-          prefixIcon: Icon(Icons.lock_outline),
-          labelStyle: TextStyle(fontSize: 15)),
+        border: OutlineInputBorder(),
+        labelText: 'Password',
+        prefixIcon: Icon(Icons.lock_outline),
+        labelStyle: TextStyle(fontSize: 15),
+        suffixIcon: IconButton(
+          icon: Icon(Icons.remove_red_eye_sharp),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        ),
+      ),
     );
   }
 }

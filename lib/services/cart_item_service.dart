@@ -16,20 +16,21 @@ abstract class ICartItemService {
 }
 
 class CartItemService extends ICartItemService {
-  final CollectionReference _usersDB = Firestore.instance.collection('Users');
+  final CollectionReference _usersDB =
+      FirebaseFirestore.instance.collection('Users');
 
   @override
   Future<void> createCartItem(
       {@required String uid, @required CartItemModel cartItem}) async {
     try {
       final CollectionReference colRef =
-          _usersDB.document(uid).collection('cartItems');
+          _usersDB.doc(uid).collection('cartItems');
 
-      final DocumentReference docRef = colRef.document();
+      final DocumentReference docRef = colRef.doc();
 
-      cartItem.id = docRef.documentID;
+      cartItem.id = docRef.id;
 
-      await docRef.setData(
+      await docRef.set(
         cartItem.toMap(),
       );
 
@@ -44,9 +45,8 @@ class CartItemService extends ICartItemService {
   @override
   Future<List<CartItemModel>> retrieveCartItems({@required String uid}) async {
     try {
-      CollectionReference colRef =
-          _usersDB.document(uid).collection('cartItems');
-      List<DocumentSnapshot> docs = (await colRef.getDocuments()).documents;
+      CollectionReference colRef = _usersDB.doc(uid).collection('cartItems');
+      List<DocumentSnapshot> docs = (await colRef.get()).docs;
       List<CartItemModel> cartItems = [];
       for (int i = 0; i < docs.length; i++) {
         cartItems.add(
@@ -65,10 +65,9 @@ class CartItemService extends ICartItemService {
       @required String cartItemID,
       @required Map<String, dynamic> data}) async {
     try {
-      CollectionReference colRef =
-          _usersDB.document(uid).collection('cartItems');
-      DocumentReference docRef = colRef.document(cartItemID);
-      await docRef.updateData(data);
+      CollectionReference colRef = _usersDB.doc(uid).collection('cartItems');
+      DocumentReference docRef = colRef.doc(cartItemID);
+      await docRef.update(data);
       return;
     } catch (e) {
       throw Exception(
@@ -82,9 +81,8 @@ class CartItemService extends ICartItemService {
       {@required String uid, @required String cartItemID}) async {
     try {
       //Delete cart item from database.
-      CollectionReference colRef =
-          _usersDB.document(uid).collection('cartItems');
-      await colRef.document(cartItemID).delete();
+      CollectionReference colRef = _usersDB.doc(uid).collection('cartItems');
+      await colRef.doc(cartItemID).delete();
       return;
     } catch (e) {
       throw Exception(

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
@@ -9,13 +8,11 @@ import 'package:litpic/models/sku_model.dart';
 import 'package:litpic/models/user_model.dart';
 import 'package:litpic/pages/checkout/checkout_success_page.dart';
 import 'package:litpic/services/auth_service.dart';
-import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/fcm_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/services/stripe_order_service.dart';
-import 'package:litpic/services/stripe_sku_service.dart';
 import 'package:litpic/services/user_service.dart';
 import 'package:litpic/views/cart_item_bought_view.dart';
 import 'package:litpic/views/pay_flow_diagram_view.dart';
@@ -295,12 +292,12 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
       cartItems.clear();
 
       //Fetch cart item documents.
-      List<DocumentSnapshot> docs = (await Firestore.instance
+      List<DocumentSnapshot> docs = (await FirebaseFirestore.instance
               .collection('Users')
-              .document(_currentUser.uid)
+              .doc(_currentUser.uid)
               .collection('cartItems')
-              .getDocuments())
-          .documents;
+              .get())
+          .docs;
 
       //Add cart items to list.
       for (int i = 0; i < docs.length; i++) {
@@ -344,7 +341,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
 
         //Create order document reference.
         DocumentReference ordersDocRef =
-            await Firestore.instance.collection('Orders').add({
+            await FirebaseFirestore.instance.collection('orders').add({
           'id': orderID,
           'name': _currentUser.customer.shipping.name,
           'email': _currentUser.customer.email
@@ -356,16 +353,15 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
         }
 
         //Create user cart items reference.
-        CollectionReference cartItemsColRef = Firestore.instance
+        CollectionReference cartItemsColRef = FirebaseFirestore.instance
             .collection('Users')
-            .document(_currentUser.uid)
+            .doc(_currentUser.uid)
             .collection('cartItems');
 
         //Clear shopping cart.
-        List<DocumentSnapshot> docs =
-            (await cartItemsColRef.getDocuments()).documents;
+        List<DocumentSnapshot> docs = (await cartItemsColRef.get()).docs;
         for (int i = 0; i < docs.length; i++) {
-          await cartItemsColRef.document(docs[i].documentID).delete();
+          await cartItemsColRef.doc(docs[i].id).delete();
         }
 
         //Send notification to myself of new order created.

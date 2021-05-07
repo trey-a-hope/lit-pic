@@ -15,10 +15,10 @@ class CartItemModel {
 
   factory CartItemModel.fromDoc({@required DocumentSnapshot doc}) {
     return CartItemModel(
-        id: doc.data['id'],
-        imgUrl: doc.data['imgUrl'],
-        imgPath: doc.data['imgPath'],
-        quantity: doc.data['quantity']);
+        id: doc.data()['id'],
+        imgUrl: doc.data()['imgUrl'],
+        imgPath: doc.data()['imgPath'],
+        quantity: doc.data()['quantity']);
   }
 
   Map<String, dynamic> toMap() {

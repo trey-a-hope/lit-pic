@@ -17,7 +17,7 @@ class StripeSkuService extends IStripeSkuService {
     Map data = {'skuID': skuID};
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripeRetrieveSku',
+      Uri.parse('${GCF_ENDPOINT}StripeRetrieveSku'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );

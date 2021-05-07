@@ -63,8 +63,8 @@ class _CreateLithophanePageState extends State<CreateLithophanePage>
           _showSelectImageDialog();
         },
         child: Container(
-          height: CommonThings.width,
-          width: CommonThings.width,
+          height: screenWidth,
+          width: screenWidth,
           color: Colors.grey[300],
           child: _image == null
               ? Icon(

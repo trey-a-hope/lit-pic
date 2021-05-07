@@ -43,7 +43,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
         );
 
         //Create user in Auth.
-        AuthResult authResult =
+        UserCredential userCredential =
             await locator<AuthService>().createUserWithEmailAndPassword(
           email: email,
           password: password,
@@ -51,7 +51,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
         //Create user in Database.
         UserModel user = UserModel(
-          uid: authResult.user.uid,
+          uid: userCredential.user.uid,
           fcmToken: null,
           created: DateTime.now(),
           modified: DateTime.now(),

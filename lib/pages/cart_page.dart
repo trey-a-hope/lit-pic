@@ -261,12 +261,12 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
       totalLithophanes = 0;
 
       //Fetch cart item documents.
-      List<DocumentSnapshot> docs = (await Firestore.instance
+      List<DocumentSnapshot> docs = (await FirebaseFirestore.instance
               .collection('Users')
-              .document(_currentUser.uid)
+              .doc(_currentUser.uid)
               .collection('cartItems')
-              .getDocuments())
-          .documents;
+              .get())
+          .docs;
 
       //Add cart items to list.
       for (int i = 0; i < docs.length; i++) {

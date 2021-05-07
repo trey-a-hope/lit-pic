@@ -14,11 +14,11 @@ class DBService extends IDBService {
       {String collection, String property, dynamic value}) async {
     try {
       final CollectionReference colRef =
-          Firestore.instance.collection(collection);
-      QuerySnapshot querySnapshot = await colRef.getDocuments();
-      List<DocumentSnapshot> docs = querySnapshot.documents;
+          FirebaseFirestore.instance.collection(collection);
+      QuerySnapshot querySnapshot = await colRef.get();
+      List<DocumentSnapshot> docs = querySnapshot.docs;
       for (int i = 0; i < docs.length; i++) {
-        await colRef.document(docs[i].documentID).updateData(
+        await colRef.doc(docs[i].id).update(
           {property: value},
         );
       }

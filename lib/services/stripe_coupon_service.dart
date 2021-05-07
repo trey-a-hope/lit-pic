@@ -16,7 +16,7 @@ class StripeCouponService extends IStripeCouponService {
     Map data = {'couponID': couponID};
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripeRetrieveCoupon',
+      Uri.parse('${GCF_ENDPOINT}StripeRetrieveCoupon'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );

@@ -21,13 +21,13 @@ class LitPicModel {
 
   factory LitPicModel.fromDoc({@required DocumentSnapshot doc}) {
     return LitPicModel(
-      dimensions: doc.data['dimensions'],
-      endColor: doc.data['endColor'],
-      id: doc.data['id'],
-      imgUrl: doc.data['imgUrl'],
-      printMinutes: doc.data['printMinutes'],
-      startColor: doc.data['startColor'],
-      title: doc.data['title'],
+      dimensions: doc.data()['dimensions'],
+      endColor: doc.data()['endColor'],
+      id: doc.data()['id'],
+      imgUrl: doc.data()['imgUrl'],
+      printMinutes: doc.data()['printMinutes'],
+      startColor: doc.data()['startColor'],
+      title: doc.data()['title'],
     );
   }
 

@@ -21,11 +21,11 @@ class UserModel {
 
   factory UserModel.fromDoc({@required DocumentSnapshot doc}) {
     return UserModel(
-      uid: doc.data['uid'],
-      customerID: doc.data['customerID'],
-      fcmToken: doc.data['fcmToken'],
-      created: doc.data['created'].toDate(),
-      modified: doc.data['modified'].toDate(),
+      uid: doc.data()['uid'],
+      customerID: doc.data()['customerID'],
+      fcmToken: doc.data()['fcmToken'],
+      created: doc.data()['created'].toDate(),
+      modified: doc.data()['modified'].toDate(),
     );
   }
 

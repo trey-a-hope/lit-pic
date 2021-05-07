@@ -49,7 +49,7 @@ class StripeOrderService extends IStripeOrderService {
     }
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripeListOrders',
+      Uri.parse('${GCF_ENDPOINT}StripeListOrders'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -105,7 +105,7 @@ class StripeOrderService extends IStripeOrderService {
     };
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripeCreateOrder',
+      Uri.parse('${GCF_ENDPOINT}StripeCreateOrder'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -128,7 +128,7 @@ class StripeOrderService extends IStripeOrderService {
     Map data = {'orderID': orderID, 'source': source, 'customerID': customerID};
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripePayOrder',
+      Uri.parse('${GCF_ENDPOINT}StripePayOrder'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -160,7 +160,7 @@ class StripeOrderService extends IStripeOrderService {
     };
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripeUpdateOrder',
+      Uri.parse('${GCF_ENDPOINT}StripeUpdateOrder'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );

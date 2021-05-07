@@ -7,12 +7,12 @@ abstract class ILitPicService {
 
 class LitPicService extends ILitPicService {
   final CollectionReference _litPicsDB =
-      Firestore.instance.collection('Lit Pics');
+      FirebaseFirestore.instance.collection('Lit Pics');
 
   @override
   Future<List<LitPicModel>> retrieveLitPics() async {
     try {
-      List<DocumentSnapshot> docs = (await _litPicsDB.getDocuments()).documents;
+      List<DocumentSnapshot> docs = (await _litPicsDB.get()).docs;
       List<LitPicModel> litPics = [];
       for (int i = 0; i < docs.length; i++) {
         litPics.add(

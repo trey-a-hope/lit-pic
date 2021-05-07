@@ -296,19 +296,19 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       cartItems.clear();
 
       //Fetch order that matches order id.
-      QuerySnapshot orderQuerySnapshot = await Firestore.instance
-          .collection('Orders')
+      QuerySnapshot orderQuerySnapshot = await FirebaseFirestore.instance
+          .collection('orders')
           .where('id', isEqualTo: order.id)
-          .getDocuments();
+          .get();
 
       //Fetch cart items for that order.
-      DocumentSnapshot cartItemDoc = orderQuerySnapshot.documents.first;
-      QuerySnapshot cartItemsSnapshot = await Firestore.instance
-          .collection('Orders')
-          .document(cartItemDoc.documentID)
+      DocumentSnapshot cartItemDoc = orderQuerySnapshot.docs.first;
+      QuerySnapshot cartItemsSnapshot = await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(cartItemDoc.id)
           .collection('cartItems')
-          .getDocuments();
-      List<DocumentSnapshot> cartItemDocs = cartItemsSnapshot.documents;
+          .get();
+      List<DocumentSnapshot> cartItemDocs = cartItemsSnapshot.docs;
 
       //Add cart items to list.
       for (int i = 0; i < cartItemDocs.length; i++) {

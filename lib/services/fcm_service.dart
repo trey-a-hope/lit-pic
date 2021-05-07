@@ -16,7 +16,7 @@ abstract class IFCMService {
 }
 
 class FCMService extends IFCMService {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final String _endpoint = 'https://fcm.googleapis.com/fcm/send';
   final String _contentType = 'application/json';
   final String _authorization =
@@ -33,7 +33,7 @@ class FCMService extends IFCMService {
       },
     );
     return http.post(
-      _endpoint,
+      Uri.parse(_endpoint),
       body: data,
       headers: {'Content-Type': _contentType, 'Authorization': _authorization},
     );

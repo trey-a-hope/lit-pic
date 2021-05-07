@@ -148,8 +148,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
             },
           );
 
-          locator<AuthService>()
-              .sendPasswordResetEmail(email: _emailController.text);
+          locator<AuthService>().resetPassword(email: _emailController.text);
 
           setState(
             () {

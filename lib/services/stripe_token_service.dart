@@ -28,7 +28,7 @@ class StripeTokenService extends IStripeTokenService {
     };
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripeCreateToken',
+      Uri.parse('${GCF_ENDPOINT}StripeCreateToken'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );

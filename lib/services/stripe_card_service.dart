@@ -17,7 +17,7 @@ class StripeCardService extends IStripeCardService {
     Map data = {'customerID': customerID, 'token': token};
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripeCreateCard',
+      Uri.parse('${GCF_ENDPOINT}StripeCreateCard'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
@@ -41,7 +41,7 @@ class StripeCardService extends IStripeCardService {
     Map data = {'customerID': customerID, 'cardID': cardID};
 
     http.Response response = await http.post(
-      '${GCF_ENDPOINT}StripeDeleteCard',
+      Uri.parse('${GCF_ENDPOINT}StripeDeleteCard'),
       body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
