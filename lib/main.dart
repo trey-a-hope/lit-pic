@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-//import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:litpic/blocs/login/login_bloc.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/pages/auth/login_page.dart';
 import 'package:litpic/pages/cart_page.dart';
 import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/profile/profile_page.dart';
@@ -31,9 +31,9 @@ void main() async {
   );
 
   if (Platform.isAndroid) {
-    //FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
   } else {
-    //FlutterStatusbarcolor.setStatusBarColor(Colors.white);
+    FlutterStatusbarcolor.setStatusBarColor(Colors.white);
   }
 
   //Make status bar in Android transparent.
@@ -78,7 +78,12 @@ class LandingPage extends StatelessWidget {
       stream: locator<AuthService>().onAuthStateChanged(),
       builder: (context, snapshot) {
         User user = snapshot.data;
-        return user == null ? LoginPage() : MainApp();
+        return user == null
+            ? BlocProvider(
+                create: (context) => LoginBloc(),
+                child: LoginPage(),
+              )
+            : MainApp();
       },
     );
   }
