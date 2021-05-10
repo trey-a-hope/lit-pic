@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/service_locator.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/main.dart';
 import 'package:litpic/models/cart_item_model.dart';
 import 'package:litpic/models/sku_model.dart';
 import 'package:litpic/models/user_model.dart';

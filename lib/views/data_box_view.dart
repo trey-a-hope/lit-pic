@@ -27,7 +27,7 @@ class DataBoxChildView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = List<Widget>();
+    List<Widget> widgets = [];
     bool addSpace = false;
     for (int i = 0; i < dataBoxChildren.length; !addSpace ? i++ : i + 0) {
       if (addSpace) {
@@ -422,7 +422,7 @@ class CurvePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    List<Color> colorsList = List<Color>();
+    List<Color> colorsList = [];
     if (colors != null) {
       colorsList = colors;
     } else {

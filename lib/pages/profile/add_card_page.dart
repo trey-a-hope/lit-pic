@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:litpic/asset_images.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
@@ -95,7 +94,7 @@ class _AddCardPageState extends State<AddCardPage>
       listViews.add(
         Form(
           key: _formKey,
-          autovalidate: _autoValidate,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: <Widget>[
               Padding(
@@ -297,7 +296,7 @@ class _AddCardPageState extends State<AddCardPage>
   }
 
   Widget getMainListViewUI() {
-    List<Future> futures = List<Future>();
+    List<Future> futures = [];
     futures.add(loadCustomerInfo());
     return FutureBuilder(
       future: Future.wait(futures),

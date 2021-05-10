@@ -1,11 +1,17 @@
 part of 'create_lithophane_bloc.dart';
 
 @immutable
-abstract class CreateLithophaneState {}
+abstract class CreateLithophaneState extends Equatable {}
 
-class CreateLithophaneInitialState extends CreateLithophaneState {}
+class CreateLithophaneInitialState extends CreateLithophaneState {
+  @override
+  List<Object> get props => [];
+}
 
-class CreateLithophaneLoadingState extends CreateLithophaneState {}
+class CreateLithophaneLoadingState extends CreateLithophaneState {
+  @override
+  List<Object> get props => [];
+}
 
 class CreateLithophaneLoadedState extends CreateLithophaneState {
   final SkuModel sku;

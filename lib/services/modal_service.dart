@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 abstract class IModalService {
   void showAlert(
@@ -46,7 +45,7 @@ class ModalService extends IModalService {
                 title: Text(title),
                 content: Text(message),
                 actions: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: const Text('OK'),
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -95,13 +94,13 @@ class ModalService extends IModalService {
                 title: Text(title),
                 content: Text(message),
                 actions: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: Text('Yes'),
                     onPressed: () {
                       Navigator.of(context).pop(true);
                     },
                   ),
-                  FlatButton(
+                  TextButton(
                     child: Text('No'),
                     onPressed: () {
                       Navigator.of(context).pop(false);

@@ -334,7 +334,7 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
   }
 
   Widget getMainListViewUI() {
-    List<Future> futures = List<Future>();
+    List<Future> futures = [];
     futures.add(load());
     // futures.add(fetchMonthlyCoupon());
     futures.add(fetchLithophaneSku());

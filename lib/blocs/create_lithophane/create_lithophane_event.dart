@@ -1,9 +1,12 @@
 part of 'create_lithophane_bloc.dart';
 
 @immutable
-abstract class CreateLithophaneEvent {}
+abstract class CreateLithophaneEvent extends Equatable {}
 
-class LoadPageEvent extends CreateLithophaneEvent {}
+class LoadPageEvent extends CreateLithophaneEvent {
+  @override
+  List<Object> get props => [];
+}
 
 class UpdateQuantityEvent extends CreateLithophaneEvent {
   final int quantity;

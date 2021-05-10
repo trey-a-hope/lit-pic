@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:litpic/asset_images.dart';
@@ -32,8 +31,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       final String email = event.email;
       final String password = event.password;
       try {
-        UserCredential userCredential =
-            await locator<AuthService>().signInWithEmailAndPassword(
+        await locator<AuthService>().signInWithEmailAndPassword(
           email: email,
           password: password,
         );

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:litpic/asset_images.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class DetailCardView extends StatelessWidget {
   final VoidCallback onTap;
@@ -91,7 +89,6 @@ class DetailCardView extends StatelessWidget {
                                               height: 10,
                                             ),
                                             Text(text),
-  
                                             SizedBox(
                                               height: 10,
                                             ),

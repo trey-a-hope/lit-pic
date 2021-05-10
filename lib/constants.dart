@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:litpic/main.dart';
-
 import 'extensions/hexcolor.dart';
 
 const String GCF_ENDPOINT =

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert' show Encoding, json;
+import 'dart:convert' show json;
 
 import '../constants.dart';
 

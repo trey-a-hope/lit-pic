@@ -414,7 +414,7 @@ class _CheckoutFinalPageState extends State<CheckoutFinalPage>
   }
 
   Widget getMainListViewUI() {
-    List<Future> futures = List<Future>();
+    List<Future> futures = [];
     futures.add(loadCustomerInfo());
     // futures.add(fetchLithophaneSku());
     // futures.add(fetchAdminDocID());

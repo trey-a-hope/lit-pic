@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:convert' show Encoding, json;
+import 'dart:convert' show json;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
