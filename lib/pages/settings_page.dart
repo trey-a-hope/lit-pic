@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
@@ -219,7 +218,7 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   Widget getMainListViewUI() {
-    List<Future> futures = List<Future>();
+    List<Future> futures = [];
     futures.add(load());
     return FutureBuilder(
       future: Future.wait(futures),

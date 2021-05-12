@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:litpic/models/order_model.dart';
 import 'package:litpic/services/formatter_service.dart';
 

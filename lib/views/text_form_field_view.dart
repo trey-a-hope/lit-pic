@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/services/validater_service.dart';
+import 'package:flutter/material.dart'; 
 
 class TextFormFieldView extends StatelessWidget {
   final AnimationController animationController;

@@ -1,19 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:flutter/material.dart'; 
 import 'package:intl/intl.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/cart_item_model.dart';
 import 'package:litpic/models/order_model.dart';
 import 'package:litpic/models/sku_model.dart';
-import 'package:litpic/models/user_model.dart';
-import 'package:litpic/services/db_service.dart';
+import 'package:litpic/models/user_model.dart'; 
 import 'package:litpic/services/fcm_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe_order_service.dart';
-import 'package:litpic/services/stripe_sku_service.dart';
+import 'package:litpic/services/stripe_order_service.dart'; 
 import 'package:litpic/services/user_service.dart';
 import 'package:litpic/services/validater_service.dart';
 import 'package:litpic/views/cart_item_bought_view.dart';
@@ -58,8 +55,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
   final String timeFormat = 'MMM d, yyyy @ h:mm a';
   SkuModel _sku;
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); 
 
   List<CartItemModel> cartItems = [];
 
@@ -298,7 +294,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
         listViews.add(
           Form(
             key: _formKey,
-            autovalidate: _autoValidate,
+            autovalidateMode: AutovalidateMode.onUserInteraction, 
             child: Column(
               children: <Widget>[
                 Padding(
@@ -495,7 +491,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
   }
 
   Widget getMainListViewUI() {
-    List<Future> futures = List<Future>();
+    List<Future> futures = [];
     futures.add(fetchLithophaneSku());
     futures.add(fetchCartItems());
     return FutureBuilder(

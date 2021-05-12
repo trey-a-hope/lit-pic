@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/order_model.dart';
-import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/validater_service.dart';
@@ -31,7 +29,6 @@ class _PasswordResetPageState extends State<PasswordResetPage>
 
   final Color iconColor = Colors.amber[700];
 
-  UserModel _currentUser;
   List<OrderModel> orders = [];
 
   bool addAllListDataComplete = false;
@@ -87,7 +84,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
       listViews.add(
         Form(
           key: _formKey,
-          autovalidate: _autoValidate,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Padding(
             padding: EdgeInsets.all(20),
             child: TextFormFieldView(
@@ -203,7 +200,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
   }
 
   Widget getMainListViewUI() {
-    List<Future> futures = List<Future>();
+    List<Future> futures = [];
     futures.add(
       Future.delayed(
         Duration(seconds: 0),

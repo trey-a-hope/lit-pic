@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/user_model.dart';
@@ -89,7 +88,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
       listViews.add(
         Form(
           key: _formKey,
-          autovalidate: _autoValidate,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: <Widget>[
               Padding(
@@ -287,7 +286,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
   }
 
   Widget getMainListViewUI() {
-    List<Future> futures = List<Future>();
+    List<Future> futures = [];
     futures.add(loadCustomerInfo());
     return FutureBuilder(
       future: Future.wait(futures),

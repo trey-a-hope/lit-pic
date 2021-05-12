@@ -1,15 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/cart_item_model.dart';
 import 'package:litpic/models/order_model.dart';
 import 'package:litpic/models/sku_model.dart';
-import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/formatter_service.dart';
-import 'package:litpic/services/stripe_sku_service.dart';
 import 'package:litpic/views/cart_item_bought_view.dart';
 import 'package:litpic/views/simple_title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -339,7 +336,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
   }
 
   Widget getMainListViewUI() {
-    List<Future> futures = List<Future>();
+    List<Future> futures = [];
     futures.add(fetchLithophaneSku());
     futures.add(fetchCartItems());
     return FutureBuilder(

@@ -1,9 +1,12 @@
 part of 'signup_bloc.dart';
 
 @immutable
-abstract class SignupEvent {}
+abstract class SignupEvent extends Equatable {}
 
-class LoadPageEvent extends SignupEvent {}
+class LoadPageEvent extends SignupEvent {
+  @override
+  List<Object> get props => [];
+}
 
 class SubmitEvent extends SignupEvent {
   final String name;

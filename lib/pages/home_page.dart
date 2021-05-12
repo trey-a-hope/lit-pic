@@ -2,15 +2,12 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/litpic_model.dart';
 import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
-import 'package:litpic/services/db_service.dart';
 import 'package:litpic/services/litpic_service.dart';
-import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/user_service.dart';
 import 'package:litpic/views/detail_card_view.dart';
 import 'package:litpic/views/recent_creations_view.dart';
@@ -286,7 +283,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget getMainListViewUI() {
-    List<Future> futures = List<Future>();
+    List<Future> futures = [];
     futures.add(load());
     futures.add(fetchLitPics());
     return FutureBuilder(

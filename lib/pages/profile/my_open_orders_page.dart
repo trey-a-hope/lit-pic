@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:litpic/common/spinner.dart';
+ import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/order_model.dart';
 import 'package:litpic/models/user_model.dart';
@@ -173,7 +172,7 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
   }
 
   Widget getMainListViewUI() {
-    List<Future> futures = List<Future>();
+    List<Future> futures = [];
     futures.add(loadCustomerInfo());
     return FutureBuilder(
       future: Future.wait(futures),

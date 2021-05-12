@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:flutter/material.dart'; 
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/pages/admin/admin_complete_orders.dart';
@@ -141,7 +140,7 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
   }
 
   Widget getMainListViewUI() {
-    List<Future> futures = List<Future>();
+    List<Future> futures = [];
     futures.add(Future.delayed(Duration(seconds: 0)));
     return FutureBuilder(
       future: Future.wait(futures),

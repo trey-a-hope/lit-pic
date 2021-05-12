@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:litpic/common/spinner.dart';
+ import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/user_model.dart';
-import 'package:litpic/views/pay_flow_diagram_view.dart';
+ import 'package:litpic/views/pay_flow_diagram_view.dart';
 import 'package:litpic/views/round_button_view.dart';
 
 class CheckoutSuccessPage extends StatefulWidget {
@@ -22,8 +20,7 @@ class _CheckoutSuccessPageState extends State<CheckoutSuccessPage>
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  UserModel _currentUser;
-
+ 
   bool loadCustomerInfoComplete = false;
   bool addAllListDataComplete = false;
 
