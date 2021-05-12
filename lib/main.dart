@@ -6,20 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:litpic/blocs/cart/cart_bloc.dart' as CART_BP;
 import 'package:litpic/blocs/login/login_bloc.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/pages/cart_page.dart';
 import 'package:litpic/pages/home_page.dart';
 import 'package:litpic/pages/profile/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
 import 'package:litpic/service_locator.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:package_info/package_info.dart';
-
-import 'blocs/create_lithophane/create_lithophane_bloc.dart';
+import 'blocs/create_lithophane/create_lithophane_bloc.dart' as CREATE_BP;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -166,9 +165,9 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                       () {
                         tabBody = BlocProvider(
                           lazy: true,
-                          create: (context) =>
-                              CreateLithophaneBloc()..add(LoadPageEvent()),
-                          child: CreateLithophanePage(),
+                          create: (context) => CREATE_BP.CreateLithophaneBloc()
+                            ..add(CREATE_BP.LoadPageEvent()),
+                          child: CREATE_BP.CreateLithophanePage(),
                         );
                       },
                     );
@@ -179,8 +178,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                 animationController.reverse().then((data) {
                   if (!mounted) return;
                   setState(() {
-                    tabBody =
-                        CartPage(animationController: animationController);
+                    tabBody = BlocProvider(
+                      lazy: true,
+                      create: (context) =>
+                          CART_BP.CartBloc()..add(CART_BP.LoadPageEvent()),
+                      child: CART_BP.CartPage(),
+                    );
                   });
                 });
                 break;
