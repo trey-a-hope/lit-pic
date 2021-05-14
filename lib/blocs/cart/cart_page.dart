@@ -7,13 +7,8 @@ class CartPage extends StatefulWidget {
   _CartPageState createState() => _CartPageState();
 }
 
-class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
-  Animation<double> topBarAnimation;
-  AnimationController animationController;
-  List<Widget> listViews = [];
-  ScrollController scrollController = ScrollController();
-  double topBarOpacity = 0.0;
-
+class _CartPageState extends State<CartPage>
+    with TickerProviderStateMixin, UIPropertiesMixin {
   @override
   void initState() {
     animationController =
@@ -59,8 +54,6 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
     @required double total,
   }) async {
     listViews.clear();
-    // if (!addAllListDataComplete) {
-    //   addAllListDataComplete = true;
 
     var count = 1;
 
@@ -241,101 +234,16 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
               );
               return Stack(
                 children: <Widget>[
-                  ListView.builder(
-                    controller: scrollController,
-                    padding: EdgeInsets.only(
-                      top: AppBar().preferredSize.height +
-                          MediaQuery.of(context).padding.top +
-                          24,
-                      bottom: 62 + MediaQuery.of(context).padding.bottom,
-                    ),
-                    itemCount: listViews.length,
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: (context, index) {
-                      animationController.forward();
-                      return listViews[index];
-                    },
+                  LitPicListViews(
+                    listViews: listViews,
+                    animationController: animationController,
+                    scrollController: scrollController,
                   ),
-                  Column(
-                    children: <Widget>[
-                      AnimatedBuilder(
-                        animation: animationController,
-                        builder: (BuildContext context, Widget child) {
-                          return FadeTransition(
-                            opacity: topBarAnimation,
-                            child: Transform(
-                              transform: Matrix4.translationValues(
-                                  0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: LitPicTheme.white
-                                      .withOpacity(topBarOpacity),
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(32.0),
-                                  ),
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                        color: LitPicTheme.grey
-                                            .withOpacity(0.4 * topBarOpacity),
-                                        offset: Offset(1.1, 1.1),
-                                        blurRadius: 10.0),
-                                  ],
-                                ),
-                                child: Column(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).padding.top,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 16,
-                                          right: 16,
-                                          top: 16 - 8.0 * topBarOpacity,
-                                          bottom: 12 - 8.0 * topBarOpacity),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                "Shopping Cart",
-                                                textAlign: TextAlign.left,
-                                                style: TextStyle(
-                                                  fontFamily:
-                                                      LitPicTheme.fontName,
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 22 +
-                                                      6 -
-                                                      6 * topBarOpacity,
-                                                  letterSpacing: 1.2,
-                                                  color: LitPicTheme.darkerText,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          IconButton(
-                                            onPressed: () async {
-                                              context
-                                                  .read<CartBloc>()
-                                                  .add(RefreshEvent());
-                                            },
-                                            icon: Icon(Icons.refresh),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                    ],
+                  LitPicAppBar(
+                    title: 'Shopping Cart',
+                    topBarOpacity: topBarOpacity,
+                    animationController: animationController,
+                    topBarAnimation: topBarAnimation,
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).padding.bottom,
@@ -353,66 +261,9 @@ class _CartPageState extends State<CartPage> with TickerProviderStateMixin {
 
             return Container();
           },
-          listener: (context, state) {
-            // if (state is CreateLithophaneLoadedState) {
-            //   final bool imageUploaded = state.imageUploaded;
-            //   if (imageUploaded) {
-            //     _image = null;
-            //     locator<ModalService>().showAlert(
-            //       context: context,
-            //       title: 'Got It',
-            //       message: 'This item has been added to your shopping cart.',
-            //     );
-            //   }
-            // }
-          },
+          listener: (context, state) {},
         ),
-        // body: Stack(
-        //   children: <Widget>[
-        //     getMainListViewUI(),
-        //     getAppBarUI(),
-        //     SizedBox(
-        //       height: MediaQuery.of(context).padding.bottom,
-        //     )
-        //   ],
-        // ),
       ),
     );
-  }
-
-  _deleteCartItem({@required CartItemModel cartItem}) async {
-    // bool confirm = await locator<ModalService>().showConfirmation(
-    //     context: context,
-    //     title: 'Remove Item From Cart',
-    //     message: 'Are you sure.');
-    // if (confirm) {
-    //   setState(() {
-    //     _isLoading = true;
-    //   });
-
-    //   //Remove cart item from database.
-    //   await locator<CartItemService>()
-    //       .deleteCartItem(uid: _currentUser.uid, cartItemID: cartItem.id);
-
-    //   //Remove image of cart item from storage.
-    //   await locator<StorageService>().deleteImage(imgPath: cartItem.imgPath);
-
-    //   //Refresh cart data.
-    //   fetchCartItemsComplete = false;
-    //   await fetchCartItems();
-
-    //   //Rerun total calculations.
-    //   calculateTotalsComplete = false;
-    //   calculateTotals();
-
-    //   //Re add views with data.
-    //   addAllListDataComplete = false;
-    //   addAllListData();
-
-    //   //
-    //   setState(() {
-    //     _isLoading = false;
-    //   });
-    // }
   }
 }
