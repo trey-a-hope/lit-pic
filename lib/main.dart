@@ -13,12 +13,12 @@ import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/pages/home_page.dart';
-import 'package:litpic/pages/profile/profile_page.dart';
 import 'package:litpic/pages/settings_page.dart';
 import 'package:litpic/service_locator.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:package_info/package_info.dart';
 import 'blocs/create_lithophane/create_lithophane_bloc.dart' as CREATE_BP;
+import 'blocs/profile/profile_bloc.dart' as PROFILE_BP;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -191,8 +191,12 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
                 animationController.reverse().then((data) {
                   if (!mounted) return;
                   setState(() {
-                    tabBody =
-                        ProfilePage(animationController: animationController);
+                    tabBody = BlocProvider(
+                      lazy: true,
+                      create: (context) => PROFILE_BP.ProfileBloc()
+                        ..add(PROFILE_BP.LoadPageEvent()),
+                      child: PROFILE_BP.ProfilePage(),
+                    );
                   });
                 });
                 break;
