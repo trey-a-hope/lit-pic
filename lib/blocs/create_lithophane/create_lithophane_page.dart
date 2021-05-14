@@ -8,12 +8,7 @@ class CreateLithophanePage extends StatefulWidget {
 }
 
 class _CreateLithophanePageState extends State<CreateLithophanePage>
-    with TickerProviderStateMixin {
-  Animation<double> topBarAnimation;
-  AnimationController animationController;
-  List<Widget> listViews = [];
-  ScrollController scrollController = ScrollController();
-  double topBarOpacity = 0.0;
+    with TickerProviderStateMixin, UIPropertiesMixin {
   PickedFile _image;
 
   @override
@@ -300,93 +295,16 @@ class _CreateLithophanePageState extends State<CreateLithophanePage>
 
               return Stack(
                 children: <Widget>[
-                  ListView.builder(
-                    controller: scrollController,
-                    padding: EdgeInsets.only(
-                      top: AppBar().preferredSize.height +
-                          MediaQuery.of(context).padding.top +
-                          24,
-                      bottom: 62 + MediaQuery.of(context).padding.bottom,
-                    ),
-                    itemCount: listViews.length,
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: (context, index) {
-                      animationController.forward();
-                      return listViews[index];
-                    },
+                  LitPicListViews(
+                    listViews: listViews,
+                    animationController: animationController,
+                    scrollController: scrollController,
                   ),
-                  Column(
-                    children: <Widget>[
-                      AnimatedBuilder(
-                        animation: animationController,
-                        builder: (BuildContext context, Widget child) {
-                          return FadeTransition(
-                            opacity: topBarAnimation,
-                            child: Transform(
-                              transform: Matrix4.translationValues(
-                                  0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: LitPicTheme.white
-                                      .withOpacity(topBarOpacity),
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(32.0),
-                                  ),
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                        color: LitPicTheme.grey
-                                            .withOpacity(0.4 * topBarOpacity),
-                                        offset: Offset(1.1, 1.1),
-                                        blurRadius: 10.0),
-                                  ],
-                                ),
-                                child: Column(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).padding.top,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 16,
-                                          right: 16,
-                                          top: 16 - 8.0 * topBarOpacity,
-                                          bottom: 12 - 8.0 * topBarOpacity),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                'Create Lithophane',
-                                                textAlign: TextAlign.left,
-                                                style: TextStyle(
-                                                  fontFamily:
-                                                      LitPicTheme.fontName,
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 22 +
-                                                      6 -
-                                                      6 * topBarOpacity,
-                                                  letterSpacing: 1.2,
-                                                  color: LitPicTheme.darkerText,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                    ],
+                  LitPicAppBar(
+                    title: 'Create Lithophane',
+                    topBarOpacity: topBarOpacity,
+                    animationController: animationController,
+                    topBarAnimation: topBarAnimation,
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).padding.bottom,

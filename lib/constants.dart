@@ -44,11 +44,11 @@ class TabIconData {
     ),
     TabIconData(
       unselectedIcon: Icon(
-        Icons.image,
+        Icons.edit,
         color: Colors.grey,
       ),
       selectedIcon: Icon(
-        Icons.image,
+        Icons.edit,
         color: Colors.amber,
       ),
       index: 1,
