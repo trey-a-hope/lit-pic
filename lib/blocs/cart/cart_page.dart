@@ -189,6 +189,14 @@ class _CartPageState extends State<CartPage>
               //     return CheckoutShippingPage();
               //   }),
               // );
+
+              Route route = MaterialPageRoute(
+                builder: (context) => BlocProvider(
+                  create: (context) => blachblachalfea()..add(LoadPageEvent()),
+                  child: CheckoutPage(),
+                ),
+              );
+              Navigator.push(context, route);
             },
             textColor: Colors.white,
             animation: Tween(begin: 0.0, end: 1.0).animate(
