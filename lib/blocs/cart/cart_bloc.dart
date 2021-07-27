@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:litpic/blocs/checkout/checkout_bloc.dart' as CHECKOUT_BP;
 import 'package:litpic/common/lit_pic_app_bar.dart';
 import 'package:litpic/common/lit_pic_list_views.dart';
 import 'package:litpic/common/spinner.dart';
