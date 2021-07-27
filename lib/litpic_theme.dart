@@ -20,17 +20,17 @@ class LitPicTheme {
   static const Color spacer = Color(0xFFF2F2F2);
   static const String fontName = 'Roboto';
 
-  static const TextTheme textTheme = TextTheme(
-    display1: display1,
-    headline: headline,
-    title: title,
-    subtitle: subtitle,
-    body2: body2,
-    body1: body1,
+  static TextTheme textTheme = TextTheme(
+    headline4: headline4,
+    headline5: headline5,
+    headline6: headline6,
+    subtitle2: subtitle2,
+    bodyText1: bodyText1,
+    bodyText2: bodyText2,
     caption: caption,
   );
 
-  static const TextStyle display1 = TextStyle(
+  static const TextStyle headline4 = TextStyle(
     fontFamily: fontName,
     fontWeight: FontWeight.bold,
     fontSize: 36,
@@ -39,7 +39,7 @@ class LitPicTheme {
     color: darkerText,
   );
 
-  static const TextStyle headline = TextStyle(
+  static const TextStyle headline5 = TextStyle(
     fontFamily: fontName,
     fontWeight: FontWeight.bold,
     fontSize: 24,
@@ -47,7 +47,7 @@ class LitPicTheme {
     color: darkerText,
   );
 
-  static const TextStyle title = TextStyle(
+  static const TextStyle headline6 = TextStyle(
     fontFamily: fontName,
     fontWeight: FontWeight.bold,
     fontSize: 16,
@@ -55,7 +55,7 @@ class LitPicTheme {
     color: darkerText,
   );
 
-  static const TextStyle subtitle = TextStyle(
+  static const TextStyle subtitle2 = TextStyle(
     fontFamily: fontName,
     fontWeight: FontWeight.w400,
     fontSize: 14,
@@ -63,7 +63,7 @@ class LitPicTheme {
     color: darkText,
   );
 
-  static const TextStyle body2 = TextStyle(
+  static const TextStyle bodyText1 = TextStyle(
     fontFamily: fontName,
     fontWeight: FontWeight.w400,
     fontSize: 14,
@@ -71,7 +71,7 @@ class LitPicTheme {
     color: darkText,
   );
 
-  static const TextStyle body1 = TextStyle(
+  static const TextStyle bodyText2 = TextStyle(
     fontFamily: fontName,
     fontWeight: FontWeight.w400,
     fontSize: 16,
