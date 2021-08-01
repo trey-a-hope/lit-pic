@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/pages/admin/admin_complete_orders.dart';
@@ -9,19 +9,19 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 class AdminPage extends StatefulWidget {
   final AnimationController animationController;
 
-  const AdminPage({Key key, this.animationController}) : super(key: key);
+  const AdminPage({required this.animationController}) : super();
   @override
   _AdminPageState createState() => _AdminPageState();
 }
 
 class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
-  Animation<double> topBarAnimation;
+  late Animation<double> topBarAnimation;
 
   List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final Color iconColor = Colors.amber[700];
+  final Color iconColor = Colors.amber[700]!;
 
   bool addAllListDataComplete = false;
 
@@ -174,7 +174,7 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
       children: <Widget>[
         AnimatedBuilder(
           animation: widget.animationController,
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
               child: new Transform(

@@ -1,22 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+ import 'package:flutter/services.dart';
 import 'package:litpic/models/user_model.dart';
 
 abstract class IAuthService {
   Future<UserModel> getCurrentUser();
   Future<void> signOut();
-  Stream<User> onAuthStateChanged();
+  Stream<User?> onAuthStateChanged();
   Future<UserCredential> signInWithEmailAndPassword(
-      {@required String email, @required String password});
+      {required String email, required String password});
 
   Future<UserCredential> createUserWithEmailAndPassword(
-      {@required String email, @required String password});
-  Future<void> updatePassword({@required String password});
-  Future<void> updateEmail({@required String email});
+      {required String email, required String password});
+  Future<void> updatePassword({required String password});
+  Future<void> updateEmail({required String email});
 
-  Future<void> deleteUser({@required String uid});
-  Future<void> resetPassword({@required String email});
+  Future<void> deleteUser({required String uid});
+  Future<void> resetPassword({required String email});
 }
 
 class AuthService extends IAuthService {
@@ -27,7 +27,7 @@ class AuthService extends IAuthService {
   @override
   Future<UserModel> getCurrentUser() async {
     try {
-      User firebaseUser = _auth.currentUser;
+      User firebaseUser = _auth.currentUser!;
       final DocumentSnapshot documentSnapshot =
           await _usersDB.doc(firebaseUser.uid).get();
       return UserModel.fromDoc(doc: documentSnapshot);
@@ -42,80 +42,60 @@ class AuthService extends IAuthService {
   }
 
   @override
-  Stream<User> onAuthStateChanged() {
+  Stream<User?> onAuthStateChanged() {
     return _auth.idTokenChanges();
   }
 
   @override
   Future<UserCredential> signInWithEmailAndPassword(
-      {@required String email, @required String password}) {
+      {required String email, required String password}) {
     return _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   @override
   Future<UserCredential> createUserWithEmailAndPassword(
-      {@required String email, @required String password}) {
+      {required String email, required String password}) {
     return _auth.createUserWithEmailAndPassword(
         email: email, password: password);
   }
 
   @override
-  Future<void> resetPassword({@required String email}) async {
+  Future<void> resetPassword({required String email}) async {
     try {
       return await _auth.sendPasswordResetEmail(email: email);
-    } catch (e) {
-      throw Exception(
-        e.toString(),
-      );
+    } on PlatformException catch (e) {
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 
-  Future<void> updatePassword({@required String password}) async {
+  Future<void> updatePassword({required String password}) async {
     try {
-      User firebaseUser = _auth.currentUser;
+      User firebaseUser = _auth.currentUser!;
       await firebaseUser.updatePassword(password);
       return;
-    } catch (e) {
-      if (e.message != null) {
-        throw Exception(
-          e.message,
-        );
-      } else {
-        throw Exception(
-          e.toString(),
-        );
-      }
+    } on PlatformException catch (e) {
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 
   @override
-  Future<void> deleteUser({@required String uid}) async {
+  Future<void> deleteUser({required String uid}) async {
     try {
-      User firebaseUser = _auth.currentUser;
+      User firebaseUser = _auth.currentUser!;
       await firebaseUser.delete();
       await _usersDB.doc(uid).delete();
       return;
-    } catch (e) {
-      throw Exception(
-        e.toString(),
-      );
+    } on PlatformException catch (e) {
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 
   @override
-  Future<void> updateEmail({@required String email}) async {
+  Future<void> updateEmail({required String email}) async {
     try {
-      return await _auth.currentUser.updateEmail(email);
-    } catch (e) {
-      if (e.message != null) {
-        throw Exception(
-          e.message,
-        );
-      } else {
-        throw Exception(
-          e.toString(),
-        );
-      }
+      return await _auth.currentUser!.updateEmail(email);
+    } on PlatformException catch (e) {
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 }

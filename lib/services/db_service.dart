@@ -1,17 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 abstract class IDBService {
   Future<void> addPropertyToDocuments(
-      {@required String collection,
-      @required String property,
-      @required dynamic value});
+      {required String collection,
+      required String property,
+      required dynamic value});
 }
 
 class DBService extends IDBService {
   @override
   Future<void> addPropertyToDocuments(
-      {String collection, String property, dynamic value}) async {
+      {required String collection,
+      required String property,
+      required dynamic value}) async {
     try {
       final CollectionReference colRef =
           FirebaseFirestore.instance.collection(collection);

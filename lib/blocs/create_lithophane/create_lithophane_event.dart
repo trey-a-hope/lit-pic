@@ -11,7 +11,7 @@ class UpdateQuantityEvent extends CreateLithophaneEvent {
   final int quantity;
 
   UpdateQuantityEvent({
-    @required this.quantity,
+    required this.quantity,
   });
 
   @override
@@ -21,10 +21,10 @@ class UpdateQuantityEvent extends CreateLithophaneEvent {
 }
 
 class AddToCartEvent extends CreateLithophaneEvent {
-  final PickedFile image;
+  final XFile image;
 
   AddToCartEvent({
-    @required this.image,
+    required this.image,
   });
 
   @override

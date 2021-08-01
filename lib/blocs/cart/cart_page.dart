@@ -1,7 +1,7 @@
 part of 'cart_bloc.dart';
 
 class CartPage extends StatefulWidget {
-  const CartPage({Key key}) : super(key: key);
+  const CartPage() : super();
 
   @override
   _CartPageState createState() => _CartPageState();
@@ -47,11 +47,11 @@ class _CartPageState extends State<CartPage>
   }
 
   void addAllListData({
-    @required List<CartItemModel> cartItems,
-    @required SkuModel sku,
-    @required double subTotal,
-    @required double shippingFee,
-    @required double total,
+    required List<CartItemModel> cartItems,
+    required SkuModel sku,
+    required double subTotal,
+    required double shippingFee,
+    required double total,
   }) async {
     listViews.clear();
 
@@ -178,10 +178,12 @@ class _CartPageState extends State<CartPage>
           child: RoundButtonView(
             text: 'PROCEED TO CHECKOUT',
             buttonColor: Colors.amber,
-            onPressed: () {
-              // prefs.setDouble('subTotal', subTotal);
-              // prefs.setDouble('shippingFee', shippingFee);
-              // prefs.setDouble('total', total);
+            onPressed: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+
+              prefs.setDouble('subTotal', subTotal);
+              prefs.setDouble('shippingFee', shippingFee);
+              prefs.setDouble('total', total);
 
               // Navigator.push(
               //   context,
@@ -254,7 +256,6 @@ class _CartPageState extends State<CartPage>
                     title: 'Shopping Cart',
                     topBarOpacity: topBarOpacity,
                     animationController: animationController,
-                    topBarAnimation: topBarAnimation,
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).padding.bottom,

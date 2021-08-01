@@ -6,11 +6,10 @@ class LitPicListViews extends StatelessWidget {
   final List<Widget> listViews;
 
   LitPicListViews({
-    Key key,
-    @required this.scrollController,
-    @required this.animationController,
-    @required this.listViews,
-  }) : super(key: key);
+    required this.scrollController,
+    required this.animationController,
+    required this.listViews,
+  }) : super();
 
   @override
   Widget build(BuildContext context) {

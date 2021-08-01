@@ -7,19 +7,19 @@ import '../constants.dart';
 
 abstract class IStripeTokenService extends ChangeNotifier {
   Future<String> create(
-      {@required String number,
-      @required String expMonth,
-      @required String expYear,
-      @required String cvc});
+      {required String number,
+      required String expMonth,
+      required String expYear,
+      required String cvc});
 }
 
 class StripeTokenService extends IStripeTokenService {
   @override
   Future<String> create(
-      {@required String number,
-      @required String expMonth,
-      @required String expYear,
-      @required String cvc}) async {
+      {required String number,
+      required String expMonth,
+      required String expYear,
+      required String cvc}) async {
     Map data = {
       'number': number,
       'exp_month': expMonth,
@@ -41,7 +41,7 @@ class StripeTokenService extends IStripeTokenService {
         throw PlatformException(
             message: map['raw']['message'], code: map['raw']['code']);
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
       throw PlatformException(message: e.message, code: e.code);
     }
   }

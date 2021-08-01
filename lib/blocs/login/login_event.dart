@@ -12,8 +12,8 @@ class SubmitEvent extends LoginEvent {
   final String password;
 
   SubmitEvent({
-    @required this.email,
-    @required this.password,
+    required this.email,
+    required this.password,
   });
 
   @override

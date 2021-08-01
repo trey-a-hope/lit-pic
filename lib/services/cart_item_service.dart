@@ -1,18 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:litpic/models/cart_item_model.dart';
 
 abstract class ICartItemService {
   //Cart Item
   Future<void> createCartItem(
-      {@required String uid, @required CartItemModel cartItem});
-  Future<List<CartItemModel>> retrieveCartItems({@required String uid});
+      {required String uid, required CartItemModel cartItem});
+  Future<List<CartItemModel>> retrieveCartItems({required String uid});
   Future<void> updateCartItem(
-      {@required String uid,
-      @required String cartItemID,
-      @required Map<String, dynamic> data});
+      {required String uid,
+      required String cartItemID,
+      required Map<String, dynamic> data});
   Future<void> deleteCartItem(
-      {@required String uid, @required String cartItemID});
+      {required String uid, required String cartItemID});
 }
 
 class CartItemService extends ICartItemService {
@@ -21,7 +20,7 @@ class CartItemService extends ICartItemService {
 
   @override
   Future<void> createCartItem(
-      {@required String uid, @required CartItemModel cartItem}) async {
+      {required String uid, required CartItemModel cartItem}) async {
     try {
       final CollectionReference colRef =
           _usersDB.doc(uid).collection('cartItems');
@@ -43,7 +42,7 @@ class CartItemService extends ICartItemService {
   }
 
   @override
-  Future<List<CartItemModel>> retrieveCartItems({@required String uid}) async {
+  Future<List<CartItemModel>> retrieveCartItems({required String uid}) async {
     try {
       CollectionReference colRef = _usersDB.doc(uid).collection('cartItems');
       List<DocumentSnapshot> docs = (await colRef.get()).docs;
@@ -61,9 +60,9 @@ class CartItemService extends ICartItemService {
 
   @override
   Future<void> updateCartItem(
-      {@required String uid,
-      @required String cartItemID,
-      @required Map<String, dynamic> data}) async {
+      {required String uid,
+      required String cartItemID,
+      required Map<String, dynamic> data}) async {
     try {
       CollectionReference colRef = _usersDB.doc(uid).collection('cartItems');
       DocumentReference docRef = colRef.doc(cartItemID);
@@ -78,7 +77,7 @@ class CartItemService extends ICartItemService {
 
   @override
   Future<void> deleteCartItem(
-      {@required String uid, @required String cartItemID}) async {
+      {required String uid, required String cartItemID}) async {
     try {
       //Delete cart item from database.
       CollectionReference colRef = _usersDB.doc(uid).collection('cartItems');

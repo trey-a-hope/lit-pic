@@ -28,9 +28,9 @@
 //   }
 
 //   Widget buildCartView(
-//       {@required String imgUrl,
-//       @required String name,
-//       @required String price}) {
+//       {required String imgUrl,
+//       required String name,
+//       required String price}) {
 //     return SizedBox(
 //       height: 170,
 //       child: Stack(

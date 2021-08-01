@@ -37,8 +37,8 @@ class CreateLithophaneBloc
     extends Bloc<CreateLithophaneEvent, CreateLithophaneState> {
   CreateLithophaneBloc() : super(CreateLithophaneInitialState());
 
-  UserModel _currentUser;
-  SkuModel _sku;
+  late UserModel _currentUser;
+  late SkuModel _sku;
   int _quantity = 1;
 
   @override
@@ -66,7 +66,7 @@ class CreateLithophaneBloc
     }
 
     if (event is AddToCartEvent) {
-      final PickedFile image = event.image;
+      final XFile image = event.image;
       try {
         //Upload image to storage.
         final String photoID = Uuid().v1();

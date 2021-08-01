@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show json;
@@ -8,12 +7,12 @@ import 'package:litpic/models/sku_model.dart';
 import '../constants.dart';
 
 abstract class IStripeSkuService {
-  Future<SkuModel> retrieve({@required String skuID});
+  Future<SkuModel> retrieve({required String skuID});
 }
 
 class StripeSkuService extends IStripeSkuService {
   @override
-  Future<SkuModel> retrieve({@required String skuID}) async {
+  Future<SkuModel> retrieve({required String skuID}) async {
     Map data = {'skuID': skuID};
 
     http.Response response = await http.post(
@@ -30,7 +29,7 @@ class StripeSkuService extends IStripeSkuService {
         throw PlatformException(
             message: map['raw']['message'], code: map['raw']['code']);
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
       throw PlatformException(message: e.message, code: e.code);
     }
   }

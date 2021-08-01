@@ -1,28 +1,28 @@
 abstract class IValidatorService {
-  String isEmpty(String value);
-  String mobile(String value);
-  String email(String value);
-  String password(String value);
-  String state(String value);
-  String zip(String value);
-  String cardNumber(String value);
-  String cardExpiration(String value);
-  String cardCVC(String value);
-  String trackingNumber(String value);
+  String? isEmpty(String? value);
+  String? mobile(String value);
+  String? email(String value);
+  String? password(String value);
+  String? state(String value);
+  String? zip(String value);
+  String? cardNumber(String value);
+  String? cardExpiration(String value);
+  String? cardCVC(String value);
+  String? trackingNumber(String value);
 }
 
 class ValidatorService extends IValidatorService {
   @override
-  String isEmpty(String value) {
-    if (value.length == 0) {
-      return ('Field cannot be empty.');
-    } else {
-      return null;
-    }
+  String? isEmpty(String? value) {
+    if (value == null) return null;
+
+    return value.length == 0 ? 'Field cannot be empty.' : null;
   }
 
   @override
-  String mobile(String value) {
+  String? mobile(String? value) {
+    if (value == null) return null;
+
     String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExp = RegExp(patttern);
     if (value.length == 0) {
@@ -34,10 +34,12 @@ class ValidatorService extends IValidatorService {
   }
 
   @override
-  String email(String value) {
+  String? email(String? value) {
+    if (value == null) return null;
+
     Pattern pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = RegExp(pattern);
+    RegExp regex = RegExp('$pattern');
     if (!regex.hasMatch(value))
       return 'Enter a valid email.';
     else
@@ -45,9 +47,11 @@ class ValidatorService extends IValidatorService {
   }
 
   @override
-  String password(String value) {
+  String? password(String? value) {
+    if (value == null) return null;
+
     Pattern pattern = '.{6,}';
-    RegExp regex = RegExp(pattern);
+    RegExp regex = RegExp('$pattern');
     if (!regex.hasMatch(value))
       return '6 character minimum.';
     else
@@ -55,7 +59,8 @@ class ValidatorService extends IValidatorService {
   }
 
   @override
-  String state(String value) {
+  String? state(String? value) {
+    if (value == null) return null;
     if (value.isEmpty) return 'Invalid state.';
     final RegExp regExp = RegExp(r'^[a-zA-Z]{2}$');
     if (!regExp.hasMatch(value)) return 'Must be 2 letters.';
@@ -63,7 +68,9 @@ class ValidatorService extends IValidatorService {
   }
 
   @override
-  String zip(String value) {
+  String? zip(String? value) {
+    if (value == null) return null;
+
     if (value.isEmpty) return 'Invalid zip.';
     final RegExp regExp = RegExp(r'^[0-9]{5}$');
     if (!regExp.hasMatch(value)) return 'Must be 5 digits.';
@@ -71,7 +78,9 @@ class ValidatorService extends IValidatorService {
   }
 
   @override
-  String cardNumber(String value) {
+  String? cardNumber(String? value) {
+    if (value == null) return null;
+
     if (value.isEmpty) return 'Invalid card number.';
     final RegExp regExp = RegExp(r'^[0-9]{16}$');
     if (!regExp.hasMatch(value)) return 'Must be 16 numbers.';
@@ -79,7 +88,9 @@ class ValidatorService extends IValidatorService {
   }
 
   @override
-  String cardExpiration(String value) {
+  String? cardExpiration(String? value) {
+    if (value == null) return null;
+
     if (value.isEmpty) return 'Invalid expiration.';
     final RegExp regExp = RegExp(r'^[0-9]{4}$');
     if (!regExp.hasMatch(value)) return 'Must be 4 numbers.';
@@ -87,7 +98,9 @@ class ValidatorService extends IValidatorService {
   }
 
   @override
-  String cardCVC(String value) {
+  String? cardCVC(String? value) {
+    if (value == null) return null;
+
     if (value.isEmpty) return 'Invalid CVC.';
     final RegExp regExp = RegExp(r'^[0-9]{3}$');
     if (!regExp.hasMatch(value)) return 'Must be 3 numbers.';
@@ -95,7 +108,9 @@ class ValidatorService extends IValidatorService {
   }
 
   @override
-  String trackingNumber(String value) {
+  String? trackingNumber(String? value) {
+    if (value == null) return null;
+
     if (value.isEmpty) return 'Invalid Tracking Number.';
     final RegExp regExp = RegExp(r'^[0-9]{22}$');
     if (!regExp.hasMatch(value)) return 'Must be 22 numbers.';

@@ -14,18 +14,29 @@ class CheckoutLoadingState extends CheckoutState {
   List<Object> get props => [];
 }
 
-class CheckoutShippingState extends CheckoutState {
-  CheckoutShippingState();
+class CheckoutLoadedState extends CheckoutState {
+  CheckoutLoadedState();
 
   @override
   List<Object> get props => [];
+}
+
+class CheckoutShippingState extends CheckoutState {
+  final UserModel currentUser;
+   
+  CheckoutShippingState({required this.currentUser});
+
+  @override
+  List<Object> get props => [
+        currentUser,
+      ];
 }
 
 class ErrorState extends CheckoutState {
   final dynamic error;
 
   ErrorState({
-    @required this.error,
+    required this.error,
   });
 
   @override

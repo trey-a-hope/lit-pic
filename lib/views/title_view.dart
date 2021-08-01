@@ -5,25 +5,24 @@ class TitleView extends StatelessWidget {
   final String titleTxt;
   final String subTxt;
   final AnimationController animationController;
-  final Animation animation;
+  final Animation<double> animation;
   final bool showExtra;
-  final VoidCallback showExtraOnTap;
+  final VoidCallback? showExtraOnTap;
 
-  TitleView(
-      {Key key,
-      @required this.titleTxt,
-      @required this.subTxt,
-      @required this.animationController,
-      @required this.animation,
-      @required this.showExtra,
-      this.showExtraOnTap})
-      : super(key: key);
+  TitleView({
+    required this.titleTxt,
+    required this.subTxt,
+    required this.animationController,
+    required this.animation,
+    required this.showExtra,
+    this.showExtraOnTap,
+  }) : super();
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animationController,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
           opacity: animation,
           child: Transform(

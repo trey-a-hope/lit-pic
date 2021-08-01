@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:litpic/common/spinner.dart';
+import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/cart_item_model.dart';
 import 'package:litpic/models/order_model.dart';
 import 'package:litpic/models/sku_model.dart';
-import 'package:litpic/services/formatter_service.dart';
+ import 'package:litpic/services/formatter_service.dart';
+import 'package:litpic/services/stripe_sku_service.dart';
 import 'package:litpic/views/cart_item_bought_view.dart';
 import 'package:litpic/views/simple_title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -15,7 +17,11 @@ import '../../service_locator.dart';
 
 class OrderDetailsPage extends StatefulWidget {
   final OrderModel order;
-  const OrderDetailsPage({Key key, @required this.order}) : super(key: key);
+  const OrderDetailsPage(
+      {
+      // Key key,
+      required this.order})
+      : super();
   @override
   _OrderDetailsPageState createState() => _OrderDetailsPageState(order: order);
 }
@@ -24,10 +30,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
     with TickerProviderStateMixin {
   final OrderModel order;
 
-  _OrderDetailsPageState({@required this.order});
-  AnimationController animationController;
-
-  Animation<double> topBarAnimation;
+  _OrderDetailsPageState({required this.order});
+  late AnimationController animationController;
+  late Animation<double> topBarAnimation;
 
   List<Widget> listViews = [];
   var scrollController = ScrollController();
@@ -39,7 +44,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
   bool _isLoading = false;
 
   final String timeFormat = 'MMM d, yyyy @ h:mm a';
-  SkuModel _sku;
+  late SkuModel _sku;
 
   List<CartItemModel> cartItems = [];
 
@@ -272,9 +277,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
 
   Future<void> fetchLithophaneSku() async {
     if (!fetchLithophaneSkuComplete) {
-      // fetchLithophaneSkuComplete = true;
+      fetchLithophaneSkuComplete = true;
       // final String skuID = await locator<DBService>().retrieveSkuID();
-      // _sku = await locator<StripeSkuService>().retrieve(skuID: skuID);
+      _sku = await locator<StripeSkuService>().retrieve(skuID: SKU_UD);
       // return;
     } else {
       return;
@@ -371,11 +376,11 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       children: <Widget>[
         AnimatedBuilder(
           animation: animationController,
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
-              child: new Transform(
-                transform: new Matrix4.translationValues(
+              child: Transform(
+                transform: Matrix4.translationValues(
                     0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
                 child: Container(
                   decoration: BoxDecoration(

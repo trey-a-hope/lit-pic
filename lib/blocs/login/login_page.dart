@@ -144,9 +144,10 @@ class _LoginPageState extends State<LoginPage>
                               ),
                               GoodButton(
                                 textColor: Colors.white,
-                                buttonColor: Colors.amber[700],
+                                buttonColor: Colors.amber[700]!,
                                 onPressed: () {
-                                  if (!_formKey.currentState.validate()) return;
+                                  if (!_formKey.currentState!.validate())
+                                    return;
                                   context.read<LoginBloc>().add(
                                         SubmitEvent(
                                           email: _emailController.text,

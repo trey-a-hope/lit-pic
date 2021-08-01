@@ -1,18 +1,15 @@
 import 'dart:async';
 import 'dart:convert' show json;
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 abstract class IFCMService {
   Future<void> sendNotificationToUser(
-      {@required String fcmToken,
-      @required String title,
-      @required String body});
+      {required String fcmToken, required String title, required String body});
   Future<void> sendNotificationToGroup(
-      {@required String group, @required String title, @required String body});
-  Future<void> unsubscribeFromTopic({@required String topic});
-  Future<void> subscribeToTopic({@required String topic});
+      {required String group, required String title, required String body});
+  Future<void> unsubscribeFromTopic({required String topic});
+  Future<void> subscribeToTopic({required String topic});
 }
 
 class FCMService extends IFCMService {
@@ -40,26 +37,24 @@ class FCMService extends IFCMService {
   }
 
   @override
-  Future<void> unsubscribeFromTopic({@required String topic}) {
+  Future<void> unsubscribeFromTopic({required String topic}) {
     return _firebaseMessaging.subscribeToTopic(topic);
   }
 
   @override
-  Future<void> subscribeToTopic({@required String topic}) {
+  Future<void> subscribeToTopic({required String topic}) {
     return _firebaseMessaging.subscribeToTopic(topic);
   }
 
   @override
   Future<void> sendNotificationToUser(
-      {@required String fcmToken,
-      @required String title,
-      @required String body}) {
+      {required String fcmToken, required String title, required String body}) {
     return _sendNotification(fcmToken, title, body);
   }
 
   @override
   Future<void> sendNotificationToGroup(
-      {@required String group, @required String title, @required String body}) {
+      {required String group, required String title, required String body}) {
     return _sendNotification('/topics/' + group, title, body);
   }
 }

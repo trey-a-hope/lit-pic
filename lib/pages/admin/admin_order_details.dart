@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/cart_item_model.dart';
 import 'package:litpic/models/order_model.dart';
 import 'package:litpic/models/sku_model.dart';
-import 'package:litpic/models/user_model.dart'; 
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/fcm_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe_order_service.dart'; 
+import 'package:litpic/services/stripe_order_service.dart';
 import 'package:litpic/services/user_service.dart';
 import 'package:litpic/services/validater_service.dart';
 import 'package:litpic/views/cart_item_bought_view.dart';
@@ -24,9 +24,8 @@ import '../../service_locator.dart';
 class AdminOrderDetailsPage extends StatefulWidget {
   final OrderModel order;
   final bool openOrders;
-  const AdminOrderDetailsPage(
-      {Key key, @required this.order, @required this.openOrders})
-      : super(key: key);
+  const AdminOrderDetailsPage({required this.order, required this.openOrders})
+      : super();
   @override
   _AdminOrderDetailsPageState createState() =>
       _AdminOrderDetailsPageState(order: order, openOrders: openOrders);
@@ -37,11 +36,10 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
   final OrderModel order;
   final bool openOrders;
 
-  _AdminOrderDetailsPageState(
-      {@required this.order, @required this.openOrders});
-  AnimationController animationController;
+  _AdminOrderDetailsPageState({required this.order, required this.openOrders});
+  late AnimationController animationController;
 
-  Animation<double> topBarAnimation;
+  late Animation<double> topBarAnimation;
 
   List<Widget> listViews = [];
   var scrollController = ScrollController();
@@ -53,9 +51,9 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
   bool _isLoading = false;
 
   final String timeFormat = 'MMM d, yyyy @ h:mm a';
-  SkuModel _sku;
+  late SkuModel _sku;
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   List<CartItemModel> cartItems = [];
 
@@ -294,7 +292,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
         listViews.add(
           Form(
             key: _formKey,
-            autovalidateMode: AutovalidateMode.onUserInteraction, 
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
               children: <Widget>[
                 Padding(
@@ -420,8 +418,8 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
   }
 
   void _submit() async {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
       bool confirm = await locator<ModalService>().showConfirmation(
           context: context, title: 'Are you sure?', message: '');
@@ -441,10 +439,13 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
           //Send notification to user of complete order.
           UserModel user = await locator<UserService>()
               .retrieveUserByCustomerID(customerID: order.customerID);
-          await locator<FCMService>().sendNotificationToUser(
-              fcmToken: user.fcmToken,
-              title: 'ORDER SHIPPED',
-              body: 'View details now.');
+
+          if (user.fcmToken != null) {
+            await locator<FCMService>().sendNotificationToUser(
+                fcmToken: user.fcmToken!,
+                title: 'ORDER SHIPPED',
+                body: 'View details now.');
+          }
 
           //Display success modal.
           locator<ModalService>().showAlert(
@@ -526,7 +527,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
       children: <Widget>[
         AnimatedBuilder(
           animation: animationController,
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
               child: new Transform(

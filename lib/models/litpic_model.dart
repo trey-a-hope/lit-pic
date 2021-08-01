@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 class LitPicModel {
   final String dimensions;
@@ -11,23 +10,23 @@ class LitPicModel {
   final String title;
 
   LitPicModel(
-      {@required this.dimensions,
-      @required this.endColor,
-      @required this.id,
-      @required this.imgUrl,
-      @required this.printMinutes,
-      @required this.startColor,
-      @required this.title});
+      {required this.dimensions,
+      required this.endColor,
+      required this.id,
+      required this.imgUrl,
+      required this.printMinutes,
+      required this.startColor,
+      required this.title});
 
-  factory LitPicModel.fromDoc({@required DocumentSnapshot doc}) {
+  factory LitPicModel.fromDoc({required DocumentSnapshot doc}) {
     return LitPicModel(
-      dimensions: doc.data()['dimensions'],
-      endColor: doc.data()['endColor'],
-      id: doc.data()['id'],
-      imgUrl: doc.data()['imgUrl'],
-      printMinutes: doc.data()['printMinutes'],
-      startColor: doc.data()['startColor'],
-      title: doc.data()['title'],
+      dimensions: (doc.data() as dynamic)['dimensions'],
+      endColor: (doc.data() as dynamic)['endColor'],
+      id: (doc.data() as dynamic)['id'],
+      imgUrl: (doc.data() as dynamic)['imgUrl'],
+      printMinutes: (doc.data() as dynamic)['printMinutes'],
+      startColor: (doc.data() as dynamic)['startColor'],
+      title: (doc.data() as dynamic)['title'],
     );
   }
 

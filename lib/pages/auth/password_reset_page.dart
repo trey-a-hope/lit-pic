@@ -12,22 +12,22 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import '../../service_locator.dart';
 
 class PasswordResetPage extends StatefulWidget {
-  const PasswordResetPage({Key key}) : super(key: key);
+  const PasswordResetPage() : super();
   @override
   _PasswordResetPageState createState() => _PasswordResetPageState();
 }
 
 class _PasswordResetPageState extends State<PasswordResetPage>
     with TickerProviderStateMixin {
-  AnimationController animationController;
+  late AnimationController animationController;
 
-  Animation<double> topBarAnimation;
+  late Animation<double> topBarAnimation;
 
   List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final Color iconColor = Colors.amber[700];
+  final Color iconColor = Colors.amber[700]!;
 
   List<OrderModel> orders = [];
 
@@ -129,7 +129,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
   }
 
   void submit() async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       bool confirm = await locator<ModalService>().showConfirmation(
           context: context,
           title: 'Submit',
@@ -137,7 +137,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
               'A link to reset your password will be sent to ${_emailController.text}');
 
       if (confirm) {
-        _formKey.currentState.save();
+        _formKey.currentState!.save();
         try {
           setState(
             () {
@@ -238,7 +238,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
       children: <Widget>[
         AnimatedBuilder(
           animation: animationController,
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
               child: new Transform(

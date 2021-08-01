@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/credit_card_model.dart';
@@ -15,24 +16,24 @@ import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SavedCardsPage extends StatefulWidget {
-  const SavedCardsPage({Key key}) : super(key: key);
+  const SavedCardsPage() : super();
   @override
   _SavedCardsPageState createState() => _SavedCardsPageState();
 }
 
 class _SavedCardsPageState extends State<SavedCardsPage>
     with TickerProviderStateMixin {
-  AnimationController animationController;
+  late AnimationController animationController;
 
-  Animation<double> topBarAnimation;
+  late Animation<double> topBarAnimation;
 
   List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final Color iconColor = Colors.amber[700];
+  final Color iconColor = Colors.amber[700]!;
 
-  UserModel _currentUser;
+  late UserModel _currentUser;
   List<OrderModel> orders = [];
 
   bool loadCustomerInfoComplete = false;
@@ -90,7 +91,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
       //       : SizedBox.shrink(),
       // );
 
-      if (_currentUser.customer.sources.isEmpty) {
+      if (_currentUser.customer!.sources.isEmpty) {
         listViews.add(
           TitleView(
             titleTxt: 'No Saved Cards',
@@ -104,8 +105,8 @@ class _SavedCardsPageState extends State<SavedCardsPage>
           ),
         );
       } else {
-        for (int i = 0; i < _currentUser.customer.sources.length; i++) {
-          CreditCardModel creditCard = _currentUser.customer.sources[i];
+        for (int i = 0; i < _currentUser.customer!.sources.length; i++) {
+          CreditCardModel creditCard = _currentUser.customer!.sources[i];
           listViews.add(
             CreditCardView(
               deleteCard: () async {
@@ -126,7 +127,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
                   makeDefaultCard(creditCard: creditCard);
                 }
               },
-              isDefault: _currentUser.customer.defaultSource == creditCard.id,
+              isDefault: _currentUser.customer!.defaultSource == creditCard.id,
               creditCard: creditCard,
               animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                   parent: animationController,
@@ -149,7 +150,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
         _currentUser.customer = await locator<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
-        print(_currentUser.customer.defaultSource);
+        print(_currentUser.customer!.defaultSource);
 
         return;
       } catch (e) {
@@ -163,7 +164,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
     }
   }
 
-  void deleteCard({@required CreditCardModel creditCard}) async {
+  void deleteCard({required CreditCardModel creditCard}) async {
     try {
       setState(() {
         _isLoading = true;
@@ -197,7 +198,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
     }
   }
 
-  void makeDefaultCard({@required CreditCardModel creditCard}) async {
+  void makeDefaultCard({required CreditCardModel creditCard}) async {
     try {
       setState(() {
         _isLoading = true;
@@ -207,7 +208,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
       locator<StripeCustomerService>().update(
           customerID: _currentUser.customerID,
           defaultSource: creditCard.id,
-          name: _currentUser.customer.name);
+          name: _currentUser.customer!.name);
 
       //Re add views with new data.
       loadCustomerInfoComplete = false;
@@ -224,14 +225,14 @@ class _SavedCardsPageState extends State<SavedCardsPage>
       setState(() {
         _isLoading = false;
       });
-    } catch (e) {
+    } on PlatformException catch (e) {
       setState(() {
         _isLoading = false;
       });
       locator<ModalService>().showAlert(
         context: context,
         title: 'Error',
-        message: e.message,
+        message: e.message!,
       );
     }
   }
@@ -290,7 +291,7 @@ class _SavedCardsPageState extends State<SavedCardsPage>
       children: <Widget>[
         AnimatedBuilder(
           animation: animationController,
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
               child: new Transform(

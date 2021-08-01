@@ -15,24 +15,24 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import '../../service_locator.dart';
 
 class MyCompleteOrdersPage extends StatefulWidget {
-  const MyCompleteOrdersPage({Key key}) : super(key: key);
+  const MyCompleteOrdersPage() : super();
   @override
   _MyCompleteOrdersPageState createState() => _MyCompleteOrdersPageState();
 }
 
 class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
     with TickerProviderStateMixin {
-  AnimationController animationController;
+  late AnimationController animationController;
 
-  Animation<double> topBarAnimation;
+  late Animation<double> topBarAnimation;
 
   List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final Color iconColor = Colors.amber[700];
+  final Color iconColor = Colors.amber[700]!;
 
-  UserModel _currentUser;
+  late UserModel _currentUser;
   List<OrderModel> orders = [];
 
   bool addAllListDataComplete = false;
@@ -197,7 +197,7 @@ class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
       children: <Widget>[
         AnimatedBuilder(
           animation: animationController,
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
               child: new Transform(

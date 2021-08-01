@@ -1,9 +1,7 @@
 part of 'checkout_bloc.dart';
 
- 
-
 class CheckoutPage extends StatefulWidget {
-  const CheckoutPage({Key key}) : super(key: key);
+  const CheckoutPage() : super();
 
   @override
   _CheckoutPageState createState() => _CheckoutPageState();
@@ -11,6 +9,20 @@ class CheckoutPage extends StatefulWidget {
 
 class _CheckoutPageState extends State<CheckoutPage>
     with TickerProviderStateMixin, UIPropertiesMixin {
+  // AnimationController animationController;
+  // Animation<double> topBarAnimation;
+
+  // List<Widget> listViews = [];
+  // var scrollController = ScrollController();
+  // double topBarOpacity = 0.0;
+
+  // UserModel _currentUser;
+
+  // bool loadCustomerInfoComplete = false;
+  // bool addAllListDataComplete = false;
+
+  // bool _isLoading = false;
+
   @override
   void initState() {
     animationController =
@@ -48,162 +60,134 @@ class _CheckoutPageState extends State<CheckoutPage>
     super.initState();
   }
 
-  void _addAllListData({@required SkuModel sku, @required int quantity}) {
-    var count = 9;
-    listViews.clear();
-
-    // listViews.add(
-    //   GestureDetector(
-    //     onTap: () {
-    //       _showSelectImageDialog();
-    //     },
-    //     child: Container(
-    //       height: screenWidth,
-    //       width: screenWidth,
-    //       color: Colors.grey[300],
-    //       child: _image == null
-    //           ? Icon(
-    //               Icons.add_a_photo,
-    //               color: Colors.white70,
-    //               size: 150,
-    //             )
-    //           : Image(
-    //               image: FileImage(File(_image.path)),
-    //               fit: BoxFit.contain,
-    //             ),
-    //     ),
-    //   ),
-    // );
+  void addAllListData({required UserModel currentUser}) {
+    // if (!addAllListDataComplete) {
+    //   addAllListDataComplete = true;
+    var count = 5;
 
     listViews.add(
-      SizedBox(
-        height: 20,
+      Padding(
+        padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
+        child: PayFlowDiagramView(
+          paymentComplete: false,
+          shippingComplete: false,
+          submitComplete: false,
+          animation: Tween(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
+            ),
+          ),
+          animationController: animationController,
+        ),
       ),
     );
 
     listViews.add(
       TitleView(
-        showExtra: false,
-        titleTxt: 'Choose Quantity',
-        subTxt: 'Details',
+        showExtraOnTap: () {
+          throw UnimplementedError();
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (_) {
+          //     return EditShippingInfoPage();
+          //   }),
+          // );
+        },
+        showExtra: true,
+        titleTxt: 'Shipping',
+        subTxt: 'Edit',
         animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: animationController,
             curve:
-                Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+                Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: animationController,
       ),
     );
 
-    listViews.add(SizedBox(
-      height: 20,
-    ));
-
-    listViews.add(
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          InkWell(
-            onTap: () {
-              // if (quantity > 1) {
-              //   context.read<CreateLithophaneBloc>().add(
-              //         UpdateQuantityEvent(quantity: --quantity),
-              //       );
-              // }
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: LitPicTheme.nearlyWhite,
-                shape: BoxShape.circle,
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                      color: LitPicTheme.nearlyDarkBlue.withOpacity(0.4),
-                      offset: Offset(4.0, 4.0),
-                      blurRadius: 8.0),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: Icon(
-                  Icons.remove,
-                  color: LitPicTheme.nearlyDarkBlue,
-                  size: 24,
-                ),
-              ),
-            ),
-          ),
-          Text(
-            quantity.toString(),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: LitPicTheme.fontName,
-              fontWeight: FontWeight.w600,
-              fontSize: 32,
-              color: LitPicTheme.nearlyDarkBlue,
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              // context.read<CreateLithophaneBloc>().add(
-              //       UpdateQuantityEvent(quantity: ++quantity),
-              //     );
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: LitPicTheme.nearlyWhite,
-                shape: BoxShape.circle,
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                      color: LitPicTheme.nearlyDarkBlue.withOpacity(0.4),
-                      offset: Offset(4.0, 4.0),
-                      blurRadius: 8.0),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: Icon(
-                  Icons.add,
-                  color: LitPicTheme.nearlyDarkBlue,
-                  size: 24,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    listViews.add(SizedBox(
-      height: 20,
-    ));
-    listViews.add(
-      Padding(
-        padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-        child: RoundButtonView(
-          onPressed: () {
-            // if (_image == null) {
-            //   locator<ModalService>().showAlert(
-            //       context: context,
-            //       title: 'Error',
-            //       message: 'Please select an image first.');
-            //   return;
-            // }
-
-            // context
-            //     .read<CreateLithophaneBloc>()
-            //     .add(AddToCartEvent(image: _image));
-          },
-          buttonColor: Colors.amber,
-          text:
-              'ADD LITHOPHANE${quantity == 1 ? '' : 'S'} TO CART - ${locator<FormatterService>().money(amount: sku.price * quantity)}',
-          textColor: Colors.white,
+    if (currentUser.customer!.shipping == null) {
+      listViews.add(
+        TitleView(
+          titleTxt: 'No Address Saved',
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
                   Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
           animationController: animationController,
+          showExtra: false,
+          subTxt: '',
         ),
-      ),
-    );
+      );
+    } else {
+      listViews.add(
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: DataBoxView(
+            dataBoxChildren: [
+              DataBoxChild(
+                  iconData: Icons.location_on,
+                  text: 'Address',
+                  subtext: currentUser.customer!.shipping!.address.line1,
+                  color: Colors.amber),
+              DataBoxChild(
+                  iconData: Icons.location_city,
+                  text: 'City',
+                  subtext: currentUser.customer!.shipping!.address.city,
+                  color: Colors.amber),
+              DataBoxChild(
+                  iconData: Icons.my_location,
+                  text: 'State',
+                  subtext: currentUser.customer!.shipping!.address.state,
+                  color: Colors.amber),
+              DataBoxChild(
+                  iconData: Icons.contact_mail,
+                  text: 'ZIP',
+                  subtext: currentUser.customer!.shipping!.address.postalCode,
+                  color: Colors.amber)
+            ],
+            animation: Tween(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                parent: animationController,
+                curve:
+                    Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn),
+              ),
+            ),
+            animationController: animationController,
+          ),
+        ),
+      );
+    }
+
+    if (currentUser.customer!.shipping != null) {
+      listViews.add(
+        Padding(
+          padding: EdgeInsets.all(20),
+          child: RoundButtonView(
+            buttonColor: Colors.amber,
+            text: 'CHOOSE PAYMENT',
+            textColor: Colors.white,
+            animation: Tween(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                parent: animationController,
+                curve:
+                    Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn),
+              ),
+            ),
+            animationController: animationController,
+            onPressed: () {
+              throw UnimplementedError();
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (_) {
+              //     return CheckoutPaymentPage();
+              //   }),
+              // );
+            },
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -219,10 +203,20 @@ class _CheckoutPageState extends State<CheckoutPage>
             }
 
             if (state is CheckoutShippingState) {
+              // final double subTotal = state.subTotal;
+              // final double shippingFee = state.shippingFee;
               // final SkuModel sku = state.sku;
-              // final int quantity = state.quantity;
+              // final List<CartItemModel> cartItems = state.cartItems;
+              // final double total = state.total;
 
-              // _addAllListData(sku: sku, quantity: quantity);
+              addAllListData(
+                currentUser: state.currentUser,
+                // subTotal: subTotal,
+                // shippingFee: shippingFee,
+                // sku: sku,
+                // cartItems: cartItems,
+                // total: total,
+              );
 
               return Stack(
                 children: <Widget>[
@@ -232,10 +226,12 @@ class _CheckoutPageState extends State<CheckoutPage>
                     scrollController: scrollController,
                   ),
                   LitPicAppBar(
-                    title: 'Checkout',
+                    title: 'Shopping Cart',
                     topBarOpacity: topBarOpacity,
                     animationController: animationController,
-                    topBarAnimation: topBarAnimation,
+                    goBackAction: () {
+                      Navigator.of(context).pop();
+                    },
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).padding.bottom,

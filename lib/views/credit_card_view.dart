@@ -5,31 +5,31 @@ import 'package:litpic/models/credit_card_model.dart';
 
 class CreditCardView extends StatelessWidget {
   final AnimationController animationController;
-  final Animation animation;
+  final Animation<double> animation;
   final CreditCardModel creditCard;
   final bool isDefault;
-  final Function makeDefaultCard;
-  final Function deleteCard;
+  final void Function()? makeDefaultCard;
+  final void Function()? deleteCard;
 
   const CreditCardView(
-      {Key key,
-      @required this.animationController,
-      @required this.creditCard,
-      @required this.animation,
-      @required this.isDefault,
-      @required this.makeDefaultCard,
-      @required this.deleteCard})
-      : super(key: key);
+      { //Key key,
+      required this.animationController,
+      required this.creditCard,
+      required this.animation,
+      required this.isDefault,
+      required this.makeDefaultCard,
+      required this.deleteCard})
+      : super();
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animationController,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
           opacity: animation,
-          child: new Transform(
-            transform: new Matrix4.translationValues(
+          child: Transform(
+            transform: Matrix4.translationValues(
                 0.0, 50 * (1.0 - animation.value), 0.0),
             child: Padding(
               padding: const EdgeInsets.only(

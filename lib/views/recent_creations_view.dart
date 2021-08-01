@@ -5,16 +5,16 @@ import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/litpic_model.dart';
 
 class RecentCreationsView extends StatefulWidget {
-  final AnimationController mainScreenAnimationController;
-  final Animation mainScreenAnimation;
+  final AnimationController animationController;
+  final Animation<double> animation;
   final List<LitPicModel> litPics;
 
   const RecentCreationsView(
-      {Key key,
-      @required this.mainScreenAnimationController,
-      @required this.mainScreenAnimation,
-      @required this.litPics})
-      : super(key: key);
+      { //Key key,
+      required this.animationController,
+      required this.animation,
+      required this.litPics})
+      : super();
   @override
   _RecentCreationsViewState createState() =>
       _RecentCreationsViewState(litPics: this.litPics);
@@ -22,8 +22,8 @@ class RecentCreationsView extends StatefulWidget {
 
 class _RecentCreationsViewState extends State<RecentCreationsView>
     with TickerProviderStateMixin {
-  _RecentCreationsViewState({@required this.litPics});
-  AnimationController animationController;
+  _RecentCreationsViewState({required this.litPics});
+  late AnimationController animationController;
   final List<LitPicModel> litPics;
 
   @override
@@ -42,13 +42,13 @@ class _RecentCreationsViewState extends State<RecentCreationsView>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: widget.mainScreenAnimationController,
-      builder: (BuildContext context, Widget child) {
+      animation: widget.animationController,
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
-          opacity: widget.mainScreenAnimation,
+          opacity: widget.animation,
           child: Transform(
             transform: Matrix4.translationValues(
-                0.0, 30 * (1.0 - widget.mainScreenAnimation.value), 0.0),
+                0.0, 30 * (1.0 - widget.animation.value), 0.0),
             child: Container(
               height: 216,
               width: double.infinity,
@@ -84,17 +84,20 @@ class _RecentCreationsViewState extends State<RecentCreationsView>
 class MealsView extends StatelessWidget {
   final LitPicModel litPic;
   final AnimationController animationController;
-  final Animation animation;
+  final Animation<double> animation;
 
-  const MealsView(
-      {Key key, this.litPic, this.animationController, this.animation})
-      : super(key: key);
+  const MealsView({
+    //Key key,
+    required this.litPic,
+    required this.animationController,
+    required this.animation,
+  }) : super();
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animationController,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
           opacity: animation,
           child: Transform(
@@ -230,9 +233,13 @@ class MealsView extends StatelessWidget {
                             child: AspectRatio(
                               aspectRatio: 1.0,
                               child: Hero(
-                                tag: litPic.imgUrl,
-                                child: Image.network(litPic.imgUrl),
-                              ),
+                                  tag: 'a',
+                                  child: Image.network(
+                                    litPic.imgUrl,
+                                    scale: 10,
+                                    repeat: ImageRepeat.noRepeat,
+                                  ) // Image.network(litPic.imgUrl),
+                                  ),
                             ),
                           ),
                         ),

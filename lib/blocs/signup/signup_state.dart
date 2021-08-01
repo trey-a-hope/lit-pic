@@ -15,7 +15,7 @@ class SignupLoadingState extends SignupState {
 
 class SignupLoadedState extends SignupState {
   final bool signupSuccessful;
-  SignupLoadedState({@required this.signupSuccessful});
+  SignupLoadedState({required this.signupSuccessful});
 
   @override
   List<Object> get props => [
@@ -27,7 +27,7 @@ class ErrorState extends SignupState {
   final dynamic error;
 
   ErrorState({
-    @required this.error,
+    required this.error,
   });
 
   @override

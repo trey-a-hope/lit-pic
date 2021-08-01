@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
+import 'package:litpic/mixins/ui_properties_mixin.dart';
 import 'package:litpic/models/user_model.dart';
 import 'package:litpic/pages/admin/admin_page.dart';
 import 'package:litpic/services/auth_service.dart';
@@ -13,30 +15,34 @@ import 'package:url_launcher/url_launcher.dart';
 import '../service_locator.dart';
 
 class SettingsPage extends StatefulWidget {
-  final AnimationController animationController;
-
-  const SettingsPage({Key key, this.animationController}) : super(key: key);
+  const SettingsPage() : super();
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage>
-    with TickerProviderStateMixin {
-  Animation<double> topBarAnimation;
+    with TickerProviderStateMixin, UIPropertiesMixin {
+  // late Animation<double> topBarAnimation;
 
-  List<Widget> listViews = [];
-  var scrollController = ScrollController();
-  double topBarOpacity = 0.0;
+  // List<Widget> listViews = [];
+  // var scrollController = ScrollController();
+  // double topBarOpacity = 0.0;
 
-  final Color iconColor = Colors.amber[700];
-  UserModel _currentUser;
+  final Color iconColor = Colors.amber[700]!;
+  late UserModel _currentUser;
   bool addAllListDataComplete = false;
 
   @override
   void initState() {
-    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-        parent: widget.animationController,
-        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+    animationController =
+        AnimationController(duration: Duration(milliseconds: 600), vsync: this);
+
+    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn),
+      ),
+    );
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -72,10 +78,10 @@ class _SettingsPageState extends State<SettingsPage>
       if (_currentUser.uid == ADMIN_DOC_ID) {
         listViews.add(
           ListTileView(
-            animationController: widget.animationController,
+            animationController: animationController,
             animation: Tween(begin: 0.0, end: 1.0).animate(
               CurvedAnimation(
-                parent: widget.animationController,
+                parent: animationController,
                 curve:
                     Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
               ),
@@ -91,7 +97,7 @@ class _SettingsPageState extends State<SettingsPage>
                 context,
                 MaterialPageRoute(builder: (_) {
                   return AdminPage(
-                      animationController: widget.animationController);
+                      animationController: animationController);
                 }),
               );
             },
@@ -102,10 +108,10 @@ class _SettingsPageState extends State<SettingsPage>
       //Go To Website
       listViews.add(
         ListTileView(
-          animationController: widget.animationController,
+          animationController: animationController,
           animation: Tween(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
-              parent: widget.animationController,
+              parent: animationController,
               curve:
                   Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
             ),
@@ -133,10 +139,10 @@ class _SettingsPageState extends State<SettingsPage>
       //Delete Account
       listViews.add(
         ListTileView(
-          animationController: widget.animationController,
+          animationController: animationController,
           animation: Tween(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
-              parent: widget.animationController,
+              parent: animationController,
               curve:
                   Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
             ),
@@ -160,10 +166,10 @@ class _SettingsPageState extends State<SettingsPage>
       //Sign Out
       listViews.add(
         ListTileView(
-          animationController: widget.animationController,
+          animationController: animationController,
           animation: Tween(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
-              parent: widget.animationController,
+              parent: animationController,
               curve:
                   Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn),
             ),
@@ -191,10 +197,9 @@ class _SettingsPageState extends State<SettingsPage>
       //Load user.
       _currentUser = await locator<AuthService>().getCurrentUser();
       return;
-    } catch (e) {
-      locator<ModalService>()
-          .showAlert(context: context, title: 'Error', message: e.message);
-      return;
+    } on PlatformException catch (e) {
+      return locator<ModalService>()
+          .showAlert(context: context, title: 'Error', message: e.message!);
     }
   }
 
@@ -238,7 +243,7 @@ class _SettingsPageState extends State<SettingsPage>
             itemCount: listViews.length,
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
-              widget.animationController.forward();
+              animationController.forward();
               return listViews[index];
             },
           );
@@ -251,12 +256,12 @@ class _SettingsPageState extends State<SettingsPage>
     return Column(
       children: <Widget>[
         AnimatedBuilder(
-          animation: widget.animationController,
-          builder: (BuildContext context, Widget child) {
+          animation: animationController,
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
-              child: new Transform(
-                transform: new Matrix4.translationValues(
+              child: Transform(
+                transform: Matrix4.translationValues(
                     0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
                 child: Container(
                   decoration: BoxDecoration(

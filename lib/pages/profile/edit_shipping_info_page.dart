@@ -14,24 +14,24 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import '../../service_locator.dart';
 
 class EditShippingInfoPage extends StatefulWidget {
-  const EditShippingInfoPage({Key key}) : super(key: key);
+  const EditShippingInfoPage() : super();
   @override
   _EditShippingInfoPageState createState() => _EditShippingInfoPageState();
 }
 
 class _EditShippingInfoPageState extends State<EditShippingInfoPage>
     with TickerProviderStateMixin {
-  AnimationController animationController;
+  late AnimationController animationController;
 
-  Animation<double> topBarAnimation;
+  late Animation<double> topBarAnimation;
 
   List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final Color iconColor = Colors.amber[700];
+  final Color iconColor = Colors.amber[700]!;
 
-  UserModel _currentUser;
+  late UserModel _currentUser;
 
   bool addAllListDataComplete = false;
   bool loadCustomerInfoComplete = false;
@@ -189,13 +189,14 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
         _currentUser.customer = await locator<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
-        if (_currentUser.customer.shipping != null) {
+        if (_currentUser.customer!.shipping != null) {
           _addressController.text =
-              _currentUser.customer.shipping.address.line1;
-          _cityController.text = _currentUser.customer.shipping.address.city;
-          _stateController.text = _currentUser.customer.shipping.address.state;
+              _currentUser.customer!.shipping!.address.line1;
+          _cityController.text = _currentUser.customer!.shipping!.address.city;
+          _stateController.text =
+              _currentUser.customer!.shipping!.address.state;
           _zipController.text =
-              _currentUser.customer.shipping.address.postalCode;
+              _currentUser.customer!.shipping!.address.postalCode;
         }
 
         return;
@@ -211,11 +212,11 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
   }
 
   _save() async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       bool confirm = await locator<ModalService>().showConfirmation(
           context: context, title: 'Submit', message: 'Are you sure?');
       if (confirm) {
-        _formKey.currentState.save();
+        _formKey.currentState!.save();
 
         try {
           setState(
@@ -226,7 +227,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
 
           //Update address info.
           await locator<StripeCustomerService>().update(
-              name: _currentUser.customer.name,
+              name: _currentUser.customer!.name,
               customerID: _currentUser.customerID,
               line1: _addressController.text,
               city: _cityController.text,
@@ -244,7 +245,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
             title: 'Success',
             message: 'Shipping Info Updated',
           );
-        } catch (e) {
+        } on PlatformException catch (e) {
           setState(
             () {
               _isLoading = false;
@@ -253,7 +254,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
           locator<ModalService>().showAlert(
             context: context,
             title: 'Error',
-            message: e.message,
+            message: e.message!,
           );
         }
       } else {
@@ -320,7 +321,7 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
       children: <Widget>[
         AnimatedBuilder(
           animation: animationController,
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
               child: new Transform(

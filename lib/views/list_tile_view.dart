@@ -2,27 +2,27 @@ import 'package:flutter/material.dart';
 
 class ListTileView extends StatelessWidget {
   final AnimationController animationController;
-  final Animation animation;
+  final Animation<double> animation;
   final Icon icon;
   final String title;
   final String subTitle;
   final VoidCallback onTap;
 
   ListTileView(
-      {Key key,
-      @required this.animationController,
-      @required this.animation,
-      @required this.icon,
-      @required this.title,
-      @required this.subTitle,
-      @required this.onTap})
-      : super(key: key);
+      { //Key key,
+      required this.animationController,
+      required this.animation,
+      required this.icon,
+      required this.title,
+      required this.subTitle,
+      required this.onTap})
+      : super();
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animationController,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
           opacity: animation,
           child: Transform(

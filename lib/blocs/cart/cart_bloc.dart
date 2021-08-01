@@ -23,6 +23,7 @@ import 'package:litpic/views/round_button_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'cart_event.dart';
 part 'cart_state.dart';
@@ -31,9 +32,9 @@ part 'cart_page.dart';
 class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc() : super(CartInitialState());
 
-  UserModel _currentUser;
-  SkuModel _sku;
-  List<CartItemModel> _cartItems;
+  late UserModel _currentUser;
+  late SkuModel _sku;
+  late List<CartItemModel> _cartItems;
   double _shippingFee = 0.0;
 
   @override
@@ -58,9 +59,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         final CartItemModel cartItem = event.cartItem;
 
         await locator<CartItemService>().updateCartItem(
-            uid: _currentUser.uid,
-            cartItemID: cartItem.id,
-            data: {'quantity': cartItem.quantity + 1});
+          uid: _currentUser.uid,
+          cartItemID: cartItem.id!,
+          data: {
+            'quantity': cartItem.quantity + 1,
+          },
+        );
 
         add(RefreshEvent());
       } catch (error) {
@@ -74,7 +78,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
         await locator<CartItemService>().updateCartItem(
             uid: _currentUser.uid,
-            cartItemID: cartItem.id,
+            cartItemID: cartItem.id!,
             data: {'quantity': cartItem.quantity - 1});
 
         add(RefreshEvent());
@@ -88,7 +92,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         final CartItemModel cartItem = event.cartItem;
 
         await locator<CartItemService>()
-            .deleteCartItem(uid: _currentUser.uid, cartItemID: cartItem.id);
+            .deleteCartItem(uid: _currentUser.uid, cartItemID: cartItem.id!);
         await locator<StorageService>().deleteImage(imgPath: cartItem.imgPath);
 
         add(RefreshEvent());

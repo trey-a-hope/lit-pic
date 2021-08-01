@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 
 class GoodButton extends StatelessWidget {
-  final Function onPressed;
+  final void Function()? onPressed;
   final String text;
   final Color buttonColor;
   final Color textColor;
 
-  GoodButton({Key key, @required this.onPressed, @required this.text, @required this.buttonColor, @required this.textColor}) : super(key: key);
+  GoodButton(
+      {required this.onPressed,
+      required this.text,
+      required this.buttonColor,
+      required this.textColor})
+      : super();
 
   @override
   Widget build(BuildContext context) {

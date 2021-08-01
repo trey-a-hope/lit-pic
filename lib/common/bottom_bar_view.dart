@@ -1,369 +1,380 @@
-import 'package:flutter/material.dart';
-import 'package:litpic/constants.dart';
-import 'package:litpic/litpic_theme.dart';
-import 'dart:math' as math;
+// import 'package:flutter/material.dart';
+// import 'package:litpic/constants.dart';
+// import 'dart:math' as math;
+// import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
+// class BottomBarView extends StatefulWidget {
+//   final Function(int index) changeIndex;
+//   final Function addClick;
+//   // final List<TabIconData> tabIconsList;
+//   const BottomBarView(
+//       { //required this.tabIconsList,
+//       required this.changeIndex,
+//       required this.addClick})
+//       : super();
+//   @override
+//   _BottomBarViewState createState() => _BottomBarViewState();
+// }
 
-class BottomBarView extends StatefulWidget {
-  final Function(int index) changeIndex;
-  final Function addClick;
-  final List<TabIconData> tabIconsList;
-  const BottomBarView(
-      {Key key, this.tabIconsList, this.changeIndex, this.addClick})
-      : super(key: key);
-  @override
-  _BottomBarViewState createState() => _BottomBarViewState();
-}
+// class _BottomBarViewState extends State<BottomBarView>
+//     with TickerProviderStateMixin {
+//   late final AnimationController animationController;
 
-class _BottomBarViewState extends State<BottomBarView>
-    with TickerProviderStateMixin {
-  AnimationController animationController;
+//   PersistentTabController _controller =
+//       PersistentTabController(initialIndex: 0);
 
-  @override
-  void initState() {
-    animationController = new AnimationController(
-      vsync: this,
-      duration: new Duration(milliseconds: 1000),
-    );
-    animationController.forward();
-    super.initState();
-  }
+//   @override
+//   void initState() {
+//     animationController = new AnimationController(
+//       vsync: this,
+//       duration: new Duration(milliseconds: 1000),
+//     );
+//     animationController.forward();
+//     super.initState();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      alignment: AlignmentDirectional.bottomCenter,
-      children: <Widget>[
-        AnimatedBuilder(
-          animation: animationController,
-          builder: (BuildContext context, Widget child) {
-            return new Transform(
-              transform: new Matrix4.translationValues(0.0, 0.0, 0.0),
-              child: new PhysicalShape(
-                color: LitPicTheme.white,
-                elevation: 16.0,
-                clipper: TabClipper(
-                    radius: Tween(begin: 0.0, end: 0.0)
-                            .animate(CurvedAnimation(
-                                parent: animationController,
-                                curve: Curves.fastOutSlowIn))
-                            .value *
-                        38.0),
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 52,
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: TabIcons(
-                                tabIconData: widget.tabIconsList[0],
-                                removeAllSelect: () {
-                                  setRemoveAllSelection(widget.tabIconsList[0]);
-                                  widget.changeIndex(0);
-                                }),
-                          ),
-                          Expanded(
-                            child: TabIcons(
-                                tabIconData: widget.tabIconsList[1],
-                                removeAllSelect: () {
-                                  setRemoveAllSelection(widget.tabIconsList[1]);
-                                  widget.changeIndex(1);
-                                }),
-                          ),
+//   @override
+//   Widget build(BuildContext context) {
+//     return PersistentTabView(
+//       context,
+//       controller: _controller,
+//       screens: [
+//         Container(
+//           color: Colors.red,
+//         ),
+//         Container(
+//           color: Colors.black,
+//         ),
+//         Container(
+//           color: Colors.blue,
+//         )
+//       ],
+//       items: [
+//         PersistentBottomNavBarItem(
+//             icon: Icon(Icons.add),
+//             title: ("Delete"),
+//             activeColorPrimary: Colors.blueAccent,
+//             activeColorSecondary: Colors.white,
+//             inactiveColorPrimary: Colors.white,
+//             // routeAndNavigatorSettings: RouteAndNavigatorSettings(
+//             //   initialRoute: '/',
+//             //   routes: {
+//             //     '/first': (context) => MainScreen2(),
+//             //     '/second': (context) => MainScreen3(),
+//             //   },
+//             // ),
+//             onPressed: (context) {
+//               // pushDynamicScreen(context,
+//               //     screen: SampleModalScreen(), withNavBar: true);
+//             }),
+//         PersistentBottomNavBarItem(
+//             icon: Icon(Icons.add),
+//             title: ("Add"),
+//             activeColorPrimary: Colors.blueAccent,
+//             activeColorSecondary: Colors.white,
+//             inactiveColorPrimary: Colors.white,
+//             // routeAndNavigatorSettings: RouteAndNavigatorSettings(
+//             //   initialRoute: '/',
+//             //   routes: {
+//             //     '/first': (context) => MainScreen2(),
+//             //     '/second': (context) => MainScreen3(),
+//             //   },
+//             // ),
+//             onPressed: (context) {
+//               // pushDynamicScreen(context,
+//               //     screen: SampleModalScreen(), withNavBar: true);
+//             }),
+//         PersistentBottomNavBarItem(
+//             icon: Icon(Icons.add),
+//             title: ("Add"),
+//             activeColorPrimary: Colors.blueAccent,
+//             activeColorSecondary: Colors.white,
+//             inactiveColorPrimary: Colors.white,
+//             // routeAndNavigatorSettings: RouteAndNavigatorSettings(
+//             //   initialRoute: '/',
+//             //   routes: {
+//             //     '/first': (context) => MainScreen2(),
+//             //     '/second': (context) => MainScreen3(),
+//             //   },
+//             // ),
+//             onPressed: (context) {
+//               // pushDynamicScreen(context,
+//               //     screen: SampleModalScreen(), withNavBar: true);
+//             }),
+//       ],
+//       confineInSafeArea: true,
+//       backgroundColor: Colors.white,
+//       handleAndroidBackButtonPress: true,
+//       resizeToAvoidBottomInset: true,
+//       stateManagement: true,
+//       navBarHeight: MediaQuery.of(context).viewInsets.bottom > 0
+//           ? 0.0
+//           : kBottomNavigationBarHeight,
+//       hideNavigationBarWhenKeyboardShows: true,
+//       margin: EdgeInsets.all(0.0),
+//       popActionScreens: PopActionScreensType.all,
+//       bottomScreenMargin: 0.0,
+//       onWillPop: (context) async {
+//         // await showDialog(
+//         //   context: context,
+//         //   useSafeArea: true,
+//         //   builder: (context) => Container(
+//         //     height: 50.0,
+//         //     width: 50.0,
+//         //     color: Colors.white,
+//         //     child: ElevatedButton(
+//         //       child: Text("Close"),
+//         //       onPressed: () {
+//         //         Navigator.pop(context);
+//         //       },
+//         //     ),
+//         //   ),
+//         // );
+//         return true;
+//       },
+//       selectedTabScreenContext: (context) {
+//         // testContext = context;
+//       },
+//       // hideNavigationBar: _hideNavBar,
+//       decoration: NavBarDecoration(
+//           colorBehindNavBar: Colors.indigo,
+//           borderRadius: BorderRadius.circular(20.0)),
+//       popAllScreensOnTapOfSelectedTab: true,
+//       itemAnimationProperties: ItemAnimationProperties(
+//         duration: Duration(milliseconds: 400),
+//         curve: Curves.ease,
+//       ),
+//       screenTransitionAnimation: ScreenTransitionAnimation(
+//         animateTabTransition: true,
+//         curve: Curves.ease,
+//         duration: Duration(milliseconds: 200),
+//       ),
+//       navBarStyle:
+//           NavBarStyle.style10, // Choose the nav bar style with this property
+//     );
+//     // return Stack(
+//     //   alignment: AlignmentDirectional.bottomCenter,
+//     //   children: <Widget>[
+//     //     AnimatedBuilder(
+//     //       animation: animationController,
+//     //       builder: (BuildContext context, Widget? child) {
+//     //         TabIconData homeTabIconData = TabIconData(
+//     //           unselectedIcon: Icon(
+//     //             Icons.home,
+//     //             color: Colors.grey,
+//     //           ),
+//     //           selectedIcon: Icon(
+//     //             Icons.home,
+//     //             color: Colors.amber,
+//     //           ),
+//     //           index: 0,
+//     //           isSelected: true,
+//     //           animationController: animationController,
+//     //         );
 
-                          // SizedBox(
-                          //   width: Tween(begin: 0.0, end: 1.0)
-                          //           .animate(CurvedAnimation(
-                          //               parent: animationController,
-                          //               curve: Curves.fastOutSlowIn))
-                          //           .value *
-                          //       64.0,
-                          // ),
-                          Expanded(
-                            child: TabIcons(
-                                tabIconData: widget.tabIconsList[2],
-                                removeAllSelect: () {
-                                  setRemoveAllSelection(widget.tabIconsList[2]);
-                                  widget.changeIndex(2);
-                                }),
-                          ),
-                          Expanded(
-                            child: TabIcons(
-                                tabIconData: widget.tabIconsList[3],
-                                removeAllSelect: () {
-                                  setRemoveAllSelection(widget.tabIconsList[3]);
-                                  widget.changeIndex(3);
-                                }),
-                          ),
-                          Expanded(
-                            child: TabIcons(
-                                tabIconData: widget.tabIconsList[4],
-                                removeAllSelect: () {
-                                  setRemoveAllSelection(widget.tabIconsList[4]);
-                                  widget.changeIndex(4);
-                                }),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).padding.bottom,
-                    )
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-        // Padding(
-        //   padding:
-        //       EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-        //   child: SizedBox(
-        //     width: 38 * 2.0,
-        //     height: 38 + 62.0,
-        //     child: Container(
-        //       alignment: Alignment.topCenter,
-        //       color: Colors.transparent,
-        //       child: SizedBox(
-        //         width: 38 * 2.0,
-        //         height: 38 * 2.0,
-        //         child: Padding(
-        //           padding: const EdgeInsets.all(8.0),
-        //           child: new ScaleTransition(
-        //             alignment: Alignment.center,
-        //             scale: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-        //                 parent: animationController,
-        //                 curve: Curves.fastOutSlowIn)),
-        //             child: Container(
-        //               // alignment: Alignment.center,s
-        //               decoration: BoxDecoration(
-        //                 color: LitPicTheme.nearlyDarkBlue,
-        //                 gradient: LinearGradient(
-        //                     colors: [
-        //                       LitPicTheme.nearlyDarkBlue,
-        //                       HexColor("#6A88E5"),
-        //                     ],
-        //                     begin: Alignment.topLeft,
-        //                     end: Alignment.bottomRight),
-        //                 shape: BoxShape.circle,
-        //                 boxShadow: <BoxShadow>[
-        //                   BoxShadow(
-        //                       color: LitPicTheme.nearlyDarkBlue
-        //                           .withOpacity(0.4),
-        //                       offset: Offset(8.0, 16.0),
-        //                       blurRadius: 16.0),
-        //                 ],
-        //               ),
-        //               child: Material(
-        //                 color: Colors.transparent,
-        //                 child: InkWell(
-        //                   splashColor: Colors.white.withOpacity(0.1),
-        //                   highlightColor: Colors.transparent,
-        //                   focusColor: Colors.transparent,
-        //                   onTap: () {
-        //                     widget.addClick();
-        //                   },
-        //                   child: Icon(
-        //                     Icons.add,
-        //                     color: LitPicTheme.white,
-        //                     size: 32,
-        //                   ),
-        //                 ),
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ),
-      ],
-    );
-  }
+//     //         TabIconData editTabIconData = TabIconData(
+//     //           unselectedIcon: Icon(
+//     //             Icons.edit,
+//     //             color: Colors.grey,
+//     //           ),
+//     //           selectedIcon: Icon(
+//     //             Icons.edit,
+//     //             color: Colors.amber,
+//     //           ),
+//     //           index: 1,
+//     //           isSelected: false,
+//     //           animationController: animationController,
+//     //         );
 
-  void setRemoveAllSelection(TabIconData tabIconData) {
-    if (!mounted) return;
-    setState(() {
-      widget.tabIconsList.forEach((tab) {
-        tab.isSelected = false;
-        if (tabIconData.index == tab.index) {
-          tab.isSelected = true;
-        }
-      });
-    });
-  }
-}
+//     //         TabIconData shoppingCartTabIconData = TabIconData(
+//     //           unselectedIcon: Icon(
+//     //             Icons.shopping_cart,
+//     //             color: Colors.grey,
+//     //           ),
+//     //           selectedIcon: Icon(
+//     //             Icons.shopping_cart,
+//     //             color: Colors.amber,
+//     //           ),
+//     //           index: 2,
+//     //           isSelected: false,
+//     //           animationController: animationController,
+//     //         );
 
-class TabIcons extends StatefulWidget {
-  final TabIconData tabIconData;
-  final Function removeAllSelect;
-  const TabIcons({Key key, this.tabIconData, this.removeAllSelect})
-      : super(key: key);
-  @override
-  _TabIconsState createState() => _TabIconsState();
-}
+//     //         TabIconData faceTabIconData = TabIconData(
+//     //           unselectedIcon: Icon(
+//     //             Icons.face,
+//     //             color: Colors.grey,
+//     //           ),
+//     //           selectedIcon: Icon(
+//     //             Icons.face,
+//     //             color: Colors.amber,
+//     //           ),
+//     //           index: 3,
+//     //           isSelected: false,
+//     //           animationController: animationController,
+//     //         );
 
-class _TabIconsState extends State<TabIcons> with TickerProviderStateMixin {
-  @override
-  void initState() {
-    widget.tabIconData.animationController = new AnimationController(
-      vsync: this,
-      duration: new Duration(milliseconds: 400),
-    )..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          if (!mounted) return;
-          widget.removeAllSelect();
-          widget.tabIconData.animationController.reverse();
-        }
-      });
-    super.initState();
-  }
+//     //         TabIconData settingsTabIconData = TabIconData(
+//     //           unselectedIcon: Icon(
+//     //             Icons.settings,
+//     //             color: Colors.grey,
+//     //           ),
+//     //           selectedIcon: Icon(
+//     //             Icons.settings,
+//     //             color: Colors.amber,
+//     //           ),
+//     //           index: 4,
+//     //           isSelected: false,
+//     //           animationController: animationController,
+//     //         );
 
-  void setAnimation() {
-    widget.tabIconData.animationController.forward();
-  }
+//     //         return Transform(
+//     //           transform: Matrix4.translationValues(0.0, 0.0, 0.0),
+//     //           child: PhysicalShape(
+//     //             color: LitPicTheme.white,
+//     //             elevation: 16.0,
+//     //             clipper: TabClipper(
+//     //                 radius: Tween(begin: 0.0, end: 0.0)
+//     //                         .animate(CurvedAnimation(
+//     //                             parent: animationController,
+//     //                             curve: Curves.fastOutSlowIn))
+//     //                         .value *
+//     //                     38.0),
+//     //             child: Column(
+//     //               children: <Widget>[
+//     //                 SizedBox(
+//     //                   height: 52,
+//     //                   child: Row(
+//     //                     children: <Widget>[
+//     //                       Expanded(
+//     //                         child: TabIcon(
+//     //                           tabIconData: homeTabIconData,
+//     //                           removeAllSelect: () {
+//     //                             toggleTabIconData(
+//     //                               tabIconData: homeTabIconData,
+//     //                               index: 0,
+//     //                             );
+//     //                             widget.changeIndex(0);
+//     //                           },
+//     //                         ),
+//     //                       ),
+//     //                       Expanded(
+//     //                         child: TabIcon(
+//     //                           tabIconData: editTabIconData,
+//     //                           removeAllSelect: () {
+//     //                             toggleTabIconData(
+//     //                               tabIconData: editTabIconData,
+//     //                               index: 1,
+//     //                             );
+//     //                             widget.changeIndex(1);
+//     //                           },
+//     //                         ),
+//     //                       ),
+//     //                       Expanded(
+//     //                         child: TabIcon(
+//     //                           tabIconData: shoppingCartTabIconData,
+//     //                           removeAllSelect: () {
+//     //                             toggleTabIconData(
+//     //                               tabIconData: shoppingCartTabIconData,
+//     //                               index: 2,
+//     //                             );
+//     //                             widget.changeIndex(2);
+//     //                           },
+//     //                         ),
+//     //                       ),
+//     //                       Expanded(
+//     //                         child: TabIcon(
+//     //                           tabIconData: faceTabIconData,
+//     //                           removeAllSelect: () {
+//     //                             toggleTabIconData(
+//     //                               tabIconData: shoppingCartTabIconData,
+//     //                               index: 3,
+//     //                             );
+//     //                             widget.changeIndex(3);
+//     //                           },
+//     //                         ),
+//     //                       ),
+//     //                       Expanded(
+//     //                         child: TabIcon(
+//     //                           tabIconData: settingsTabIconData,
+//     //                           removeAllSelect: () {
+//     //                             toggleTabIconData(
+//     //                               tabIconData: shoppingCartTabIconData,
+//     //                               index: 4,
+//     //                             );
+//     //                             widget.changeIndex(4);
+//     //                           },
+//     //                         ),
+//     //                       ),
+//     //                     ],
+//     //                   ),
+//     //                 ),
+//     //                 SizedBox(
+//     //                   height: MediaQuery.of(context).padding.bottom,
+//     //                 )
+//     //               ],
+//     //             ),
+//     //           ),
+//     //         );
+//     //       },
+//     //     ),
+//     //   ],
+//     // );
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1,
-      child: Center(
-        child: InkWell(
-          splashColor: Colors.transparent,
-          focusColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          onTap: () {
-            if (!widget.tabIconData.isSelected) {
-              setAnimation();
-            }
-          },
-          child: IgnorePointer(
-            child: Stack(
-              alignment: AlignmentDirectional.center,
-              children: <Widget>[
-                new ScaleTransition(
-                  alignment: Alignment.center,
-                  scale: Tween(begin: 0.88, end: 1.0).animate(CurvedAnimation(
-                      parent: widget.tabIconData.animationController,
-                      curve: Interval(0.1, 1.0, curve: Curves.fastOutSlowIn))),
-                  child: widget.tabIconData.isSelected
-                      ? widget.tabIconData.selectedIcon
-                      : widget.tabIconData.unselectedIcon,
-                ),
-                Positioned(
-                  top: 4,
-                  left: 6,
-                  right: 0,
-                  child: new ScaleTransition(
-                    alignment: Alignment.center,
-                    scale: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-                        parent: widget.tabIconData.animationController,
-                        curve:
-                            Interval(0.2, 1.0, curve: Curves.fastOutSlowIn))),
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: LitPicTheme.nearlyDarkBlue,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 6,
-                  bottom: 8,
-                  child: new ScaleTransition(
-                    alignment: Alignment.center,
-                    scale: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-                        parent: widget.tabIconData.animationController,
-                        curve:
-                            Interval(0.5, 0.8, curve: Curves.fastOutSlowIn))),
-                    child: Container(
-                      width: 4,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: LitPicTheme.nearlyDarkBlue,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 6,
-                  right: 8,
-                  bottom: 0,
-                  child: new ScaleTransition(
-                    alignment: Alignment.center,
-                    scale: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-                        parent: widget.tabIconData.animationController,
-                        curve:
-                            Interval(0.5, 0.6, curve: Curves.fastOutSlowIn))),
-                    child: Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: LitPicTheme.nearlyDarkBlue,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+//   void toggleTabIconData(
+//       {required TabIconData tabIconData, required int index}) {
+//     if (!mounted) return;
 
-class TabClipper extends CustomClipper<Path> {
-  final double radius;
-  TabClipper({this.radius = 38.0});
+//     setState(() {
+//       tabIconData.isSelected = tabIconData.index == index;
+//     });
+//   }
+// }
 
-  @override
-  Path getClip(Size size) {
-    final path = Path();
+// class TabClipper extends CustomClipper<Path> {
+//   final double radius;
+//   TabClipper({this.radius = 38.0});
 
-    final v = radius * 2;
-    path.lineTo(0, 0);
-    path.arcTo(Rect.fromLTWH(0, 0, radius, radius), degreeToRadians(180),
-        degreeToRadians(90), false);
-    path.arcTo(
-        Rect.fromLTWH(
-            ((size.width / 2) - v / 2) - radius + v * 0.04, 0, radius, radius),
-        degreeToRadians(270),
-        degreeToRadians(70),
-        false);
+//   @override
+//   Path getClip(Size size) {
+//     final path = Path();
 
-    path.arcTo(Rect.fromLTWH((size.width / 2) - v / 2, -v / 2, v, v),
-        degreeToRadians(160), degreeToRadians(-140), false);
+//     final v = radius * 2;
+//     path.lineTo(0, 0);
+//     path.arcTo(Rect.fromLTWH(0, 0, radius, radius), degreeToRadians(180),
+//         degreeToRadians(90), false);
+//     path.arcTo(
+//         Rect.fromLTWH(
+//             ((size.width / 2) - v / 2) - radius + v * 0.04, 0, radius, radius),
+//         degreeToRadians(270),
+//         degreeToRadians(70),
+//         false);
 
-    path.arcTo(
-        Rect.fromLTWH((size.width - ((size.width / 2) - v / 2)) - v * 0.04, 0,
-            radius, radius),
-        degreeToRadians(200),
-        degreeToRadians(70),
-        false);
-    path.arcTo(Rect.fromLTWH(size.width - radius, 0, radius, radius),
-        degreeToRadians(270), degreeToRadians(90), false);
-    path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
+//     path.arcTo(Rect.fromLTWH((size.width / 2) - v / 2, -v / 2, v, v),
+//         degreeToRadians(160), degreeToRadians(-140), false);
 
-    path.close();
-    return path;
-  }
+//     path.arcTo(
+//         Rect.fromLTWH((size.width - ((size.width / 2) - v / 2)) - v * 0.04, 0,
+//             radius, radius),
+//         degreeToRadians(200),
+//         degreeToRadians(70),
+//         false);
+//     path.arcTo(Rect.fromLTWH(size.width - radius, 0, radius, radius),
+//         degreeToRadians(270), degreeToRadians(90), false);
+//     path.lineTo(size.width, 0);
+//     path.lineTo(size.width, size.height);
+//     path.lineTo(0, size.height);
 
-  @override
-  bool shouldReclip(TabClipper oldClipper) => true;
+//     path.close();
+//     return path;
+//   }
 
-  double degreeToRadians(double degree) {
-    var redian = (math.pi / 180) * degree;
-    return redian;
-  }
-}
+//   @override
+//   bool shouldReclip(TabClipper oldClipper) => true;
+
+//   double degreeToRadians(double degree) {
+//     var redian = (math.pi / 180) * degree;
+//     return redian;
+//   }
+// }

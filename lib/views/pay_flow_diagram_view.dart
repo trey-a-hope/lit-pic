@@ -6,46 +6,47 @@ class PayFlowDiagramView extends StatelessWidget {
   final bool paymentComplete;
   final bool submitComplete;
   final AnimationController animationController;
-  final Animation animation;
+  final Animation<double> animation;
+
   PayFlowDiagramView({
-    Key key,
-    @required this.shippingComplete,
-    @required this.paymentComplete,
-    @required this.submitComplete,
-    @required this.animationController,
-    @required this.animation,
-  }) : super(key: key);
+    //Key key,
+    required this.shippingComplete,
+    required this.paymentComplete,
+    required this.submitComplete,
+    required this.animationController,
+    required this.animation,
+  }) : super();
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animationController,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
           opacity: animation,
           child: Transform(
             transform: Matrix4.translationValues(
                 100 * (1.0 - animation.value), 0.0, 0.0),
-            child:Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Icon(
-                    MdiIcons.mailbox,
-                    size: 40,
-                    color: shippingComplete ? Colors.green : Colors.grey,
-                  ),
-                  Icon(
-                    MdiIcons.creditCard,
-                    size: 40,
-                    color: paymentComplete ? Colors.green : Colors.grey,
-                  ),
-                  Icon(
-                    MdiIcons.check,
-                    size: 40,
-                    color: submitComplete ? Colors.green : Colors.grey,
-                  )
-                ],
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Icon(
+                  MdiIcons.mailbox,
+                  size: 40,
+                  color: shippingComplete ? Colors.green : Colors.grey,
+                ),
+                Icon(
+                  MdiIcons.creditCard,
+                  size: 40,
+                  color: paymentComplete ? Colors.green : Colors.grey,
+                ),
+                Icon(
+                  MdiIcons.check,
+                  size: 40,
+                  color: submitComplete ? Colors.green : Colors.grey,
+                )
+              ],
+            ),
           ),
         );
       },

@@ -16,23 +16,23 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import '../../service_locator.dart';
 
 class AddCardPage extends StatefulWidget {
-  const AddCardPage({Key key}) : super(key: key);
+  const AddCardPage() : super();
   @override
   _AddCardPageState createState() => _AddCardPageState();
 }
 
 class _AddCardPageState extends State<AddCardPage>
     with TickerProviderStateMixin {
-  AnimationController animationController;
-  Animation<double> topBarAnimation;
+  late AnimationController animationController;
+  late Animation<double> topBarAnimation;
 
   List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final Color iconColor = Colors.amber[700];
+  final Color iconColor = Colors.amber[700]!;
 
-  UserModel _currentUser;
+  late UserModel _currentUser;
 
   bool addAllListDataComplete = false;
 
@@ -211,7 +211,7 @@ class _AddCardPageState extends State<AddCardPage>
   }
 
   void _submitCard() async {
-    final FormState form = _formKey.currentState;
+    final FormState form = _formKey.currentState!;
     if (!form.validate()) {
       _autoValidate = true;
     } else {
@@ -330,7 +330,7 @@ class _AddCardPageState extends State<AddCardPage>
       children: <Widget>[
         AnimatedBuilder(
           animation: animationController,
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
               child: new Transform(

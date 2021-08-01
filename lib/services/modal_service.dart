@@ -4,21 +4,21 @@ import 'package:flutter/material.dart';
 
 abstract class IModalService {
   void showAlert(
-      {@required BuildContext context,
-      @required String title,
-      @required String message});
+      {required BuildContext context,
+      required String title,
+      required String message});
   Future<bool> showConfirmation(
-      {@required BuildContext context,
-      @required String title,
-      @required String message});
+      {required BuildContext context,
+      required String title,
+      required String message});
 }
 
 class ModalService extends IModalService {
   @override
   void showAlert(
-      {@required BuildContext context,
-      @required String title,
-      @required String message}) {
+      {required BuildContext context,
+      required String title,
+      required String message}) {
     Platform.isIOS
         ? showCupertinoDialog(
             context: context,
@@ -59,9 +59,9 @@ class ModalService extends IModalService {
 
   @override
   Future<bool> showConfirmation(
-      {@required BuildContext context,
-      @required String title,
-      @required String message}) {
+      {required BuildContext context,
+      required String title,
+      required String message}) async {
     return Platform.isIOS
         ? showCupertinoDialog(
             context: context,
@@ -86,7 +86,7 @@ class ModalService extends IModalService {
                   )
                 ],
               );
-            })
+            }) as Future<bool>
         : showDialog(
             context: context,
             builder: (BuildContext buildContext) {
@@ -109,6 +109,6 @@ class ModalService extends IModalService {
                 ],
               );
             },
-          );
+          ) as Future<bool>;
   }
 }

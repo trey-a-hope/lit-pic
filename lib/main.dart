@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:litpic/blocs/cart/cart_bloc.dart' as CART_BP;
 import 'package:litpic/blocs/login/login_bloc.dart';
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
@@ -29,11 +27,11 @@ void main() async {
     [DeviceOrientation.portraitUp],
   );
 
-  if (Platform.isAndroid) {
-    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
-  } else {
-    FlutterStatusbarcolor.setStatusBarColor(Colors.white);
-  }
+  // if (Platform.isAndroid) {
+  //   FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+  // } else {
+  //   FlutterStatusbarcolor.setStatusBarColor(Colors.white);
+  // }
 
   //Make status bar in Android transparent.
   SystemChrome.setSystemUIOverlayStyle(
@@ -68,6 +66,8 @@ class MyApp extends StatelessWidget {
 }
 
 class LandingPage extends StatelessWidget {
+  late final User? user;
+
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
@@ -76,13 +76,14 @@ class LandingPage extends StatelessWidget {
     return StreamBuilder(
       stream: locator<AuthService>().onAuthStateChanged(),
       builder: (context, snapshot) {
-        User user = snapshot.data;
-        return user == null
-            ? BlocProvider(
-                create: (context) => LoginBloc(),
-                child: LoginPage(),
-              )
-            : MainApp();
+        if (snapshot.hasData) {
+          return MainApp();
+        }
+
+        return BlocProvider(
+          create: (context) => LoginBloc(),
+          child: LoginPage(),
+        );
       },
     );
   }
@@ -94,30 +95,28 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
-  AnimationController animationController;
+  int _tabIndex = 0;
 
-  List<TabIconData> tabIconsList = TabIconData.tabIconsList;
+  Color _homeActiveColor = Colors.amber;
+  Color _homeInactiveColor = LitPicTheme.nearlyDarkBlue;
+  Color _createActiveColor = LitPicTheme.nearlyDarkBlue;
+  Color _createInactiveColor = Colors.amber;
+  Color _cartActiveColor = LitPicTheme.nearlyDarkBlue;
+  Color _cartInactiveColor = Colors.amber;
+  Color _profileActiveColor = LitPicTheme.nearlyDarkBlue;
+  Color _profileInactiveColor = Colors.amber;
+  Color _settingsActiveColor = LitPicTheme.nearlyDarkBlue;
+  Color _settingsInactiveColor = Colors.amber;
 
-  Widget tabBody = Container(
-    color: LitPicTheme.background,
-  );
+  Widget tabBody = HomePage();
 
   @override
   void initState() {
-    tabIconsList.forEach((tab) {
-      tab.isSelected = false;
-    });
-    tabIconsList[0].isSelected = true;
-
-    animationController =
-        AnimationController(duration: Duration(milliseconds: 600), vsync: this);
-    tabBody = HomePage(animationController: animationController);
     super.initState();
   }
 
   @override
   void dispose() {
-    animationController.dispose();
     super.dispose();
   }
 
@@ -130,89 +129,292 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
         body: Stack(
           children: <Widget>[
             tabBody,
-            bottomBar(),
+            // bottomBar(),
           ],
         ),
+        bottomNavigationBar: BottomNavyBar(
+          selectedIndex: _tabIndex,
+          showElevation: true,
+          itemCornerRadius: 24,
+          curve: Curves.easeIn,
+          onItemSelected: (index) {
+            setState(() {
+              _tabIndex = index;
+
+              _homeActiveColor =
+                  _tabIndex == 0 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
+              _homeInactiveColor =
+                  _tabIndex == 0 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
+
+              _createActiveColor =
+                  _tabIndex == 1 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
+              _createInactiveColor =
+                  _tabIndex == 1 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
+
+              _cartActiveColor =
+                  _tabIndex == 2 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
+              _cartInactiveColor =
+                  _tabIndex == 2 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
+
+              _profileActiveColor =
+                  _tabIndex == 3 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
+              _profileInactiveColor =
+                  _tabIndex == 3 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
+
+              _settingsActiveColor =
+                  _tabIndex == 4 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
+              _settingsInactiveColor =
+                  _tabIndex == 4 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
+
+              switch (index) {
+                case 0:
+                  tabBody = HomePage();
+                  break;
+                case 1:
+                  tabBody = BlocProvider(
+                    lazy: true,
+                    create: (context) => CREATE_BP.CreateLithophaneBloc()
+                      ..add(CREATE_BP.LoadPageEvent()),
+                    child: CREATE_BP.CreateLithophanePage(),
+                  );
+
+                  break;
+                case 2:
+                  tabBody = BlocProvider(
+                    lazy: true,
+                    create: (context) =>
+                        CART_BP.CartBloc()..add(CART_BP.LoadPageEvent()),
+                    child: CART_BP.CartPage(),
+                  );
+                  break;
+                case 3:
+                  tabBody = BlocProvider(
+                    lazy: true,
+                    create: (context) => PROFILE_BP.ProfileBloc()
+                      ..add(PROFILE_BP.LoadPageEvent()),
+                    child: PROFILE_BP.ProfilePage(),
+                  );
+                  break;
+                case 4:
+                  tabBody = SettingsPage();
+                  break;
+                default:
+                  break;
+              }
+            });
+          },
+          items: <BottomNavyBarItem>[
+            BottomNavyBarItem(
+              icon: Icon(
+                Icons.home,
+                color: _homeInactiveColor,
+              ),
+              title: Text(
+                'Home',
+                style: TextStyle(color: _homeInactiveColor),
+              ),
+              activeColor: _homeActiveColor,
+              textAlign: TextAlign.center,
+            ),
+            BottomNavyBarItem(
+              icon: Icon(
+                Icons.add,
+                color: _createInactiveColor,
+              ),
+              title: Text(
+                'Create',
+                style: TextStyle(color: _createInactiveColor),
+              ),
+              activeColor: _createActiveColor,
+              textAlign: TextAlign.center,
+            ),
+            BottomNavyBarItem(
+              icon: Icon(
+                Icons.shopping_cart,
+                color: _cartInactiveColor,
+              ),
+              title: Text(
+                'Cart',
+                style: TextStyle(color: _cartInactiveColor),
+              ),
+              activeColor: _cartActiveColor,
+              textAlign: TextAlign.center,
+            ),
+            BottomNavyBarItem(
+              icon: Icon(
+                Icons.face,
+                color: _profileInactiveColor,
+              ),
+              title: Text(
+                'Profile',
+                style: TextStyle(color: _profileInactiveColor),
+              ),
+              activeColor: _profileActiveColor,
+              textAlign: TextAlign.center,
+            ),
+            BottomNavyBarItem(
+              icon: Icon(
+                Icons.settings,
+                color: _settingsInactiveColor,
+              ),
+              title: Text(
+                'Settings',
+                style: TextStyle(color: _settingsInactiveColor),
+              ),
+              activeColor: _settingsActiveColor,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        // bottomNavigationBar: BottomBarView(
+        // tabIconsList: tabIconsList,
+        // addClick: () {},
+        // changeIndex: (index) {
+        // switch (index) {
+        //   case 0:
+        //     animationController!.reverse().then((data) {
+        //       if (!mounted) return;
+        //       setState(() {
+        //         tabBody =
+        //             HomePage(animationController: animationController!);
+        //       });
+        //     });
+        //     break;
+        //   case 1:
+        //     animationController!.reverse().then(
+        //       (data) {
+        //         if (!mounted) return;
+        //         setState(
+        //           () {
+        //             tabBody = BlocProvider(
+        //               lazy: true,
+        //               create: (context) => CREATE_BP.CreateLithophaneBloc()
+        //                 ..add(CREATE_BP.LoadPageEvent()),
+        //               child: CREATE_BP.CreateLithophanePage(),
+        //             );
+        //           },
+        //         );
+        //       },
+        //     );
+        //     break;
+        //   case 2:
+        //     animationController!.reverse().then((data) {
+        //       if (!mounted) return;
+        //       setState(() {
+        //         tabBody = BlocProvider(
+        //           lazy: true,
+        //           create: (context) =>
+        //               CART_BP.CartBloc()..add(CART_BP.LoadPageEvent()),
+        //           child: CART_BP.CartPage(),
+        //         );
+        //       });
+        //     });
+        //     break;
+        //   case 3:
+        //     animationController!.reverse().then((data) {
+        //       if (!mounted) return;
+        //       setState(() {
+        //         tabBody = BlocProvider(
+        //           lazy: true,
+        //           create: (context) => PROFILE_BP.ProfileBloc()
+        //             ..add(PROFILE_BP.LoadPageEvent()),
+        //           child: PROFILE_BP.ProfilePage(),
+        //         );
+        //       });
+        //     });
+        //     break;
+        //   case 4:
+        //     animationController!.reverse().then((data) {
+        //       if (!mounted) return;
+        //       setState(() {
+        //         tabBody =
+        //             SettingsPage(animationController: animationController!);
+        //       });
+        //     });
+        //     break;
+        // }
+        //   },
+        // ),
       ),
     );
   }
 
-  Widget bottomBar() {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: SizedBox(),
-        ),
-        BottomBarView(
-          tabIconsList: tabIconsList,
-          addClick: () {},
-          changeIndex: (index) {
-            switch (index) {
-              case 0:
-                animationController.reverse().then((data) {
-                  if (!mounted) return;
-                  setState(() {
-                    tabBody =
-                        HomePage(animationController: animationController);
-                  });
-                });
-                break;
-              case 1:
-                animationController.reverse().then(
-                  (data) {
-                    if (!mounted) return;
-                    setState(
-                      () {
-                        tabBody = BlocProvider(
-                          lazy: true,
-                          create: (context) => CREATE_BP.CreateLithophaneBloc()
-                            ..add(CREATE_BP.LoadPageEvent()),
-                          child: CREATE_BP.CreateLithophanePage(),
-                        );
-                      },
-                    );
-                  },
-                );
-                break;
-              case 2:
-                animationController.reverse().then((data) {
-                  if (!mounted) return;
-                  setState(() {
-                    tabBody = BlocProvider(
-                      lazy: true,
-                      create: (context) =>
-                          CART_BP.CartBloc()..add(CART_BP.LoadPageEvent()),
-                      child: CART_BP.CartPage(),
-                    );
-                  });
-                });
-                break;
-              case 3:
-                animationController.reverse().then((data) {
-                  if (!mounted) return;
-                  setState(() {
-                    tabBody = BlocProvider(
-                      lazy: true,
-                      create: (context) => PROFILE_BP.ProfileBloc()
-                        ..add(PROFILE_BP.LoadPageEvent()),
-                      child: PROFILE_BP.ProfilePage(),
-                    );
-                  });
-                });
-                break;
-              case 4:
-                animationController.reverse().then((data) {
-                  if (!mounted) return;
-                  setState(() {
-                    tabBody =
-                        SettingsPage(animationController: animationController);
-                  });
-                });
-                break;
-            }
-          },
-        ),
-      ],
-    );
-  }
+  // Widget bottomBar() {
+  //   return Column(
+  //     children: <Widget>[
+  //       Expanded(
+  //         child: SizedBox(),
+  //       ),
+  //       BottomBarView(
+  //         // tabIconsList: tabIconsList,
+  //         addClick: () {},
+  //         changeIndex: (index) {
+  //           // switch (index) {
+  //           //   case 0:
+  //           //     animationController!.reverse().then((data) {
+  //           //       if (!mounted) return;
+  //           //       setState(() {
+  //           //         tabBody =
+  //           //             HomePage(animationController: animationController!);
+  //           //       });
+  //           //     });
+  //           //     break;
+  //           //   case 1:
+  //           //     animationController!.reverse().then(
+  //           //       (data) {
+  //           //         if (!mounted) return;
+  //           //         setState(
+  //           //           () {
+  //           //             tabBody = BlocProvider(
+  //           //               lazy: true,
+  //           //               create: (context) => CREATE_BP.CreateLithophaneBloc()
+  //           //                 ..add(CREATE_BP.LoadPageEvent()),
+  //           //               child: CREATE_BP.CreateLithophanePage(),
+  //           //             );
+  //           //           },
+  //           //         );
+  //           //       },
+  //           //     );
+  //           //     break;
+  //           //   case 2:
+  //           //     animationController!.reverse().then((data) {
+  //           //       if (!mounted) return;
+  //           //       setState(() {
+  //           //         tabBody = BlocProvider(
+  //           //           lazy: true,
+  //           //           create: (context) =>
+  //           //               CART_BP.CartBloc()..add(CART_BP.LoadPageEvent()),
+  //           //           child: CART_BP.CartPage(),
+  //           //         );
+  //           //       });
+  //           //     });
+  //           //     break;
+  //           //   case 3:
+  //           //     animationController!.reverse().then((data) {
+  //           //       if (!mounted) return;
+  //           //       setState(() {
+  //           //         tabBody = BlocProvider(
+  //           //           lazy: true,
+  //           //           create: (context) => PROFILE_BP.ProfileBloc()
+  //           //             ..add(PROFILE_BP.LoadPageEvent()),
+  //           //           child: PROFILE_BP.ProfilePage(),
+  //           //         );
+  //           //       });
+  //           //     });
+  //           //     break;
+  //           //   case 4:
+  //           //     animationController!.reverse().then((data) {
+  //           //       if (!mounted) return;
+  //           //       setState(() {
+  //           //         tabBody =
+  //           //             SettingsPage(animationController: animationController!);
+  //           //       });
+  //           //     });
+  //           //     break;
+  //           // }
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
 }

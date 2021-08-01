@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:litpic/models/cart_item_model.dart';
@@ -9,35 +8,35 @@ import 'dart:convert' show json;
 import '../constants.dart';
 
 abstract class IStripeOrderService {
-  Future<List<OrderModel>> list({String customerID, @required String status});
+  Future<List<OrderModel>> list({String? customerID, String? status});
 
   Future<String> create(
-      {@required String customerID,
-      @required String email,
-      @required String name,
-      @required String line1,
-      @required String city,
-      @required String state,
-      @required String country,
-      @required String postalCode,
-      @required List<CartItemModel> cartItems,
-      @required SkuModel sku});
+      {required String customerID,
+      required String email,
+      required String name,
+      required String line1,
+      required String city,
+      required String state,
+      required String country,
+      required String postalCode,
+      required List<CartItemModel> cartItems,
+      required SkuModel sku});
 
   Future<void> update(
-      {@required String orderID,
-      @required String status,
-      @required String carrier,
-      @required String trackingNumber});
+      {required String orderID,
+      required String status,
+      required String carrier,
+      required String trackingNumber});
 
   Future<void> pay(
-      {@required String orderID,
-      @required String source,
-      @required String customerID});
+      {required String orderID,
+      required String source,
+      required String customerID});
 }
 
 class StripeOrderService extends IStripeOrderService {
   @override
-  Future<List<OrderModel>> list({String customerID, String status}) async {
+  Future<List<OrderModel>> list({String? customerID, String? status}) async {
     Map data = {};
 
     if (customerID != null) {
@@ -68,24 +67,26 @@ class StripeOrderService extends IStripeOrderService {
         throw PlatformException(
             message: map['raw']['message'], code: map['raw']['code']);
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
       throw PlatformException(message: e.message, code: e.code);
     }
   }
 
   @override
-  Future<String> create(
-      {String customerID,
-      String email,
-      String name,
-      String line1,
-      String city,
-      String state,
-      String country,
-      String postalCode,
-      List<CartItemModel> cartItems,
-      SkuModel sku}) async {
+  Future<String> create({
+    required String customerID,
+    required String email,
+    required String name,
+    required String line1,
+    required String city,
+    required String state,
+    required String country,
+    required String postalCode,
+    required List<CartItemModel> cartItems,
+    required SkuModel sku,
+  }) async {
     int totalLithophanes = 0;
+
     for (int i = 0; i < cartItems.length; i++) {
       totalLithophanes += cartItems[i].quantity;
     }
@@ -118,13 +119,17 @@ class StripeOrderService extends IStripeOrderService {
         throw PlatformException(
             message: map['raw']['message'], code: map['raw']['code']);
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
       throw PlatformException(message: e.message, code: e.code);
     }
   }
 
   @override
-  Future<void> pay({String orderID, String source, String customerID}) async {
+  Future<void> pay({
+    required String orderID,
+    required String source,
+    required String customerID,
+  }) async {
     Map data = {'orderID': orderID, 'source': source, 'customerID': customerID};
 
     http.Response response = await http.post(
@@ -141,17 +146,18 @@ class StripeOrderService extends IStripeOrderService {
         throw PlatformException(
             message: map['raw']['message'], code: map['raw']['code']);
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
       throw PlatformException(message: e.message, code: e.code);
     }
   }
 
   @override
-  Future<void> update(
-      {String orderID,
-      String status,
-      String carrier,
-      String trackingNumber}) async {
+  Future<void> update({
+    required String orderID,
+    required String status,
+    required String carrier,
+    required String trackingNumber,
+  }) async {
     Map data = {
       'orderID': orderID,
       'status': status,
@@ -173,7 +179,7 @@ class StripeOrderService extends IStripeOrderService {
         throw PlatformException(
             message: map['raw']['message'], code: map['raw']['code']);
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
       throw PlatformException(message: e.message, code: e.code);
     }
   }

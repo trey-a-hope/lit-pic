@@ -23,9 +23,8 @@
 
 // class _CheckoutShippingPageState extends State<CheckoutShippingPage>
 //     with TickerProviderStateMixin {
-//   AnimationController animationController;
-
-//   Animation<double> topBarAnimation;
+//   AnimationController? animationController;
+//   Animation<double>? topBarAnimation;
 
 //   List<Widget> listViews = [];
 //   var scrollController = ScrollController();

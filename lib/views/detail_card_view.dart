@@ -4,7 +4,7 @@ import 'package:litpic/litpic_theme.dart';
 class DetailCardView extends StatelessWidget {
   final VoidCallback onTap;
   final AnimationController animationController;
-  final Animation animation;
+  final Animation<double> animation;
   final Image image;
   final String title;
   final String text;
@@ -12,26 +12,26 @@ class DetailCardView extends StatelessWidget {
   final Widget widget;
 
   const DetailCardView(
-      {Key key,
-      @required this.animationController,
-      @required this.image,
-      @required this.title,
-      @required this.text,
-      @required this.subText,
-      @required this.widget,
-      @required this.animation,
-      @required this.onTap})
-      : super(key: key);
+      {//Key key,
+      required this.animationController,
+      required this.image,
+      required this.title,
+      required this.text,
+      required this.subText,
+      required this.widget,
+      required this.animation,
+      required this.onTap})
+      : super();
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animationController,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
           opacity: animation,
-          child: new Transform(
-            transform: new Matrix4.translationValues(
+          child:  Transform(
+            transform:  Matrix4.translationValues(
                 0.0, 50 * (1.0 - animation.value), 0.0),
             child: Padding(
               padding: const EdgeInsets.only(

@@ -22,7 +22,7 @@ class ErrorState extends LoginState {
   final dynamic error;
 
   ErrorState({
-    @required this.error,
+    required this.error,
   });
 
   @override

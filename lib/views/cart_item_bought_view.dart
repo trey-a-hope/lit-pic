@@ -9,21 +9,21 @@ import '../service_locator.dart';
 class CartItemBoughtView extends StatelessWidget {
   final CartItemModel cartItem;
   final AnimationController animationController;
-  final Animation animation;
+  final Animation<double> animation;
   final double price;
 
   CartItemBoughtView(
-      {Key key,
-      @required this.cartItem,
-      @required this.animationController,
-      @required this.animation,
-      @required this.price})
-      : super(key: key);
+      { //Key key,
+      required this.cartItem,
+      required this.animationController,
+      required this.animation,
+      required this.price})
+      : super();
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animationController,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
           opacity: animation,
           child: Transform(

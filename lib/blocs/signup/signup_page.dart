@@ -173,9 +173,10 @@ class _SignupPageState extends State<SignupPage>
                               ),
                               GoodButton(
                                 textColor: Colors.white,
-                                buttonColor: Colors.amber[700],
+                                buttonColor: Colors.amber[700]!,
                                 onPressed: () async {
-                                  if (!_formKey.currentState.validate()) return;
+                                  if (!_formKey.currentState!.validate())
+                                    return;
                                   final bool confirm = await locator<
                                           ModalService>()
                                       .showConfirmation(

@@ -1,7 +1,7 @@
 part of 'create_lithophane_bloc.dart';
 
 class CreateLithophanePage extends StatefulWidget {
-  const CreateLithophanePage({Key key}) : super(key: key);
+  const CreateLithophanePage() : super();
 
   @override
   _CreateLithophanePageState createState() => _CreateLithophanePageState();
@@ -9,7 +9,7 @@ class CreateLithophanePage extends StatefulWidget {
 
 class _CreateLithophanePageState extends State<CreateLithophanePage>
     with TickerProviderStateMixin, UIPropertiesMixin {
-  PickedFile _image;
+  XFile? _image;
 
   @override
   void initState() {
@@ -48,7 +48,7 @@ class _CreateLithophanePageState extends State<CreateLithophanePage>
     super.initState();
   }
 
-  void _addAllListData({@required SkuModel sku, @required int quantity}) {
+  void _addAllListData({required SkuModel sku, required int quantity}) {
     var count = 9;
     listViews.clear();
 
@@ -68,7 +68,7 @@ class _CreateLithophanePageState extends State<CreateLithophanePage>
                   size: 150,
                 )
               : Image(
-                  image: FileImage(File(_image.path)),
+                  image: FileImage(File(_image!.path)),
                   fit: BoxFit.contain,
                 ),
         ),
@@ -188,9 +188,9 @@ class _CreateLithophanePageState extends State<CreateLithophanePage>
               return;
             }
 
-            context
-                .read<CreateLithophaneBloc>()
-                .add(AddToCartEvent(image: _image));
+            context.read<CreateLithophaneBloc>().add(
+                  AddToCartEvent(image: _image!),
+                );
           },
           buttonColor: Colors.amber,
           text:
@@ -264,9 +264,10 @@ class _CreateLithophanePageState extends State<CreateLithophanePage>
         });
   }
 
-  _handleImage({@required ImageSource source}) async {
+  _handleImage({required ImageSource source}) async {
     Navigator.pop(context);
-    PickedFile imageFile = await ImagePicker().getImage(source: source);
+    XFile? imageFile = await ImagePicker().pickImage(source: source);
+
     if (imageFile != null) {
       imageFile = await locator<ImageService>().cropImage(imageFile: imageFile);
       setState(() {
@@ -304,7 +305,7 @@ class _CreateLithophanePageState extends State<CreateLithophanePage>
                     title: 'Create Lithophane',
                     topBarOpacity: topBarOpacity,
                     animationController: animationController,
-                    topBarAnimation: topBarAnimation,
+                    // topBarAnimation: topBarAnimation,
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).padding.bottom,

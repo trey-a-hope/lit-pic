@@ -1,36 +1,44 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:litpic/models/credit_card_model.dart';
 import 'package:litpic/models/customer_model.dart';
 import 'package:litpic/models/shipping_model.dart';
 import 'dart:convert' show json;
-
 import '../constants.dart';
 
 abstract class IStripeCustomerService {
-  Future<String> create({String email, String name});
-  Future<CustomerModel> retrieve({@required String customerID});
-  Future<void> update(
-      {@required String customerID,
-      String city,
-      String country,
-      String line1,
-      String postalCode,
-      String state,
-      String defaultSource,
-      String name,
-      String email});
-  Future<bool> delete({@required String customerID});
+  Future<String> create({
+    required String? email,
+    required String name,
+    required String description,
+  });
+  Future<CustomerModel> retrieve({required String customerID});
+  Future<void> update({
+    required String customerID,
+    String? city,
+    String? country,
+    String? line1,
+    String? postalCode,
+    String? state,
+    String? defaultSource,
+    String? name,
+    String? email,
+  });
+  Future<bool> delete({required String customerID});
 }
 
 class StripeCustomerService extends IStripeCustomerService {
   @override
-  Future<String> create(
-      {@required String email,
-      @required String description,
-      @required String name}) async {
+  Future<String> create({
+    required String? email,
+    required String? name,
+    required String? description,
+  }) async {
     Map data = {};
+
+    if (email != null) {
+      data['email'] = email;
+    }
 
     if (name != null) {
       data['name'] = name;
@@ -38,10 +46,6 @@ class StripeCustomerService extends IStripeCustomerService {
 
     if (description != null) {
       data['description'] = description;
-    }
-
-    if (email != null) {
-      data['email'] = email;
     }
 
     http.Response response = await http.post(
@@ -58,13 +62,13 @@ class StripeCustomerService extends IStripeCustomerService {
         throw PlatformException(
             message: map['raw']['message'], code: map['raw']['code']);
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
       throw PlatformException(message: e.message, code: e.code);
     }
   }
 
   @override
-  Future<CustomerModel> retrieve({@required String customerID}) async {
+  Future<CustomerModel> retrieve({required String customerID}) async {
     Map data = {'customerID': customerID};
 
     http.Response response = await http.post(
@@ -77,11 +81,11 @@ class StripeCustomerService extends IStripeCustomerService {
       Map map = json.decode(response.body);
 
       if (map['statusCode'] == null) {
-        Map shippingMap = map['shipping'];
-        Map sourcesMap = map['sources'];
+        Map? shippingMap = map['shipping'];
+        Map? sourcesMap = map['sources'];
 
         //Add default card if one is active.
-        CreditCardModel card;
+        CreditCardModel? card;
         if (map['default_source'] != null) {
           Map cardMap = map['sources']['data'][0];
           card = CreditCardModel(
@@ -117,28 +121,31 @@ class StripeCustomerService extends IStripeCustomerService {
             defaultSource: map['default_source'],
             card: card,
             name: map['name'],
-            shipping: ShippingModel.fromMap(map: shippingMap),
+            shipping: shippingMap == null
+                ? null
+                : ShippingModel.fromMap(map: shippingMap),
             sources: sources);
       } else {
         throw PlatformException(
             message: map['raw']['message'], code: map['raw']['code']);
       }
-    } catch (e) {
-      throw Exception();
+    } on PlatformException catch (e) {
+      throw PlatformException(message: e.message, code: e.code);
     }
   }
 
   @override
-  Future<void> update(
-      {String customerID,
-      String city,
-      String country,
-      String line1,
-      String postalCode,
-      String state,
-      String defaultSource,
-      String name,
-      String email}) async {
+  Future<void> update({
+    required String customerID,
+    String? city,
+    String? country,
+    String? line1,
+    String? postalCode,
+    String? state,
+    String? defaultSource,
+    String? name,
+    String? email,
+  }) async {
     Map data = {
       'customerID': customerID,
     };
@@ -189,13 +196,13 @@ class StripeCustomerService extends IStripeCustomerService {
         throw PlatformException(
             message: map['raw']['message'], code: map['raw']['code']);
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
       throw PlatformException(message: e.message, code: e.code);
     }
   }
 
   @override
-  Future<bool> delete({String customerID}) async {
+  Future<bool> delete({required String customerID}) async {
     Map data = {'customerID': customerID};
 
     http.Response response = await http.post(

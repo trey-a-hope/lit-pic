@@ -5,23 +5,29 @@ class LitPicAppBar extends StatelessWidget {
   final String title;
   final double topBarOpacity;
   final AnimationController animationController;
-  final Animation<double> topBarAnimation;
+  final void Function()? goBackAction;
 
   LitPicAppBar({
-    Key key,
-    @required this.title,
-    @required this.topBarOpacity,
-    @required this.animationController,
-    @required this.topBarAnimation,
-  }) : super(key: key);
+    required this.title,
+    required this.topBarOpacity,
+    required this.animationController,
+    this.goBackAction,
+  }) : super();
 
   @override
   Widget build(BuildContext context) {
+    Animation<double> topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn),
+      ),
+    );
+
     return Column(
       children: <Widget>[
         AnimatedBuilder(
           animation: animationController,
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
               child: Transform(
@@ -55,6 +61,12 @@ class LitPicAppBar extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
+                            if (goBackAction != null) ...[
+                              IconButton(
+                                onPressed: goBackAction,
+                                icon: Icon(Icons.chevron_left_rounded),
+                              ),
+                            ],
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),

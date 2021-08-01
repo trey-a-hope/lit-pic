@@ -15,7 +15,10 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import '../../service_locator.dart';
 
 class ProfilePersonalInfoPage extends StatefulWidget {
-  const ProfilePersonalInfoPage({Key key}) : super(key: key);
+  const ProfilePersonalInfoPage(
+      //Key key
+      )
+      : super();
   @override
   _ProfilePersonalInfoPageState createState() =>
       _ProfilePersonalInfoPageState();
@@ -23,16 +26,16 @@ class ProfilePersonalInfoPage extends StatefulWidget {
 
 class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
     with TickerProviderStateMixin {
-  AnimationController animationController;
-  Animation<double> topBarAnimation;
+  late AnimationController animationController;
+  late Animation<double> topBarAnimation;
 
   List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final Color iconColor = Colors.amber[700];
+  final Color iconColor = Colors.amber[700]!;
 
-  UserModel _currentUser;
+  late UserModel _currentUser;
   bool _isLoading = false;
 
   bool loadCustomerInfoComplete = false;
@@ -106,12 +109,12 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
               DataBoxChild(
                   iconData: Icons.face,
                   text: 'Name',
-                  subtext: _currentUser.customer.name,
+                  subtext: _currentUser.customer!.name,
                   color: Colors.red),
               DataBoxChild(
                   iconData: Icons.email,
                   text: 'Email',
-                  subtext: _currentUser.customer.email,
+                  subtext: _currentUser.customer!.email,
                   color: Colors.red),
             ],
             animation: Tween(begin: 0.0, end: 1.0).animate(
@@ -147,7 +150,7 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
         ),
       );
 
-      if (_currentUser.customer.shipping == null) {
+      if (_currentUser.customer!.shipping == null) {
         listViews.add(
           SimpleTitleView(
             titleTxt: 'Currently no shipping info.',
@@ -168,22 +171,23 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
                 DataBoxChild(
                     iconData: Icons.location_on,
                     text: 'Address',
-                    subtext: _currentUser.customer.shipping.address.line1,
+                    subtext: _currentUser.customer!.shipping!.address.line1,
                     color: Colors.amber),
                 DataBoxChild(
                     iconData: Icons.location_city,
                     text: 'City',
-                    subtext: _currentUser.customer.shipping.address.city,
+                    subtext: _currentUser.customer!.shipping!.address.city,
                     color: Colors.amber),
                 DataBoxChild(
                     iconData: Icons.my_location,
                     text: 'State',
-                    subtext: _currentUser.customer.shipping.address.state,
+                    subtext: _currentUser.customer!.shipping!.address.state,
                     color: Colors.amber),
                 DataBoxChild(
                     iconData: Icons.contact_mail,
                     text: 'ZIP',
-                    subtext: _currentUser.customer.shipping.address.postalCode,
+                    subtext:
+                        _currentUser.customer!.shipping!.address.postalCode,
                     color: Colors.amber)
               ],
               animation: Tween(begin: 0.0, end: 1.0).animate(
@@ -276,11 +280,11 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
       children: <Widget>[
         AnimatedBuilder(
           animation: animationController,
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
-              child: new Transform(
-                transform: new Matrix4.translationValues(
+              child: Transform(
+                transform: Matrix4.translationValues(
                     0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
                 child: Container(
                   decoration: BoxDecoration(
@@ -343,11 +347,11 @@ class _ProfilePersonalInfoPageState extends State<ProfilePersonalInfoPage>
                                         listViews.clear();
                                       });
 
-                                      //Re add views with new data.
+                                      //Re add views with  data.
                                       loadCustomerInfoComplete = false;
                                       await loadCustomerInfo();
 
-                                      //Re add views with new data.
+                                      //Re add views with  data.
                                       addAllListDataComplete = false;
                                       addAllListData();
 

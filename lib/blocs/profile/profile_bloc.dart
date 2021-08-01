@@ -23,7 +23,7 @@ part 'profile_page.dart';
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc() : super(ProfileInitialState());
 
-  UserModel _currentUser;
+  late UserModel _currentUser;
 
   @override
   Stream<ProfileState> mapEventToState(

@@ -52,7 +52,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
         //Create user in Database.
         UserModel user = UserModel(
-          uid: userCredential.user.uid,
+          uid: userCredential.user!.uid,
           fcmToken: null,
           created: DateTime.now(),
           modified: DateTime.now(),

@@ -19,11 +19,11 @@ class CartLoadedState extends CartState {
   final double total;
 
   CartLoadedState({
-    @required this.cartItems,
-    @required this.sku,
-    @required this.subTotal,
-    @required this.shippingFee,
-    @required this.total,
+    required this.cartItems,
+    required this.sku,
+    required this.subTotal,
+    required this.shippingFee,
+    required this.total,
   });
 
   @override
@@ -40,7 +40,7 @@ class ErrorState extends CartState {
   final dynamic error;
 
   ErrorState({
-    @required this.error,
+    required this.error,
   });
 
   @override

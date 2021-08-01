@@ -1,24 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 class CartItemModel {
-  String id;
+  String? id;
   String imgUrl;
   String imgPath;
   int quantity;
 
   CartItemModel(
-      {@required this.id,
-      @required this.imgUrl,
-      @required this.imgPath,
-      @required this.quantity});
+      {required this.id,
+      required this.imgUrl,
+      required this.imgPath,
+      required this.quantity});
 
-  factory CartItemModel.fromDoc({@required DocumentSnapshot doc}) {
+  factory CartItemModel.fromDoc({required DocumentSnapshot doc}) {
     return CartItemModel(
-        id: doc.data()['id'],
-        imgUrl: doc.data()['imgUrl'],
-        imgPath: doc.data()['imgPath'],
-        quantity: doc.data()['quantity']);
+        id: (doc.data() as dynamic)['id'],
+        imgUrl: (doc.data() as dynamic)['imgUrl'],
+        imgPath: (doc.data() as dynamic)['imgPath'],
+        quantity: (doc.data() as dynamic)['quantity']);
   }
 
   Map<String, dynamic> toMap() {

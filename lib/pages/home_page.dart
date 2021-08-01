@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
+import 'package:litpic/mixins/ui_properties_mixin.dart';
 import 'package:litpic/models/litpic_model.dart';
 import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
@@ -17,32 +18,33 @@ import 'package:url_launcher/url_launcher.dart';
 import '../service_locator.dart';
 
 class HomePage extends StatefulWidget {
-  final AnimationController animationController;
-
-  const HomePage({Key key, this.animationController}) : super(key: key);
+  const HomePage() : super();
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  Animation<double> topBarAnimation;
+class _HomePageState extends State<HomePage>
+    with TickerProviderStateMixin, UIPropertiesMixin {
+  // late Animation<double> topBarAnimation;
 
-  List<Widget> listViews = [];
-  ScrollController scrollController = ScrollController();
-  double topBarOpacity = 0.0;
-  UserModel _currentUser;
+  // List<Widget> listViews = [];
+  // ScrollController scrollController = ScrollController();
+  // double topBarOpacity = 0.0;
+
+  late UserModel _currentUser;
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
-  // Coupon _coupon;
   bool addAllListDataComplete = false;
-  // String youtubeVideoID;
   List<LitPicModel> litPics = [];
 
   @override
   void initState() {
+    animationController =
+        AnimationController(duration: Duration(milliseconds: 600), vsync: this);
+
     topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: widget.animationController,
+        parent: animationController,
         curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn),
       ),
     );
@@ -91,20 +93,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             throw 'Could not launch $url';
           }
         },
-        widget: CircleAvatar(
-          backgroundImage: NetworkImage(
-              'https://scontent-ort2-2.cdninstagram.com/vp/c21f18b9242101f4476511108371b153/5E892519/t51.2885-19/s320x320/60980291_2287245398154667_3908855079028916224_n.jpg?_nc_ht=scontent-ort2-2.cdninstagram.com'),
-        ),
+        widget: Icon(Icons.print),
         image: Image.asset('assets/images/litpic_example.jpg'),
         subText: "Click here to follow.",
         title: 'What is a \"Lit Pic?\"',
         text:
             'A Lit Pic a 3D printed Lithophane, (created by tr3Designs), that you can display anywhere in your home to capture those special moments in your life. Each print comes with a stand and is measured to be between 8in high and 6in wide.',
         animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
+            parent: animationController,
             curve:
                 Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
+        animationController: animationController,
       ));
 
       // listViews.add(
@@ -167,10 +166,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           titleTxt: 'Recent creations',
           subTxt: 'Details',
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: widget.animationController,
+              parent: animationController,
               curve:
                   Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-          animationController: widget.animationController,
+          animationController: animationController,
         ),
       );
       listViews.add(
@@ -178,12 +177,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           padding: EdgeInsets.only(top: 20),
           child: RecentCreationsView(
             litPics: litPics,
-            mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
-                CurvedAnimation(
-                    parent: widget.animationController,
-                    curve: Interval((1 / count) * 3, 1.0,
-                        curve: Curves.fastOutSlowIn))),
-            mainScreenAnimationController: widget.animationController,
+            animation: Tween(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                parent: animationController,
+                curve:
+                    Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn),
+              ),
+            ),
+            animationController: animationController,
           ),
         ),
       );
@@ -223,7 +224,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }
 
       //Update user's fcm token.
-      final String fcmToken = await _fcm.getToken();
+      final String? fcmToken = await _fcm.getToken();
       if (fcmToken != null) {
         locator<UserService>()
             .updateUser(uid: _currentUser.uid, data: {'fcmToken': fcmToken});
@@ -304,7 +305,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             itemCount: listViews.length,
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
-              widget.animationController.forward();
+              animationController.forward();
               return listViews[index];
             },
           );
@@ -317,8 +318,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Column(
       children: <Widget>[
         AnimatedBuilder(
-          animation: widget.animationController,
-          builder: (BuildContext context, Widget child) {
+          animation: animationController,
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
               child: new Transform(

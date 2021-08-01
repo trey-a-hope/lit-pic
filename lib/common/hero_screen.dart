@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class HeroScreen extends StatelessWidget {
-  final String imgUrl;
-  final String imgPath;
+  final String? imgUrl;
+  final String? imgPath;
 
-  HeroScreen({@required this.imgUrl, @required this.imgPath});
+  HeroScreen({required this.imgUrl, required this.imgPath});
 
   @override
   Widget build(BuildContext context) {
@@ -12,11 +12,11 @@ class HeroScreen extends StatelessWidget {
       body: GestureDetector(
         child: Center(
           child: Hero(
-            tag: imgUrl == null ? imgPath : imgUrl,
+            tag: imgUrl == null ? imgPath! : imgUrl!,
             child: imgUrl == null
-                ? Image.asset(imgPath)
+                ? Image.asset(imgPath!)
                 : Image.network(
-                    imgUrl,
+                    imgUrl!,
                   ),
           ),
         ),

@@ -19,9 +19,9 @@ class CreateLithophaneLoadedState extends CreateLithophaneState {
   final bool imageUploaded;
 
   CreateLithophaneLoadedState({
-    @required this.sku,
-    @required this.quantity,
-    @required this.imageUploaded,
+    required this.sku,
+    required this.quantity,
+    required this.imageUploaded,
   });
 
   @override
@@ -36,7 +36,7 @@ class ErrorState extends CreateLithophaneState {
   final dynamic error;
 
   ErrorState({
-    @required this.error,
+    required this.error,
   });
 
   @override

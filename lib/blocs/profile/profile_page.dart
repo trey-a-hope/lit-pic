@@ -1,15 +1,15 @@
 part of 'profile_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({
-    Key key,
-  }) : super(key: key);
+  const ProfilePage() : super();
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin, UIPropertiesMixin {
+  bool addAllListDataComplete = false;
+
   @override
   void initState() {
     animationController =
@@ -47,32 +47,36 @@ class _ProfilePageState extends State<ProfilePage>
     super.initState();
   }
 
-  void _addAllListData({@required UserModel currentUser}) {
-    var count = 5;
+  void _addAllListData({required UserModel currentUser}) {
+    if (!addAllListDataComplete) {
+      addAllListDataComplete = true;
 
-    listViews.add(
-      TitleView(
-        showExtra: false,
-        titleTxt: 'Welcome, ${currentUser.customer.name}',
-        subTxt: 'more',
-        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: animationController,
-            curve:
-                Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: animationController,
-      ),
-    );
+      var count = 5;
 
-    listViews.add(
-      ProfileButtonsView(
-        mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: animationController,
-                curve: Interval((1 / count) * 5, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: animationController,
-      ),
-    );
+      listViews.add(
+        TitleView(
+          showExtra: false,
+          titleTxt: 'Welcome, ${currentUser.customer!.name}',
+          subTxt: 'more',
+          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: animationController,
+        ),
+      );
+
+      listViews.add(
+        ProfileButtonsView(
+          mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                  parent: animationController,
+                  curve: Interval((1 / count) * 5, 1.0,
+                      curve: Curves.fastOutSlowIn))),
+          mainScreenAnimationController: animationController,
+        ),
+      );
+    }
   }
 
   @override
@@ -103,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage>
                     title: 'Profile',
                     topBarOpacity: topBarOpacity,
                     animationController: animationController,
-                    topBarAnimation: topBarAnimation,
+                    // topBarAnimation: topBarAnimation,
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).padding.bottom,

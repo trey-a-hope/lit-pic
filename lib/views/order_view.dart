@@ -7,21 +7,21 @@ import '../service_locator.dart';
 class OrderView extends StatelessWidget {
   final OrderModel order;
   final AnimationController animationController;
-  final Animation animation;
+  final Animation<double> animation;
   final VoidCallback onTap;
 
   OrderView(
-      {Key key,
-      @required this.order,
-      @required this.animationController,
-      @required this.animation,
-      @required this.onTap})
-      : super(key: key);
+      { //Key key,
+      required this.order,
+      required this.animationController,
+      required this.animation,
+      required this.onTap})
+      : super();
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animationController,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
           opacity: animation,
           child: Transform(

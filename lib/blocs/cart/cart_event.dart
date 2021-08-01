@@ -12,7 +12,7 @@ class LoadPageEvent extends CartEvent {}
 class IncrementQuantityEvent extends CartEvent {
   final CartItemModel cartItem;
 
-  const IncrementQuantityEvent({@required this.cartItem});
+  const IncrementQuantityEvent({required this.cartItem});
 
   @override
   List<Object> get props => [
@@ -23,7 +23,7 @@ class IncrementQuantityEvent extends CartEvent {
 class DecrementQuantityEvent extends CartEvent {
   final CartItemModel cartItem;
 
-  const DecrementQuantityEvent({@required this.cartItem});
+  const DecrementQuantityEvent({required this.cartItem});
 
   @override
   List<Object> get props => [
@@ -34,7 +34,7 @@ class DecrementQuantityEvent extends CartEvent {
 class DeleteCartItemEvent extends CartEvent {
   final CartItemModel cartItem;
 
-  const DeleteCartItemEvent({@required this.cartItem});
+  const DeleteCartItemEvent({required this.cartItem});
 
   @override
   List<Object> get props => [cartItem];

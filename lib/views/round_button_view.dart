@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 
 class RoundButtonView extends StatelessWidget {
-  final Function onPressed;
+  final void Function()? onPressed;
   final String text;
   final Color buttonColor;
   final Color textColor;
   final AnimationController animationController;
-  final Animation animation;
+  final Animation<double> animation;
 
   RoundButtonView(
-      {Key key,
-      @required this.animationController,
-      @required this.animation,
-      @required this.onPressed,
-      @required this.text,
-      @required this.buttonColor,
-      @required this.textColor})
-      : super(key: key);
+      { //Key key,
+      required this.animationController,
+      required this.animation,
+      required this.onPressed,
+      required this.text,
+      required this.buttonColor,
+      required this.textColor})
+      : super();
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: animationController,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
           opacity: animation,
           child: Transform(

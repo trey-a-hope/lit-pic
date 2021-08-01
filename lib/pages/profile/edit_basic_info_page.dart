@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/user_model.dart';
@@ -13,24 +14,24 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import '../../service_locator.dart';
 
 class EditBasicInfoPage extends StatefulWidget {
-  const EditBasicInfoPage({Key key}) : super(key: key);
+  const EditBasicInfoPage() : super();
   @override
   _EditBasicInfoPageState createState() => _EditBasicInfoPageState();
 }
 
 class _EditBasicInfoPageState extends State<EditBasicInfoPage>
     with TickerProviderStateMixin {
-  AnimationController animationController;
+  late AnimationController animationController;
 
-  Animation<double> topBarAnimation;
+  late Animation<double> topBarAnimation;
 
   List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final Color iconColor = Colors.amber[700];
+  final Color iconColor = Colors.amber[700]!;
 
-  UserModel _currentUser;
+  late UserModel _currentUser;
 
   bool addAllListDataComplete = false;
   bool loadCustomerInfoComplete = false;
@@ -167,8 +168,8 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
         _currentUser.customer = await locator<StripeCustomerService>()
             .retrieve(customerID: _currentUser.customerID);
 
-        _nameController.text = _currentUser.customer.name;
-        _emailController.text = _currentUser.customer.email;
+        _nameController.text = _currentUser.customer!.name;
+        _emailController.text = _currentUser.customer!.email;
 
         return;
       } catch (e) {
@@ -183,12 +184,12 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
   }
 
   _save() async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       bool confirm = await locator<ModalService>().showConfirmation(
           context: context, title: 'Submit', message: 'Are you sure?');
 
       if (confirm) {
-        _formKey.currentState.save();
+        _formKey.currentState!.save();
         try {
           setState(
             () {
@@ -221,7 +222,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
             title: 'Success',
             message: 'Basic Info Updated',
           );
-        } catch (e) {
+        } on PlatformException catch (e) {
           setState(
             () {
               _isLoading = false;
@@ -230,7 +231,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
           locator<ModalService>().showAlert(
             context: context,
             title: 'Error',
-            message: e.message,
+            message: e.message!,
           );
         }
       } else {
@@ -297,7 +298,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
       children: <Widget>[
         AnimatedBuilder(
           animation: animationController,
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
               child: new Transform(

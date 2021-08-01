@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:litpic/models/user_model.dart';
 
 abstract class IUserService {
-  Future<void> createUser({@required UserModel user});
-  Future<UserModel> retrieveUser({@required String uid});
-  Future<UserModel> retrieveUserByCustomerID({@required String customerID});
+  Future<void> createUser({required UserModel user});
+  Future<UserModel> retrieveUser({required String uid});
+  Future<UserModel> retrieveUserByCustomerID({required String customerID});
   Future<void> updateUser(
-      {@required String uid, @required Map<String, dynamic> data});
-  Future<void> deleteUser({@required String uid});
+      {required String uid, required Map<String, dynamic> data});
+  Future<void> deleteUser({required String uid});
   // Future<List<UserModel>> retrieveUsers({bool isAdmin, int limit});
 }
 
@@ -17,7 +16,7 @@ class UserService extends IUserService {
       FirebaseFirestore.instance.collection('Users');
 
   @override
-  Future<void> createUser({@required UserModel user}) async {
+  Future<void> createUser({required UserModel user}) async {
     try {
       DocumentReference docRef = _usersDB.doc(user.uid);
 
@@ -32,7 +31,7 @@ class UserService extends IUserService {
   }
 
   @override
-  Future<UserModel> retrieveUser({@required String uid}) async {
+  Future<UserModel> retrieveUser({required String uid}) async {
     try {
       DocumentSnapshot documentSnapshot = await _usersDB.doc(uid).get();
       return UserModel.fromDoc(doc: documentSnapshot);
@@ -43,7 +42,7 @@ class UserService extends IUserService {
 
   @override
   Future<UserModel> retrieveUserByCustomerID(
-      {@required String customerID}) async {
+      {required String customerID}) async {
     try {
       DocumentSnapshot documentSnapshot =
           (await _usersDB.where('customerID', isEqualTo: customerID).get())
@@ -57,7 +56,7 @@ class UserService extends IUserService {
 
   @override
   Future<void> updateUser(
-      {@required String uid, @required Map<String, dynamic> data}) async {
+      {required String uid, required Map<String, dynamic> data}) async {
     try {
       await _usersDB.doc(uid).update(data);
       return;
@@ -69,7 +68,7 @@ class UserService extends IUserService {
   }
 
   @override
-  Future<void> deleteUser({String uid}) async {
+  Future<void> deleteUser({required String uid}) async {
     try {
       await _usersDB.doc(uid).delete();
       return;

@@ -14,9 +14,9 @@ class SubmitEvent extends SignupEvent {
   final String password;
 
   SubmitEvent({
-    @required this.name,
-    @required this.email,
-    @required this.password,
+    required this.name,
+    required this.email,
+    required this.password,
   });
 
   @override

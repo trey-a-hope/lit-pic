@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/pages/profile/my_complete_orders_page.dart';
@@ -9,36 +8,27 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 class ProfileButtonsView extends StatefulWidget {
   final AnimationController mainScreenAnimationController;
-  final Animation mainScreenAnimation;
+  final Animation<double> mainScreenAnimation;
 
   const ProfileButtonsView(
-      {Key key, this.mainScreenAnimationController, this.mainScreenAnimation})
-      : super(key: key);
+      { //Key key,
+      required this.mainScreenAnimationController,
+      required this.mainScreenAnimation})
+      : super();
   @override
   _ProfileButtonsViewState createState() => _ProfileButtonsViewState();
 }
 
 class _ProfileButtonsViewState extends State<ProfileButtonsView>
     with TickerProviderStateMixin {
-  AnimationController animationController;
-
-  List<ProfileBoxModel> profileBoxModels;
+  late AnimationController animationController;
+  late List<ProfileBoxModel> profileBoxModels;
 
   @override
   void initState() {
     animationController = AnimationController(
         duration: Duration(milliseconds: 2000), vsync: this);
-    super.initState();
-  }
 
-  @override
-  void dispose() {
-    animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     profileBoxModels = [
       ProfileBoxModel(
           title: 'Personal Info',
@@ -91,7 +81,8 @@ class _ProfileButtonsViewState extends State<ProfileButtonsView>
             MdiIcons.mailboxUp,
             color: Colors.green,
             size: 40,
-          ),          onTap: () {
+          ),
+          onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) {
@@ -101,9 +92,20 @@ class _ProfileButtonsViewState extends State<ProfileButtonsView>
           }),
     ];
 
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: widget.mainScreenAnimationController,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
           opacity: widget.mainScreenAnimation,
           child: Transform(
@@ -155,15 +157,15 @@ class _ProfileButtonsViewState extends State<ProfileButtonsView>
 
 class ProfileBoxView extends StatelessWidget {
   final AnimationController animationController;
-  final Animation animation;
+  final Animation<double> animation;
   final ProfileBoxModel profileBoxModel;
 
   const ProfileBoxView(
-      {Key key,
-      @required this.animationController,
-      @required this.animation,
-      @required this.profileBoxModel})
-      : super(key: key);
+      {//Key key,
+      required this.animationController,
+      required this.animation,
+      required this.profileBoxModel})
+      : super();
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +173,7 @@ class ProfileBoxView extends StatelessWidget {
 
     return AnimatedBuilder(
       animation: animationController,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return FadeTransition(
           opacity: animation,
           child: Transform(
@@ -236,5 +238,5 @@ class ProfileBoxModel {
   final Icon icon;
 
   ProfileBoxModel(
-      {@required this.title, @required this.onTap, @required this.icon});
+      {required this.title, required this.onTap, required this.icon});
 }

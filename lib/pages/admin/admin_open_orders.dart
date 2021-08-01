@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
- import 'package:litpic/common/spinner.dart';
+import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/order_model.dart';
 import 'package:litpic/pages/admin/admin_order_details.dart';
@@ -13,22 +13,21 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import '../../service_locator.dart';
 
 class AdminOpenOrdersPage extends StatefulWidget {
-  const AdminOpenOrdersPage({Key key}) : super(key: key);
+  const AdminOpenOrdersPage() : super();
   @override
   _AdminOpenOrdersPageState createState() => _AdminOpenOrdersPageState();
 }
 
 class _AdminOpenOrdersPageState extends State<AdminOpenOrdersPage>
     with TickerProviderStateMixin {
-  AnimationController animationController;
-
-  Animation<double> topBarAnimation;
+  late AnimationController animationController;
+  late Animation<double> topBarAnimation;
 
   List<Widget> listViews = [];
   var scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  final Color iconColor = Colors.amber[700];
+  final Color iconColor = Colors.amber[700]!;
   List<OrderModel> orders = [];
 
   bool addAllListDataComplete = false;
@@ -201,7 +200,7 @@ class _AdminOpenOrdersPageState extends State<AdminOpenOrdersPage>
       children: <Widget>[
         AnimatedBuilder(
           animation: animationController,
-          builder: (BuildContext context, Widget child) {
+          builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
               child: new Transform(
