@@ -1,55 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class PayFlowDiagramView extends StatelessWidget {
-  final bool shippingComplete;
-  final bool paymentComplete;
-  final bool submitComplete;
-  final AnimationController animationController;
-  final Animation<double> animation;
-
-  PayFlowDiagramView({
-    //Key key,
-    required this.shippingComplete,
-    required this.paymentComplete,
-    required this.submitComplete,
-    required this.animationController,
-    required this.animation,
+class PayFlowDiagramView extends StatefulWidget {
+  const PayFlowDiagramView({
+    required this.currentStep,
   }) : super();
 
+  final int currentStep;
+
+  @override
+  _PayFlowDiagramViewState createState() => _PayFlowDiagramViewState();
+}
+
+class _PayFlowDiagramViewState extends State<PayFlowDiagramView> {
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: animationController,
-      builder: (BuildContext context, Widget? child) {
-        return FadeTransition(
-          opacity: animation,
-          child: Transform(
-            transform: Matrix4.translationValues(
-                100 * (1.0 - animation.value), 0.0, 0.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Icon(
-                  MdiIcons.mailbox,
-                  size: 40,
-                  color: shippingComplete ? Colors.green : Colors.grey,
-                ),
-                Icon(
-                  MdiIcons.creditCard,
-                  size: 40,
-                  color: paymentComplete ? Colors.green : Colors.grey,
-                ),
-                Icon(
-                  MdiIcons.check,
-                  size: 40,
-                  color: submitComplete ? Colors.green : Colors.grey,
-                )
-              ],
-            ),
+    int _currentStep = widget.currentStep;
+
+    return Container(
+      height: 75,
+      width: double.infinity,
+      color: Colors.transparent,
+      child: Stepper(
+        type: StepperType.horizontal,
+        physics: ScrollPhysics(),
+        currentStep: _currentStep > 2 ? 2 : _currentStep,
+        onStepTapped: (step) => () {
+          _currentStep = step;
+        },
+        onStepContinue: () => {},
+        onStepCancel: () => {},
+        steps: <Step>[
+          Step(
+              title: const Text('Shipping'),
+              content: SizedBox.shrink(),
+              isActive: _currentStep == 0,
+              state:
+                  _currentStep == 0 ? StepState.editing : StepState.complete),
+          Step(
+            title: const Text('Payment'),
+            content: SizedBox.shrink(),
+            isActive: _currentStep == 1,
+            state: _currentStep == 1
+                ? StepState.editing
+                : _currentStep > 1
+                    ? StepState.complete
+                    : StepState.indexed,
           ),
-        );
-      },
+          Step(
+            title: const Text('Submit'),
+            content: SizedBox.shrink(),
+            isActive: _currentStep == 2,
+            state: _currentStep == 2
+                ? StepState.editing
+                : _currentStep > 2
+                    ? StepState.complete
+                    : StepState.indexed,
+          ),
+        ],
+      ),
     );
   }
 }

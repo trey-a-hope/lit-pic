@@ -8,3 +8,7 @@ abstract class CheckoutEvent extends Equatable {
 }
 
 class LoadPageEvent extends CheckoutEvent {}
+
+class NextStepEvent extends CheckoutEvent {}
+
+class PreviousStepEvent extends CheckoutEvent {}

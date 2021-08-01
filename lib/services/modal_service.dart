@@ -7,7 +7,7 @@ abstract class IModalService {
       {required BuildContext context,
       required String title,
       required String message});
-  Future<bool> showConfirmation(
+  Future<dynamic> showConfirmation(
       {required BuildContext context,
       required String title,
       required String message});
@@ -58,7 +58,7 @@ class ModalService extends IModalService {
   }
 
   @override
-  Future<bool> showConfirmation(
+  Future<dynamic> showConfirmation(
       {required BuildContext context,
       required String title,
       required String message}) async {
@@ -86,7 +86,7 @@ class ModalService extends IModalService {
                   )
                 ],
               );
-            }) as Future<bool>
+            })
         : showDialog(
             context: context,
             builder: (BuildContext buildContext) {
@@ -109,6 +109,6 @@ class ModalService extends IModalService {
                 ],
               );
             },
-          ) as Future<bool>;
+          );
   }
 }

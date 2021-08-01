@@ -9,20 +9,6 @@ class CheckoutPage extends StatefulWidget {
 
 class _CheckoutPageState extends State<CheckoutPage>
     with TickerProviderStateMixin, UIPropertiesMixin {
-  // AnimationController animationController;
-  // Animation<double> topBarAnimation;
-
-  // List<Widget> listViews = [];
-  // var scrollController = ScrollController();
-  // double topBarOpacity = 0.0;
-
-  // UserModel _currentUser;
-
-  // bool loadCustomerInfoComplete = false;
-  // bool addAllListDataComplete = false;
-
-  // bool _isLoading = false;
-
   @override
   void initState() {
     animationController =
@@ -60,40 +46,45 @@ class _CheckoutPageState extends State<CheckoutPage>
     super.initState();
   }
 
-  void addAllListData({required UserModel currentUser}) {
-    // if (!addAllListDataComplete) {
-    //   addAllListDataComplete = true;
+  void addShippingListData({required UserModel currentUser}) {
     var count = 5;
-
     listViews.add(
       Padding(
         padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
         child: PayFlowDiagramView(
-          paymentComplete: false,
-          shippingComplete: false,
-          submitComplete: false,
-          animation: Tween(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-              parent: animationController,
-              curve:
-                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
-            ),
-          ),
-          animationController: animationController,
+          currentStep: 0,
         ),
       ),
     );
 
+    if (currentUser.customer!.shipping != null) {
+      listViews.add(
+        Padding(
+          padding: EdgeInsets.all(20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  context.read<CheckoutBloc>().add(NextStepEvent());
+                },
+                child: Text('NEXT'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     listViews.add(
       TitleView(
         showExtraOnTap: () {
-          throw UnimplementedError();
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (_) {
-          //     return EditShippingInfoPage();
-          //   }),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) {
+              return EditShippingInfoPage();
+            }),
+          );
         },
         showExtra: true,
         titleTxt: 'Shipping',
@@ -158,36 +149,243 @@ class _CheckoutPageState extends State<CheckoutPage>
         ),
       );
     }
+  }
 
-    if (currentUser.customer!.shipping != null) {
+  void addPaymentListData({required UserModel currentUser}) {
+    var count = 5;
+    listViews.add(
+      Padding(
+        padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
+        child: PayFlowDiagramView(
+          currentStep: 1,
+        ),
+      ),
+    );
+    if (currentUser.customer!.sources.isNotEmpty) {
       listViews.add(
         Padding(
           padding: EdgeInsets.all(20),
-          child: RoundButtonView(
-            buttonColor: Colors.amber,
-            text: 'CHOOSE PAYMENT',
-            textColor: Colors.white,
-            animation: Tween(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
-                parent: animationController,
-                curve:
-                    Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  context.read<CheckoutBloc>().add(PreviousStepEvent());
+                },
+                child: Text('PREVIOUS'),
               ),
-            ),
-            animationController: animationController,
-            onPressed: () {
-              throw UnimplementedError();
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (_) {
-              //     return CheckoutPaymentPage();
-              //   }),
-              // );
-            },
+              ElevatedButton(
+                onPressed: () {
+                  context.read<CheckoutBloc>().add(NextStepEvent());
+                },
+                child: Text('NEXT'),
+              ),
+            ],
           ),
         ),
       );
     }
+
+    listViews.add(
+      TitleView(
+        showExtraOnTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) {
+              return SavedCardsPage();
+            }),
+          );
+        },
+        showExtra: true,
+        titleTxt: 'Payment',
+        subTxt: 'Edit',
+        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: animationController,
+            curve:
+                Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
+        animationController: animationController,
+      ),
+    );
+
+    if (currentUser.customer!.sources.isEmpty) {
+      listViews.add(
+        TitleView(
+          titleTxt: 'No Saved Cards',
+          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: animationController,
+          showExtra: false,
+          subTxt: '',
+        ),
+      );
+    } else {
+      CreditCardModel creditCard = currentUser.customer!.card!;
+      listViews.add(
+        CreditCardView(
+          deleteCard: () async {
+            locator<ModalService>().showAlert(
+                context: context,
+                title: 'Error',
+                message: 'Click edit to make changes to this card.');
+          },
+          makeDefaultCard: () async {
+            locator<ModalService>().showAlert(
+                context: context,
+                title: 'Error',
+                message: 'Click edit to make changes to this card.');
+          },
+          isDefault: true,
+          creditCard: creditCard,
+          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: animationController,
+        ),
+      );
+    }
+  }
+
+  void addSubmitListData({required UserModel currentUser}) {
+    var count = 5;
+    listViews.add(
+      Padding(
+        padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
+        child: PayFlowDiagramView(
+          currentStep: 2,
+        ),
+      ),
+    );
+
+    if (currentUser.customer!.sources.isNotEmpty) {
+      listViews.add(
+        Padding(
+          padding: EdgeInsets.all(20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  context.read<CheckoutBloc>().add(PreviousStepEvent());
+                },
+                child: Text('PREVIOUS'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  context.read<CheckoutBloc>().add(NextStepEvent());
+                },
+                child: Text('NEXT'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    listViews.add(
+      TitleView(
+        showExtraOnTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) {
+              return SavedCardsPage();
+            }),
+          );
+        },
+        showExtra: true,
+        titleTxt: 'Submit',
+        subTxt: 'Edit',
+        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: animationController,
+            curve:
+                Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
+        animationController: animationController,
+      ),
+    );
+
+    if (currentUser.customer!.sources.isEmpty) {
+      listViews.add(
+        TitleView(
+          titleTxt: 'No Saved Cards',
+          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: animationController,
+          showExtra: false,
+          subTxt: '',
+        ),
+      );
+    } else {
+      CreditCardModel creditCard = currentUser.customer!.card!;
+      listViews.add(
+        CreditCardView(
+          deleteCard: () async {
+            locator<ModalService>().showAlert(
+                context: context,
+                title: 'Error',
+                message: 'Click edit to make changes to this card.');
+          },
+          makeDefaultCard: () async {
+            locator<ModalService>().showAlert(
+                context: context,
+                title: 'Error',
+                message: 'Click edit to make changes to this card.');
+          },
+          isDefault: true,
+          creditCard: creditCard,
+          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: animationController,
+        ),
+      );
+    }
+  }
+
+  void addSuccessListData({required UserModel currentUser}) {
+    listViews.add(
+      Padding(
+        padding: EdgeInsets.fromLTRB(0, 30, 0, 40),
+        child: PayFlowDiagramView(
+          currentStep: 3,
+        ),
+      ),
+    );
+    listViews.add(
+      Padding(
+        padding: EdgeInsets.all(20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('DONE'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    listViews.add(
+      Column(
+        children: [
+          Icon(
+            Icons.check,
+            color: Colors.green,
+            size: 150,
+          ),
+          Text('Order Submitted'),
+          Text('Your order will be ready within 3 business days.',
+              style: TextStyle(fontSize: 12))
+        ],
+      ),
+    );
   }
 
   @override
@@ -198,6 +396,8 @@ class _CheckoutPageState extends State<CheckoutPage>
         backgroundColor: Colors.transparent,
         body: BlocConsumer<CheckoutBloc, CheckoutState>(
           builder: (context, state) {
+            listViews = [];
+
             if (state is CheckoutLoadingState) {
               return Spinner();
             }
@@ -209,7 +409,121 @@ class _CheckoutPageState extends State<CheckoutPage>
               // final List<CartItemModel> cartItems = state.cartItems;
               // final double total = state.total;
 
-              addAllListData(
+              addShippingListData(
+                currentUser: state.currentUser,
+                // subTotal: subTotal,
+                // shippingFee: shippingFee,
+                // sku: sku,
+                // cartItems: cartItems,
+                // total: total,
+              );
+
+              return Stack(
+                children: <Widget>[
+                  LitPicListViews(
+                    listViews: listViews,
+                    animationController: animationController,
+                    scrollController: scrollController,
+                  ),
+                  LitPicAppBar(
+                    title: 'Shopping Cart',
+                    topBarOpacity: topBarOpacity,
+                    animationController: animationController,
+                    goBackAction: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.bottom,
+                  )
+                ],
+              );
+            }
+
+            if (state is CheckoutPaymentState) {
+              // final double subTotal = state.subTotal;
+              // final double shippingFee = state.shippingFee;
+              // final SkuModel sku = state.sku;
+              // final List<CartItemModel> cartItems = state.cartItems;
+              // final double total = state.total;
+
+              addPaymentListData(
+                currentUser: state.currentUser,
+                // subTotal: subTotal,
+                // shippingFee: shippingFee,
+                // sku: sku,
+                // cartItems: cartItems,
+                // total: total,
+              );
+
+              return Stack(
+                children: <Widget>[
+                  LitPicListViews(
+                    listViews: listViews,
+                    animationController: animationController,
+                    scrollController: scrollController,
+                  ),
+                  LitPicAppBar(
+                    title: 'Shopping Cart',
+                    topBarOpacity: topBarOpacity,
+                    animationController: animationController,
+                    goBackAction: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.bottom,
+                  )
+                ],
+              );
+            }
+
+            if (state is CheckoutSubmitState) {
+              // final double subTotal = state.subTotal;
+              // final double shippingFee = state.shippingFee;
+              // final SkuModel sku = state.sku;
+              // final List<CartItemModel> cartItems = state.cartItems;
+              // final double total = state.total;
+
+              addSubmitListData(
+                currentUser: state.currentUser,
+                // subTotal: subTotal,
+                // shippingFee: shippingFee,
+                // sku: sku,
+                // cartItems: cartItems,
+                // total: total,
+              );
+
+              return Stack(
+                children: <Widget>[
+                  LitPicListViews(
+                    listViews: listViews,
+                    animationController: animationController,
+                    scrollController: scrollController,
+                  ),
+                  LitPicAppBar(
+                    title: 'Shopping Cart',
+                    topBarOpacity: topBarOpacity,
+                    animationController: animationController,
+                    goBackAction: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.bottom,
+                  )
+                ],
+              );
+            }
+
+            if (state is CheckoutSuccessState) {
+              // final double subTotal = state.subTotal;
+              // final double shippingFee = state.shippingFee;
+              // final SkuModel sku = state.sku;
+              // final List<CartItemModel> cartItems = state.cartItems;
+              // final double total = state.total;
+
+              addSuccessListData(
                 currentUser: state.currentUser,
                 // subTotal: subTotal,
                 // shippingFee: shippingFee,

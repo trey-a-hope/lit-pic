@@ -23,8 +23,41 @@ class CheckoutLoadedState extends CheckoutState {
 
 class CheckoutShippingState extends CheckoutState {
   final UserModel currentUser;
-   
+
   CheckoutShippingState({required this.currentUser});
+
+  @override
+  List<Object> get props => [
+        currentUser,
+      ];
+}
+
+class CheckoutPaymentState extends CheckoutState {
+  final UserModel currentUser;
+
+  CheckoutPaymentState({required this.currentUser});
+
+  @override
+  List<Object> get props => [
+        currentUser,
+      ];
+}
+
+class CheckoutSubmitState extends CheckoutState {
+  final UserModel currentUser;
+
+  CheckoutSubmitState({required this.currentUser});
+
+  @override
+  List<Object> get props => [
+        currentUser,
+      ];
+}
+
+class CheckoutSuccessState extends CheckoutState {
+  final UserModel currentUser;
+
+  CheckoutSuccessState({required this.currentUser});
 
   @override
   List<Object> get props => [
