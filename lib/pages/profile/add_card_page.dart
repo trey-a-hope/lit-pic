@@ -154,7 +154,7 @@ class _AddCardPageState extends State<AddCardPage>
         Padding(
           padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
           child: RoundButtonView(
-            buttonColor: Colors.green,
+            buttonColor: LitPicTheme.nearlyDarkBlue,
             textColor: Colors.white,
             onPressed: _addTestCardInfo,
             text: 'ADD TEST CARD (DEMO ONLY)',
@@ -265,7 +265,7 @@ class _AddCardPageState extends State<AddCardPage>
 
   void _addTestCardInfo() {
     _cardNumberController.text = '4242424242424242';
-    _expirationController.text = '0621';
+    _expirationController.text = '0622';
     _cvcController.text = '323';
     _autoValidate = true;
   }

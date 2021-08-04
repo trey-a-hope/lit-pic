@@ -20,7 +20,9 @@ class _PayFlowDiagramViewState extends State<PayFlowDiagramView> {
       height: 75,
       width: double.infinity,
       color: Colors.transparent,
-      child: Stepper(
+      child: 
+      
+      Stepper(
         type: StepperType.horizontal,
         physics: ScrollPhysics(),
         currentStep: _currentStep > 2 ? 2 : _currentStep,

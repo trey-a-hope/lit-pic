@@ -161,6 +161,7 @@ class _CheckoutPageState extends State<CheckoutPage>
         ),
       ),
     );
+
     if (currentUser.customer!.sources.isNotEmpty) {
       listViews.add(
         Padding(
@@ -179,6 +180,23 @@ class _CheckoutPageState extends State<CheckoutPage>
                   context.read<CheckoutBloc>().add(NextStepEvent());
                 },
                 child: Text('NEXT'),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      listViews.add(
+        Padding(
+          padding: EdgeInsets.all(20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  context.read<CheckoutBloc>().add(PreviousStepEvent());
+                },
+                child: Text('PREVIOUS'),
               ),
             ],
           ),
@@ -248,7 +266,14 @@ class _CheckoutPageState extends State<CheckoutPage>
     }
   }
 
-  void addSubmitListData({required UserModel currentUser}) {
+  void addSubmitListData({
+    required UserModel currentUser,
+    required List<CartItemModel> cartItems,
+    required SkuModel sku,
+    required double subTotal,
+    required double shippingFee,
+    required double total,
+  }) {
     var count = 5;
     listViews.add(
       Padding(
@@ -272,78 +297,160 @@ class _CheckoutPageState extends State<CheckoutPage>
                 },
                 child: Text('PREVIOUS'),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  context.read<CheckoutBloc>().add(NextStepEvent());
-                },
-                child: Text('NEXT'),
-              ),
             ],
           ),
         ),
       );
     }
-
-    listViews.add(
-      TitleView(
-        showExtraOnTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) {
-              return SavedCardsPage();
-            }),
-          );
-        },
-        showExtra: true,
-        titleTxt: 'Submit',
-        subTxt: 'Edit',
-        animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: animationController,
-            curve:
-                Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: animationController,
-      ),
-    );
-
-    if (currentUser.customer!.sources.isEmpty) {
+    for (int i = 0; i < cartItems.length; i++) {
       listViews.add(
-        TitleView(
-          titleTxt: 'No Saved Cards',
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: animationController,
-              curve:
-                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-          animationController: animationController,
-          showExtra: false,
-          subTxt: '',
-        ),
-      );
-    } else {
-      CreditCardModel creditCard = currentUser.customer!.card!;
-      listViews.add(
-        CreditCardView(
-          deleteCard: () async {
-            locator<ModalService>().showAlert(
-                context: context,
-                title: 'Error',
-                message: 'Click edit to make changes to this card.');
-          },
-          makeDefaultCard: () async {
-            locator<ModalService>().showAlert(
-                context: context,
-                title: 'Error',
-                message: 'Click edit to make changes to this card.');
-          },
-          isDefault: true,
-          creditCard: creditCard,
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: animationController,
-              curve:
-                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-          animationController: animationController,
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: CartItemBoughtView(
+            price: sku.price,
+            cartItem: cartItems[i],
+            animation: Tween(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                parent: animationController,
+                curve:
+                    Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
+              ),
+            ),
+            animationController: animationController,
+          ),
         ),
       );
     }
+
+    listViews.add(Divider());
+
+    listViews.add(
+      Padding(
+        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              'Shipping To',
+            ),
+            Text(
+              '${currentUser.customer!.name}\n${currentUser.customer!.shipping!.address.line1}\n${currentUser.customer!.shipping!.address.city}, ${currentUser.customer!.shipping!.address.state} ${currentUser.customer!.shipping!.address.postalCode}',
+              textAlign: TextAlign.end,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            )
+          ],
+        ),
+      ),
+    );
+
+    listViews.add(
+      Padding(
+        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              'Paying w/ Card',
+            ),
+            Text(
+              '${currentUser.customer!.card!.brand} - ${currentUser.customer!.card!.last4}',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            )
+          ],
+        ),
+      ),
+    );
+    listViews.add(Divider());
+
+    listViews.add(
+      Padding(
+        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              'Sub total',
+            ),
+            Text(
+              locator<FormatterService>().money(amount: subTotal),
+              style: TextStyle(fontWeight: FontWeight.bold),
+            )
+          ],
+        ),
+      ),
+    );
+
+    listViews.add(
+      Padding(
+        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              'Shipping',
+            ),
+            Text(locator<FormatterService>().money(amount: shippingFee),
+                style: TextStyle(fontWeight: FontWeight.bold))
+          ],
+        ),
+      ),
+    );
+
+    listViews.add(
+      Divider(),
+    );
+
+    TextStyle orderTotalStyle = TextStyle(
+        fontWeight: FontWeight.bold,
+        color: LitPicTheme.nearlyDarkBlue,
+        fontSize: 20);
+    listViews.add(
+      Padding(
+        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              'Order Total',
+              style: orderTotalStyle,
+            ),
+            Text(
+              locator<FormatterService>().money(amount: total),
+              style: orderTotalStyle,
+            )
+          ],
+        ),
+      ),
+    );
+
+    listViews.add(Divider());
+
+    listViews.add(
+      Padding(
+        padding: EdgeInsets.all(20),
+        child: RoundButtonView(
+          buttonColor: Colors.amber,
+          text: 'SUBMIT PAYMENT',
+          textColor: Colors.white,
+          animation: Tween(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn),
+            ),
+          ),
+          animationController: animationController,
+          onPressed: () async {
+            bool confirm = await locator<ModalService>().showConfirmation(
+                context: context,
+                title: 'Submit Order',
+                message: 'Are you sure?');
+
+            if (confirm) context.read<CheckoutBloc>().add(SubmitEvent());
+          },
+        ),
+      ),
+    );
   }
 
   void addSuccessListData({required UserModel currentUser}) {
@@ -377,7 +484,7 @@ class _CheckoutPageState extends State<CheckoutPage>
         children: [
           Icon(
             Icons.check,
-            color: Colors.green,
+            color: LitPicTheme.nearlyDarkBlue,
             size: 150,
           ),
           Text('Order Submitted'),
@@ -403,19 +510,8 @@ class _CheckoutPageState extends State<CheckoutPage>
             }
 
             if (state is CheckoutShippingState) {
-              // final double subTotal = state.subTotal;
-              // final double shippingFee = state.shippingFee;
-              // final SkuModel sku = state.sku;
-              // final List<CartItemModel> cartItems = state.cartItems;
-              // final double total = state.total;
-
               addShippingListData(
                 currentUser: state.currentUser,
-                // subTotal: subTotal,
-                // shippingFee: shippingFee,
-                // sku: sku,
-                // cartItems: cartItems,
-                // total: total,
               );
 
               return Stack(
@@ -432,6 +528,14 @@ class _CheckoutPageState extends State<CheckoutPage>
                     goBackAction: () {
                       Navigator.of(context).pop();
                     },
+                    secondaryActionButton: IconButton(
+                      onPressed: () {
+                        context.read<CheckoutBloc>().add(
+                              RefreshEvent(),
+                            );
+                      },
+                      icon: Icon(Icons.refresh),
+                    ),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).padding.bottom,
@@ -441,19 +545,8 @@ class _CheckoutPageState extends State<CheckoutPage>
             }
 
             if (state is CheckoutPaymentState) {
-              // final double subTotal = state.subTotal;
-              // final double shippingFee = state.shippingFee;
-              // final SkuModel sku = state.sku;
-              // final List<CartItemModel> cartItems = state.cartItems;
-              // final double total = state.total;
-
               addPaymentListData(
                 currentUser: state.currentUser,
-                // subTotal: subTotal,
-                // shippingFee: shippingFee,
-                // sku: sku,
-                // cartItems: cartItems,
-                // total: total,
               );
 
               return Stack(
@@ -470,6 +563,14 @@ class _CheckoutPageState extends State<CheckoutPage>
                     goBackAction: () {
                       Navigator.of(context).pop();
                     },
+                    secondaryActionButton: IconButton(
+                      onPressed: () {
+                        context.read<CheckoutBloc>().add(
+                              RefreshEvent(),
+                            );
+                      },
+                      icon: Icon(Icons.refresh),
+                    ),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).padding.bottom,
@@ -479,19 +580,19 @@ class _CheckoutPageState extends State<CheckoutPage>
             }
 
             if (state is CheckoutSubmitState) {
-              // final double subTotal = state.subTotal;
-              // final double shippingFee = state.shippingFee;
-              // final SkuModel sku = state.sku;
-              // final List<CartItemModel> cartItems = state.cartItems;
-              // final double total = state.total;
+              final double subTotal = state.subTotal;
+              final double shippingFee = state.shippingFee;
+              final SkuModel sku = state.sku;
+              final List<CartItemModel> cartItems = state.cartItems;
+              final double total = state.total;
 
               addSubmitListData(
                 currentUser: state.currentUser,
-                // subTotal: subTotal,
-                // shippingFee: shippingFee,
-                // sku: sku,
-                // cartItems: cartItems,
-                // total: total,
+                subTotal: subTotal,
+                shippingFee: shippingFee,
+                sku: sku,
+                cartItems: cartItems,
+                total: total,
               );
 
               return Stack(
@@ -508,6 +609,14 @@ class _CheckoutPageState extends State<CheckoutPage>
                     goBackAction: () {
                       Navigator.of(context).pop();
                     },
+                    secondaryActionButton: IconButton(
+                      onPressed: () {
+                        context.read<CheckoutBloc>().add(
+                              RefreshEvent(),
+                            );
+                      },
+                      icon: Icon(Icons.refresh),
+                    ),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).padding.bottom,
@@ -517,19 +626,8 @@ class _CheckoutPageState extends State<CheckoutPage>
             }
 
             if (state is CheckoutSuccessState) {
-              // final double subTotal = state.subTotal;
-              // final double shippingFee = state.shippingFee;
-              // final SkuModel sku = state.sku;
-              // final List<CartItemModel> cartItems = state.cartItems;
-              // final double total = state.total;
-
               addSuccessListData(
                 currentUser: state.currentUser,
-                // subTotal: subTotal,
-                // shippingFee: shippingFee,
-                // sku: sku,
-                // cartItems: cartItems,
-                // total: total,
               );
 
               return Stack(
@@ -546,6 +644,14 @@ class _CheckoutPageState extends State<CheckoutPage>
                     goBackAction: () {
                       Navigator.of(context).pop();
                     },
+                    secondaryActionButton: IconButton(
+                      onPressed: () {
+                        context.read<CheckoutBloc>().add(
+                              RefreshEvent(),
+                            );
+                      },
+                      icon: Icon(Icons.refresh),
+                    ),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).padding.bottom,

@@ -12,3 +12,7 @@ class LoadPageEvent extends CheckoutEvent {}
 class NextStepEvent extends CheckoutEvent {}
 
 class PreviousStepEvent extends CheckoutEvent {}
+
+class SubmitEvent extends CheckoutEvent {}
+
+class RefreshEvent extends CheckoutEvent {}

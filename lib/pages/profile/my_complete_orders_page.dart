@@ -100,7 +100,7 @@ class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
             ListTileView(
               icon: Icon(
                 MdiIcons.creditCardMarker,
-                color: Colors.green,
+                color: LitPicTheme.nearlyDarkBlue,
               ),
               subTitle: 'ID: ${order.id}',
               title:

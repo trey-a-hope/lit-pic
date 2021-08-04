@@ -45,12 +45,29 @@ class CheckoutPaymentState extends CheckoutState {
 
 class CheckoutSubmitState extends CheckoutState {
   final UserModel currentUser;
+  final double subTotal;
+  final double shippingFee;
+  final SkuModel sku;
+  final List<CartItemModel> cartItems;
+  final double total;
 
-  CheckoutSubmitState({required this.currentUser});
+  CheckoutSubmitState({
+    required this.currentUser,
+    required this.subTotal,
+    required this.shippingFee,
+    required this.sku,
+    required this.cartItems,
+    required this.total,
+  });
 
   @override
   List<Object> get props => [
         currentUser,
+        subTotal,
+        shippingFee,
+        sku,
+        cartItems,
+        total,
       ];
 }
 

@@ -79,7 +79,7 @@ class _ProfileButtonsViewState extends State<ProfileButtonsView>
           title: 'Complete Orders',
           icon: Icon(
             MdiIcons.mailboxUp,
-            color: Colors.green,
+            color: LitPicTheme.nearlyDarkBlue,
             size: 40,
           ),
           onTap: () {

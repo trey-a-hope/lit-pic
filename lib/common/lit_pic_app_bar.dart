@@ -6,11 +6,13 @@ class LitPicAppBar extends StatelessWidget {
   final double topBarOpacity;
   final AnimationController animationController;
   final void Function()? goBackAction;
+  final IconButton? secondaryActionButton;
 
   LitPicAppBar({
     required this.title,
     required this.topBarOpacity,
     required this.animationController,
+    this.secondaryActionButton,
     this.goBackAction,
   }) : super();
 
@@ -83,6 +85,9 @@ class LitPicAppBar extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            if (secondaryActionButton != null) ...[
+                              secondaryActionButton!
+                            ]
                           ],
                         ),
                       )

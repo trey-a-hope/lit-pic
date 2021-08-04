@@ -150,7 +150,7 @@ class _CartPageState extends State<CartPage>
       listViews.add(Divider());
 
       TextStyle orderTotalStyle = TextStyle(
-          fontWeight: FontWeight.bold, color: Colors.green, fontSize: 20);
+          fontWeight: FontWeight.bold, color: LitPicTheme.nearlyDarkBlue, fontSize: 20);
       listViews.add(
         Padding(
           padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
