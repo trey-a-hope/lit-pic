@@ -61,7 +61,7 @@ class _CartPageState extends State<CartPage>
       listViews.add(
         TitleView(
           showExtra: false,
-          titleTxt: 'Your cart is empty boss.',
+          titleTxt: 'Your cart is empty.',
           subTxt: 'Shop',
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
@@ -150,7 +150,9 @@ class _CartPageState extends State<CartPage>
       listViews.add(Divider());
 
       TextStyle orderTotalStyle = TextStyle(
-          fontWeight: FontWeight.bold, color: LitPicTheme.nearlyDarkBlue, fontSize: 20);
+          fontWeight: FontWeight.bold,
+          color: LitPicTheme.nearlyDarkBlue,
+          fontSize: 20);
       listViews.add(
         Padding(
           padding: EdgeInsets.fromLTRB(20, 10, 20, 10),

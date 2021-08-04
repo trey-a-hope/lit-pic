@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:litpic/blocs/checkout/checkout_bloc.dart' as CHECKOUT_BP;
@@ -48,7 +49,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         _currentUser = await locator<AuthService>().getCurrentUser();
         _sku = await locator<StripeSkuService>().retrieve(skuID: SKU_UD);
 
-        add(RefreshEvent());
+        Stream<QuerySnapshot<Object?>> snapshots =
+            locator<CartItemService>().streamCartItems(uid: _currentUser.uid);
+
+        snapshots.listen((event) {
+          add(RefreshEvent());
+        });
       } catch (error) {
         yield ErrorState(error: error);
       }

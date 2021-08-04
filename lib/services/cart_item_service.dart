@@ -12,6 +12,7 @@ abstract class ICartItemService {
       required Map<String, dynamic> data});
   Future<void> deleteCartItem(
       {required String uid, required String cartItemID});
+  Stream<QuerySnapshot<Object?>> streamCartItems({required String uid});
 }
 
 class CartItemService extends ICartItemService {
@@ -83,6 +84,19 @@ class CartItemService extends ICartItemService {
       CollectionReference colRef = _usersDB.doc(uid).collection('cartItems');
       await colRef.doc(cartItemID).delete();
       return;
+    } catch (e) {
+      throw Exception(
+        e.toString(),
+      );
+    }
+  }
+
+  @override
+  Stream<QuerySnapshot<Object?>> streamCartItems({required String uid}) {
+    try {
+      CollectionReference colRef = _usersDB.doc(uid).collection('cartItems');
+      Stream<QuerySnapshot<Object?>> snapshots = colRef.snapshots();
+      return snapshots;
     } catch (e) {
       throw Exception(
         e.toString(),
