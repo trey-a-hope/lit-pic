@@ -8,8 +8,12 @@ import 'package:litpic/common/lit_pic_app_bar.dart';
 import 'package:litpic/common/lit_pic_list_views.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/mixins/ui_properties_mixin.dart';
+import 'package:litpic/models/price_model.dart';
+import 'package:litpic/models/product_model.dart';
 import 'package:litpic/service_locator.dart';
 import 'package:litpic/services/cart_item_service.dart';
+import 'package:litpic/services/stripe_price_service.dart';
+import 'package:litpic/services/stripe_product_service.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +42,7 @@ class CreateLithophaneBloc
   CreateLithophaneBloc() : super(CreateLithophaneInitialState());
 
   late UserModel _currentUser;
-  late SkuModel _sku;
+  late PriceModel _price;
   int _quantity = 1;
 
   @override
@@ -48,18 +52,28 @@ class CreateLithophaneBloc
     yield CreateLithophaneLoadingState();
 
     if (event is LoadPageEvent) {
-      _currentUser = await locator<AuthService>().getCurrentUser();
-      _sku = await locator<StripeSkuService>().retrieve(skuID: SKU_UD);
+      try {
+        _currentUser = await locator<AuthService>().getCurrentUser();
 
-      yield CreateLithophaneLoadedState(
-          sku: _sku, quantity: _quantity, imageUploaded: false);
+        _price = await locator<StripePriceService>().get(priceID: PRICE_ID);
+
+        print(_price);
+
+        yield CreateLithophaneLoadedState(
+          price: _price,
+          quantity: _quantity,
+          imageUploaded: false,
+        );
+      } catch (error) {
+        yield ErrorState(error: error);
+      }
     }
 
     if (event is UpdateQuantityEvent) {
       _quantity = event.quantity;
 
       yield CreateLithophaneLoadedState(
-        sku: _sku,
+        price: _price,
         quantity: _quantity,
         imageUploaded: false,
       );
@@ -89,7 +103,10 @@ class CreateLithophaneBloc
         _quantity = 1;
 
         yield CreateLithophaneLoadedState(
-            sku: _sku, quantity: _quantity, imageUploaded: true);
+          price: _price,
+          quantity: _quantity,
+          imageUploaded: true,
+        );
       } catch (error) {
         yield ErrorState(error: error);
       }

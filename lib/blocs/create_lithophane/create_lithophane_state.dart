@@ -14,19 +14,19 @@ class CreateLithophaneLoadingState extends CreateLithophaneState {
 }
 
 class CreateLithophaneLoadedState extends CreateLithophaneState {
-  final SkuModel sku;
+  final PriceModel price;
   final int quantity;
   final bool imageUploaded;
 
   CreateLithophaneLoadedState({
-    required this.sku,
+    required this.price,
     required this.quantity,
     required this.imageUploaded,
   });
 
   @override
   List<Object> get props => [
-        sku,
+        price,
         quantity,
         imageUploaded,
       ];

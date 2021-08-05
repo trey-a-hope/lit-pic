@@ -139,19 +139,16 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
         );
 
         //Create order document reference.
-        DocumentReference ordersDocRef =
-            await FirebaseFirestore.instance.collection('orders').add({
+        await FirebaseFirestore.instance.collection('Orders').add({
           'id': orderID,
           'name': _currentUser.customer!.shipping!.name,
-          'email': _currentUser.customer!.email
+          'email': _currentUser.customer!.email,
+          'cartItems': _cartItems
+              .map(
+                (c) => c.toMap(),
+              )
+              .toList(),
         });
-
-        //Save cart items to database.
-        for (int i = 0; i < _cartItems.length; i++) {
-          await ordersDocRef.collection('cartItems').add(
-                _cartItems[i].toMap(),
-              );
-        }
 
         //Create user cart items reference.
         CollectionReference cartItemsColRef = FirebaseFirestore.instance

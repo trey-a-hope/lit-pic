@@ -8,6 +8,7 @@ const StripeCharge = require('./stripe/charge_functions');
 const StripeSubscription = require('./stripe/subscription_functions');
 const StripeOrder = require('./stripe/order_functions');
 const StripeProduct = require('./stripe/product_functions');
+const StripePrice = require('./stripe/price_functions');
 const StripeSku = require('./stripe/sku_functions');
 
 admin.initializeApp(functions.config().firebase);
@@ -36,8 +37,12 @@ exports.StripeListOrders = StripeOrder.list;
 exports.StripeUpdateOrder = StripeOrder.update;
 exports.StripePayOrder = StripeOrder.pay;
 
+//Stripe Price
+exports.StripeRetrievePrice = StripePrice.retrieve;
+
 //Stripe Products
 exports.StripeCreateProduct = StripeProduct.create;
+exports.StripeRetrieveProduct = StripeProduct.retrieve;
 
 //Stripe Skus
 exports.StripeRetrieveSku = StripeSku.retrieve;

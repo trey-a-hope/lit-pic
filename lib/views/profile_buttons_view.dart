@@ -79,7 +79,7 @@ class _ProfileButtonsViewState extends State<ProfileButtonsView>
           title: 'Complete Orders',
           icon: Icon(
             MdiIcons.mailboxUp,
-            color: LitPicTheme.nearlyDarkBlue,
+            color: Colors.green,
             size: 40,
           ),
           onTap: () {
@@ -161,7 +161,7 @@ class ProfileBoxView extends StatelessWidget {
   final ProfileBoxModel profileBoxModel;
 
   const ProfileBoxView(
-      {//Key key,
+      { //Key key,
       required this.animationController,
       required this.animation,
       required this.profileBoxModel})

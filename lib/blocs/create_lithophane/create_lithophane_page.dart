@@ -48,7 +48,10 @@ class _CreateLithophanePageState extends State<CreateLithophanePage>
     super.initState();
   }
 
-  void _addAllListData({required SkuModel sku, required int quantity}) {
+  void _addAllListData({
+    required PriceModel price,
+    required int quantity,
+  }) {
     var count = 9;
     listViews.clear();
 
@@ -172,9 +175,12 @@ class _CreateLithophanePageState extends State<CreateLithophanePage>
       ),
     );
 
-    listViews.add(SizedBox(
-      height: 20,
-    ));
+    listViews.add(
+      SizedBox(
+        height: 20,
+      ),
+    );
+
     listViews.add(
       Padding(
         padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -194,7 +200,7 @@ class _CreateLithophanePageState extends State<CreateLithophanePage>
           },
           buttonColor: Colors.amber,
           text:
-              'ADD LITHOPHANE${quantity == 1 ? '' : 'S'} TO CART - ${locator<FormatterService>().money(amount: sku.price * quantity)}',
+              'ADD LITHOPHANE${quantity == 1 ? '' : 'S'} TO CART - ${locator<FormatterService>().money(amount: price.unitAmount * quantity)}',
           textColor: Colors.white,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
@@ -289,10 +295,10 @@ class _CreateLithophanePageState extends State<CreateLithophanePage>
             }
 
             if (state is CreateLithophaneLoadedState) {
-              final SkuModel sku = state.sku;
+              final PriceModel price = state.price;
               final int quantity = state.quantity;
 
-              _addAllListData(sku: sku, quantity: quantity);
+              _addAllListData(price: price, quantity: quantity);
 
               return Stack(
                 children: <Widget>[

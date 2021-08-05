@@ -275,16 +275,16 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
     }
   }
 
-  Future<void> fetchLithophaneSku() async {
-    if (!fetchLithophaneSkuComplete) {
-      fetchLithophaneSkuComplete = true;
-      // final String skuID = await locator<DBService>().retrieveSkuID();
-      _sku = await locator<StripeSkuService>().retrieve(skuID: SKU_UD);
-      // return;
-    } else {
-      return;
-    }
-  }
+  // Future<void> fetchLithophaneSku() async {
+  //   if (!fetchLithophaneSkuComplete) {
+  //     fetchLithophaneSkuComplete = true;
+  //     // final String skuID = await locator<DBService>().retrieveSkuID();
+  //     _sku = await locator<StripeSkuService>().retrieve(skuID: SKU_UD);
+  //     // return;
+  //   } else {
+  //     return;
+  //   }
+  // }
 
   Future<void> fetchCartItems() async {
     if (!fetchCartItemsComplete) {
@@ -299,14 +299,14 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
 
       //Fetch order that matches order id.
       QuerySnapshot orderQuerySnapshot = await FirebaseFirestore.instance
-          .collection('orders')
+          .collection('Orders')
           .where('id', isEqualTo: order.id)
           .get();
 
       //Fetch cart items for that order.
       DocumentSnapshot cartItemDoc = orderQuerySnapshot.docs.first;
       QuerySnapshot cartItemsSnapshot = await FirebaseFirestore.instance
-          .collection('orders')
+          .collection('Orders')
           .doc(cartItemDoc.id)
           .collection('cartItems')
           .get();
@@ -342,7 +342,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
 
   Widget getMainListViewUI() {
     List<Future> futures = [];
-    futures.add(fetchLithophaneSku());
+    // futures.add(fetchLithophaneSku());
     futures.add(fetchCartItems());
     return FutureBuilder(
       future: Future.wait(futures),

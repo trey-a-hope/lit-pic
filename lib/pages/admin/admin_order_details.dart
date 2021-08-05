@@ -401,7 +401,7 @@ class _AdminOrderDetailsPageState extends State<AdminOrderDetailsPage>
 
       //Fetch cart item documents.
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('orders')
+          .collection('Orders')
           .doc(order.id)
           .collection('cartItems')
           .get();

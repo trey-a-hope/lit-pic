@@ -24,3 +24,18 @@ exports.create = functions.https.onRequest((request, response) => {
         });
 
 });
+
+
+exports.retrieve = functions.https.onRequest((request, response) => {
+    const prodID = request.body.prodID;
+
+    return stripe(env.stripe.test.secret_key).products.retrieve(
+        prodID, (err, product) => {
+            if (err) {
+                response.send(err);
+            } else {
+                response.send(product);
+            }
+        });
+
+});

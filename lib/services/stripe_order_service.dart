@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:litpic/models/cart_item_model.dart';
+import 'package:litpic/models/firebase_order_model.dart';
 import 'package:litpic/models/order_model.dart';
 import 'package:litpic/models/sku_model.dart';
 import 'dart:convert' show json;
@@ -10,17 +12,20 @@ import '../constants.dart';
 abstract class IStripeOrderService {
   Future<List<OrderModel>> list({String? customerID, String? status});
 
-  Future<String> create(
-      {required String customerID,
-      required String email,
-      required String name,
-      required String line1,
-      required String city,
-      required String state,
-      required String country,
-      required String postalCode,
-      required List<CartItemModel> cartItems,
-      required SkuModel sku});
+  Future<FirebaseOrderModel> get({required String orderID});
+
+  Future<String> create({
+    required String customerID,
+    required String email,
+    required String name,
+    required String line1,
+    required String city,
+    required String state,
+    required String country,
+    required String postalCode,
+    required List<CartItemModel> cartItems,
+    required SkuModel sku,
+  });
 
   Future<void> update(
       {required String orderID,
@@ -35,6 +40,9 @@ abstract class IStripeOrderService {
 }
 
 class StripeOrderService extends IStripeOrderService {
+  final CollectionReference _ordersDB =
+      FirebaseFirestore.instance.collection('Orders');
+
   @override
   Future<List<OrderModel>> list({String? customerID, String? status}) async {
     Map data = {};
@@ -179,6 +187,19 @@ class StripeOrderService extends IStripeOrderService {
         throw PlatformException(
             message: map['raw']['message'], code: map['raw']['code']);
       }
+    } on PlatformException catch (e) {
+      throw PlatformException(message: e.message, code: e.code);
+    }
+  }
+
+  @override
+  Future<FirebaseOrderModel> get({required String orderID}) async {
+    try {
+      DocumentSnapshot<Object?> doc =
+          (await _ordersDB.where('id', isEqualTo: orderID).get()).docs.first;
+      FirebaseOrderModel firebaseOrderModel =
+          FirebaseOrderModel.fromDoc(doc: doc);
+      return firebaseOrderModel;
     } on PlatformException catch (e) {
       throw PlatformException(message: e.message, code: e.code);
     }

@@ -4,7 +4,9 @@ const String GCF_ENDPOINT =
     'https://us-central1-litpic-f293c.cloudfunctions.net/';
 
 const String SKU_UD = 'sku_GATEGxr1FwZMJQ';
-const String ADMIN_DOC_ID = 'jFPx3bn9asN7UlIaWSlVi9W37bh2';
+const String PRODUCT_ID = 'prod_JyZNMebQ8eAizv';
+const String PRICE_ID = 'price_1JKcEpGQvSy9RLmzKGyqcqy1';
+const String ADMIN_DOC_ID = '5ztYxwc2L9ZbM8UCDRnVmGC1J6N2';
 
 //These are set in main().
 late String version;
