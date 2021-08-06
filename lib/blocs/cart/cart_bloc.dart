@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:litpic/blocs/checkout/checkout_bloc.dart';
 import 'package:litpic/common/lit_pic_app_bar.dart';
 import 'package:litpic/common/lit_pic_list_views.dart';
 import 'package:litpic/common/spinner.dart';
@@ -124,6 +125,32 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         cartItems: _cartItems,
         price: _price,
       );
+    }
+
+    if (event is ProceedToStripeCheckout) {
+      SessionModel session = SessionModel(
+        customer: _currentUser.customer!.id,
+        // lineItems: [
+        //   {
+        //     'price': '$PRICE_ID',
+        //     'quantity': 2,
+        //   },
+        // ],
+      );
+
+      String sessionID = await locator<StripeSessionService>().create(
+        session: session,
+      );
+
+      print('SessionID: $sessionID');
+
+      SessionModel newSession = await locator<StripeSessionService>().retrieve(
+        sessionID: sessionID,
+      );
+
+      print('URL: ${newSession.url}');
+
+      yield StripeCheckoutState(session: newSession);
     }
   }
 

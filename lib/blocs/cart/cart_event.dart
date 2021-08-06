@@ -46,3 +46,10 @@ class RefreshEvent extends CartEvent {
   @override
   List<Object> get props => [];
 }
+
+class ProceedToStripeCheckout extends CartEvent {
+  const ProceedToStripeCheckout();
+
+  @override
+  List<Object> get props => [];
+}

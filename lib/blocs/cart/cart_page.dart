@@ -186,33 +186,7 @@ class _CartPageState extends State<CartPage>
             buttonColor: Colors.amber,
             onPressed: () async {
               try {
-                SessionModel session = SessionModel(
-                  customer: currentUser.customer!.id,
-                  // lineItems: [
-                  //   {
-                  //     'price': '$PRICE_ID',
-                  //     'quantity': 2,
-                  //   },
-                  // ],
-                );
-
-                String sessionID = await locator<StripeSessionService>().create(
-                  session: session,
-                );
-
-                print('SessionID: $sessionID');
-
-                session = await locator<StripeSessionService>().retrieve(
-                  sessionID: sessionID,
-                );
-
-                print('URL: ${session.url}');
-
-                if (await canLaunch(session.url!)) {
-                  await launch(session.url!);
-                } else {
-                  throw 'Could not launch ${session.url}';
-                }
+                context.read<CartBloc>().add(ProceedToStripeCheckout());
               } on PlatformException catch (error) {
                 locator<ModalService>().showAlert(
                   context: context,
@@ -293,7 +267,13 @@ class _CartPageState extends State<CartPage>
 
             return Container();
           },
-          listener: (context, state) {},
+          listener: (context, state) {
+            if (state is StripeCheckoutState) {
+              SessionModel session = state.session;
+              launch(session.url!);
+              context.read<CartBloc>().add(RefreshEvent());
+            }
+          },
         ),
       ),
     );

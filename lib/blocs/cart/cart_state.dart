@@ -51,3 +51,16 @@ class ErrorState extends CartState {
         error,
       ];
 }
+
+class StripeCheckoutState extends CartState {
+  final SessionModel session;
+
+  StripeCheckoutState({
+    required this.session,
+  });
+
+  @override
+  List<Object> get props => [
+        session,
+      ];
+}
