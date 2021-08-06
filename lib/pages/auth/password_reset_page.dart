@@ -33,12 +33,9 @@ class _PasswordResetPageState extends State<PasswordResetPage>
 
   bool addAllListDataComplete = false;
 
-  bool _isLoading = false;
-
   final TextEditingController _emailController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
 
   @override
   void initState() {
@@ -139,19 +136,7 @@ class _PasswordResetPageState extends State<PasswordResetPage>
       if (confirm) {
         _formKey.currentState!.save();
         try {
-          setState(
-            () {
-              _isLoading = true;
-            },
-          );
-
           locator<AuthService>().resetPassword(email: _emailController.text);
-
-          setState(
-            () {
-              _isLoading = false;
-            },
-          );
 
           locator<ModalService>().showAlert(
             context: context,
@@ -159,24 +144,13 @@ class _PasswordResetPageState extends State<PasswordResetPage>
             message: 'Check your email.',
           );
         } catch (e) {
-          setState(
-            () {
-              _isLoading = false;
-            },
-          );
           locator<ModalService>().showAlert(
             context: context,
             title: 'Error',
             message: e.toString(),
           );
         }
-      } else {
-        setState(
-          () {
-            _autoValidate = true;
-          },
-        );
-      }
+      } else {}
     }
   }
 

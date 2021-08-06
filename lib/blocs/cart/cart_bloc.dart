@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:litpic/blocs/checkout/checkout_bloc.dart' as CHECKOUT_BP;
 import 'package:litpic/common/lit_pic_app_bar.dart';
 import 'package:litpic/common/lit_pic_list_views.dart';
 import 'package:litpic/common/spinner.dart';
@@ -10,7 +10,8 @@ import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/mixins/ui_properties_mixin.dart';
 import 'package:litpic/models/cart_item_model.dart';
-import 'package:litpic/models/sku_model.dart';
+import 'package:litpic/models/price_model.dart';
+import 'package:litpic/models/session_model.dart';
 import 'package:litpic/models/user_model.dart';
 import 'package:litpic/service_locator.dart';
 import 'package:litpic/services/auth_service.dart';
@@ -18,13 +19,15 @@ import 'package:litpic/services/cart_item_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/storage_service.dart';
-import 'package:litpic/services/stripe_sku_service.dart';
+import 'package:litpic/services/stripe_customer_service.dart';
+import 'package:litpic/services/stripe_price_service.dart';
+import 'package:litpic/services/stripe_session_service.dart';
 import 'package:litpic/views/cart_item_view.dart';
 import 'package:litpic/views/round_button_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'cart_event.dart';
 part 'cart_state.dart';
@@ -34,9 +37,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc() : super(CartInitialState());
 
   late UserModel _currentUser;
-  late SkuModel _sku;
   late List<CartItemModel> _cartItems;
   double _shippingFee = 0.0;
+  late PriceModel _price;
 
   @override
   Stream<CartState> mapEventToState(
@@ -47,7 +50,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     if (event is LoadPageEvent) {
       try {
         _currentUser = await locator<AuthService>().getCurrentUser();
-        _sku = await locator<StripeSkuService>().retrieve(skuID: SKU_UD);
+        _currentUser.customer = await locator<StripeCustomerService>()
+            .retrieve(customerID: _currentUser.customerID);
+        _price = await locator<StripePriceService>().get(priceID: PRICE_ID);
 
         Stream<QuerySnapshot<Object?>> snapshots =
             locator<CartItemService>().streamCartItems(uid: _currentUser.uid);
@@ -112,11 +117,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           .retrieveCartItems(uid: _currentUser.uid);
 
       yield CartLoadedState(
-        sku: _sku,
+        currentUser: _currentUser,
         subTotal: _getSubTotal(),
         total: _getSubTotal(),
         shippingFee: _shippingFee,
         cartItems: _cartItems,
+        price: _price,
       );
     }
   }
@@ -124,13 +130,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   double _getSubTotal() {
     double total = 0.0;
     _cartItems.forEach((cartItem) {
-      total += cartItem.quantity * _sku.price;
+      total += cartItem.quantity * _price.unitAmount;
     });
     return total;
   }
-
-  // double getStripeProcessingFee() {
-  //   double subTotal = _getSubTotal();
-  //   return (subTotal * 0.029) + 0.3;
-  // }
 }

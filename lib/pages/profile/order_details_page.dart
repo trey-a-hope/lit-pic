@@ -2,13 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:litpic/common/spinner.dart';
-import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/cart_item_model.dart';
 import 'package:litpic/models/order_model.dart';
 import 'package:litpic/models/sku_model.dart';
- import 'package:litpic/services/formatter_service.dart';
-import 'package:litpic/services/stripe_sku_service.dart';
+import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/views/cart_item_bought_view.dart';
 import 'package:litpic/views/simple_title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -41,7 +39,6 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
   bool addAllListDataComplete = false;
   bool fetchLithophaneSkuComplete = false;
   bool fetchCartItemsComplete = false;
-  bool _isLoading = false;
 
   final String timeFormat = 'MMM d, yyyy @ h:mm a';
   late SkuModel _sku;

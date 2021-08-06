@@ -43,7 +43,6 @@ class _AddCardPageState extends State<AddCardPage>
   final TextEditingController _cvcController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
 
   @override
   void initState() {
@@ -213,7 +212,6 @@ class _AddCardPageState extends State<AddCardPage>
   void _submitCard() async {
     final FormState form = _formKey.currentState!;
     if (!form.validate()) {
-      _autoValidate = true;
     } else {
       bool confirm = await locator<ModalService>().showConfirmation(
           context: context, title: 'Add Card', message: 'Are you sure?');
@@ -267,7 +265,6 @@ class _AddCardPageState extends State<AddCardPage>
     _cardNumberController.text = '4242424242424242';
     _expirationController.text = '0622';
     _cvcController.text = '323';
-    _autoValidate = true;
   }
 
   void _clearForm() {

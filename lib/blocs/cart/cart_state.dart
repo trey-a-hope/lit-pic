@@ -13,26 +13,29 @@ class CartLoadingState extends CartState {}
 
 class CartLoadedState extends CartState {
   final List<CartItemModel> cartItems;
-  final SkuModel sku;
   final double subTotal;
   final double shippingFee;
   final double total;
+  final PriceModel price;
+  final UserModel currentUser;
 
   CartLoadedState({
     required this.cartItems,
-    required this.sku,
     required this.subTotal,
     required this.shippingFee,
     required this.total,
+    required this.price,
+    required this.currentUser,
   });
 
   @override
   List<Object> get props => [
         cartItems,
-        sku,
         subTotal,
         shippingFee,
         total,
+        price,
+        currentUser,
       ];
 }
 

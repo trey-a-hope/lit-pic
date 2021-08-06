@@ -39,7 +39,6 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
   final TextEditingController _emailController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
 
   bool _isLoading = false;
 
@@ -234,13 +233,7 @@ class _EditBasicInfoPageState extends State<EditBasicInfoPage>
             message: e.message!,
           );
         }
-      } else {
-        setState(
-          () {
-            _autoValidate = true;
-          },
-        );
-      }
+      } else {}
     }
   }
 

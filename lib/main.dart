@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:litpic/blocs/cart/cart_bloc.dart' as CART_BP;
 import 'package:litpic/blocs/login/login_bloc.dart';
-import 'package:litpic/common/bottom_bar_view.dart';
 import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/pages/home_page.dart';

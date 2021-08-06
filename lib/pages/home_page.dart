@@ -158,6 +158,7 @@ class _HomePageState extends State<HomePage>
             await locator<StripeOrderService>().get(orderID: orderModel.id);
         firebaseOrderModels.add(firebaseOrderModel);
       }
+
       print(firebaseOrderModels);
 
       //Request permission on iOS device.

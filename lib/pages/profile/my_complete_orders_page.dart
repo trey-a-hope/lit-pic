@@ -37,8 +37,6 @@ class _MyCompleteOrdersPageState extends State<MyCompleteOrdersPage>
 
   bool addAllListDataComplete = false;
 
-  bool _isLoading = false;
-
   @override
   void initState() {
     animationController =

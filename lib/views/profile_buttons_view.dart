@@ -3,7 +3,6 @@ import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/pages/profile/my_complete_orders_page.dart';
 import 'package:litpic/pages/profile/my_open_orders_page.dart';
 import 'package:litpic/pages/profile/profile_personal_info_page.dart';
-import 'package:litpic/pages/profile/saved_cards_page.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class ProfileButtonsView extends StatefulWidget {
@@ -45,21 +44,21 @@ class _ProfileButtonsViewState extends State<ProfileButtonsView>
               }),
             );
           }),
-      ProfileBoxModel(
-          title: 'Saved Cards',
-          icon: Icon(
-            MdiIcons.creditCard,
-            color: Colors.blue,
-            size: 40,
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) {
-                return SavedCardsPage();
-              }),
-            );
-          }),
+      // ProfileBoxModel(
+      //     title: 'Saved Cards',
+      //     icon: Icon(
+      //       MdiIcons.creditCard,
+      //       color: Colors.blue,
+      //       size: 40,
+      //     ),
+      //     onTap: () {
+      //       Navigator.push(
+      //         context,
+      //         MaterialPageRoute(builder: (_) {
+      //           return SavedCardsPage();
+      //         }),
+      //       );
+      //     }),
       ProfileBoxModel(
           title: 'Open Orders',
           icon: Icon(

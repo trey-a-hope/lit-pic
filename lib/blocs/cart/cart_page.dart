@@ -47,11 +47,12 @@ class _CartPageState extends State<CartPage>
   }
 
   void addAllListData({
+    required UserModel currentUser,
     required List<CartItemModel> cartItems,
-    required SkuModel sku,
     required double subTotal,
     required double shippingFee,
     required double total,
+    required double price,
   }) async {
     listViews.clear();
 
@@ -63,10 +64,13 @@ class _CartPageState extends State<CartPage>
           showExtra: false,
           titleTxt: 'Your cart is empty.',
           subTxt: 'Shop',
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+          animation: Tween(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
               parent: animationController,
               curve:
-                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
+            ),
+          ),
           animationController: animationController,
         ),
       );
@@ -77,7 +81,7 @@ class _CartPageState extends State<CartPage>
           Padding(
             padding: EdgeInsets.all(10),
             child: CartItemView(
-              price: sku.price,
+              price: price,
               delete: () async {
                 bool confirm = await locator<ModalService>().showConfirmation(
                   context: context,
@@ -181,29 +185,41 @@ class _CartPageState extends State<CartPage>
             text: 'PROCEED TO CHECKOUT',
             buttonColor: Colors.amber,
             onPressed: () async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
+              try {
+                SessionModel session = SessionModel(
+                  customer: currentUser.customer!.id,
+                  // lineItems: [
+                  //   {
+                  //     'price': '$PRICE_ID',
+                  //     'quantity': 2,
+                  //   },
+                  // ],
+                );
 
-              prefs.setDouble('subTotal', subTotal);
-              prefs.setDouble('shippingFee', shippingFee);
-              prefs.setDouble('total', total);
+                String sessionID = await locator<StripeSessionService>().create(
+                  session: session,
+                );
 
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (_) {
-              //     return CheckoutShippingPage();
-              //   }),
-              // );
+                print('SessionID: $sessionID');
 
-              Route route = MaterialPageRoute(
-                builder: (context) => BlocProvider(
-                  create: (context) => CHECKOUT_BP.CheckoutBloc()
-                    ..add(
-                      CHECKOUT_BP.LoadPageEvent(),
-                    ),
-                  child: CHECKOUT_BP.CheckoutPage(),
-                ),
-              );
-              Navigator.push(context, route);
+                session = await locator<StripeSessionService>().retrieve(
+                  sessionID: sessionID,
+                );
+
+                print('URL: ${session.url}');
+
+                if (await canLaunch(session.url!)) {
+                  await launch(session.url!);
+                } else {
+                  throw 'Could not launch ${session.url}';
+                }
+              } on PlatformException catch (error) {
+                locator<ModalService>().showAlert(
+                  context: context,
+                  title: 'Error',
+                  message: error.message.toString(),
+                );
+              }
             },
             textColor: Colors.white,
             animation: Tween(begin: 0.0, end: 1.0).animate(
@@ -236,14 +252,16 @@ class _CartPageState extends State<CartPage>
             if (state is CartLoadedState) {
               final double subTotal = state.subTotal;
               final double shippingFee = state.shippingFee;
-              final SkuModel sku = state.sku;
               final List<CartItemModel> cartItems = state.cartItems;
               final double total = state.total;
+              final PriceModel price = state.price;
+              final UserModel currentUser = state.currentUser;
 
               addAllListData(
+                currentUser: currentUser,
                 subTotal: subTotal,
                 shippingFee: shippingFee,
-                sku: sku,
+                price: price.unitAmount,
                 cartItems: cartItems,
                 total: total,
               );

@@ -42,9 +42,6 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
   final TextEditingController _zipController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  bool _autoValidate = false;
-
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -219,12 +216,6 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
         _formKey.currentState!.save();
 
         try {
-          setState(
-            () {
-              _isLoading = true;
-            },
-          );
-
           //Update address info.
           await locator<StripeCustomerService>().update(
               name: _currentUser.customer!.name,
@@ -235,35 +226,19 @@ class _EditShippingInfoPageState extends State<EditShippingInfoPage>
               postalCode: _zipController.text,
               country: 'US');
 
-          setState(
-            () {
-              _isLoading = false;
-            },
-          );
           locator<ModalService>().showAlert(
             context: context,
             title: 'Success',
             message: 'Shipping Info Updated',
           );
         } on PlatformException catch (e) {
-          setState(
-            () {
-              _isLoading = false;
-            },
-          );
           locator<ModalService>().showAlert(
             context: context,
             title: 'Error',
             message: e.message!,
           );
         }
-      } else {
-        setState(
-          () {
-            _autoValidate = true;
-          },
-        );
-      }
+      } else {}
     }
   }
 
