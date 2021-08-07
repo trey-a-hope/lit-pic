@@ -11,6 +11,7 @@ const StripeProduct = require('./stripe/product_functions');
 const StripePrice = require('./stripe/price_functions');
 const StripeSession = require('./stripe/session_functions');
 const StripeSku = require('./stripe/sku_functions');
+const Webhooks = require('./stripe/webhooks');
 
 admin.initializeApp(functions.config().firebase);
 
@@ -58,3 +59,6 @@ exports.StripeCreateSubscription = StripeSubscription.create;
 
 //Stripe Tokens
 exports.StripeCreateToken = StripeToken.create;
+
+//Webhooks Payments
+exports.WebhooksPayments = Webhooks.payments;

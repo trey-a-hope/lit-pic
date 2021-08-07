@@ -130,12 +130,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     if (event is ProceedToStripeCheckout) {
       SessionModel session = SessionModel(
         customer: _currentUser.customer!.id,
-        // lineItems: [
-        //   {
-        //     'price': '$PRICE_ID',
-        //     'quantity': 2,
-        //   },
-        // ],
       );
 
       String sessionID = await locator<StripeSessionService>().create(

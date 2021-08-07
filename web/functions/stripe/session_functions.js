@@ -10,7 +10,6 @@ exports.create = functions.https.onRequest((request, response) => {
     // const line_items = request.body.line_items;
 
     return stripe(env.stripe.test.secret_key).checkout.sessions.create(
-
         {
             success_url: success_url,
             cancel_url: cancel_url,
@@ -30,7 +29,6 @@ exports.create = functions.https.onRequest((request, response) => {
                 response.send(session);
             }
         });
-
 });
 
 
