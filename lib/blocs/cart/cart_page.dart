@@ -186,6 +186,15 @@ class _CartPageState extends State<CartPage>
             buttonColor: Colors.amber,
             onPressed: () async {
               try {
+                if (currentUser.customer!.shipping == null) {
+                  locator<ModalService>().showAlert(
+                    context: context,
+                    title: 'Error',
+                    message: 'No shipping address on file; go to Profile to add a default address.',
+                  );
+                  return;
+                }
+
                 context.read<CartBloc>().add(ProceedToStripeCheckout());
               } on PlatformException catch (error) {
                 locator<ModalService>().showAlert(
