@@ -2,24 +2,39 @@ const stripe = require('stripe');
 const functions = require('firebase-functions');
 const env = functions.config();
 const admin = require('firebase-admin');
+const https = require('https')
 
-exports.payments = functions.https.onRequest((request, response) => {
+exports.payments = functions.https.onRequest(async (request, response) => {
     let sig = request.headers['stripe-signature'];
 
-    const endpointSecret = 'whsec_k1BZvAONL5R65ZyeRM7yt7Pgggl0QBhZ';//TODO: Make environment variable.
+    const ADMIN_DOC_ID = '5ztYxwc2L9ZbM8UCDRnVmGC1J6N2';
 
     try {
-        let event = stripe.webhooks.constructEvent(request.rawBody, sig, endpointSecret);
+        let event = stripe.webhooks.constructEvent(request.rawBody, sig, env.webhooks.payments.endpoint_secret);
 
         switch (event['type']) {
             case 'payment_intent.succeeded':
                 //Add new order document to firebase.
-                return admin.firestore().collection('Orders').add({ orderID: 'fjaiefa', firstName: 'Trey', lastName: 'Hope', }).then((val) => {
-                    //TODO: Send notification to admin of new order.
-                    return response.json({ type: 'payment_intent.succeeded' });
-                }).catch((err) => {
-                    print(err);
-                });
+                var data = { orderID: 'fjaiefa', firstName: 'Trey', lastName: 'Hope', };
+                // doc: FirebaseFirestore.DocumentReference = await admin.firestore().collection('Orders').add(data);
+                await admin.firestore().collection('Orders').add(data);
+
+                //TODO: Clear shopping cart for this user.
+
+                //Send notification to admin of new order.
+                var adminDoc = await admin.firestore().collection('Users').doc(ADMIN_DOC_ID).get();
+
+                var payload = {
+                    notification: {
+                        title: 'You have been invited to a trip.',
+                        body: 'Tap here to check it out!',
+                    }
+                };
+
+                await admin.messaging().sendToDevice(adminDoc.data()['fcmToken'], payload);
+
+                //Return success message.
+                return response.json({ type: 'payment_intent.succeeded', admin: adminDoc.data()['fcmToken'], });
             case 'payment_intent.payment_failed':
                 return response.json({ type: 'payment_intent.payment_failed' });
             default:
