@@ -2,7 +2,6 @@ const stripe = require('stripe');
 const functions = require('firebase-functions');
 const env = functions.config();
 const admin = require('firebase-admin');
-const https = require('https')
 
 exports.payments = functions.https.onRequest(async (request, response) => {
     let sig = request.headers['stripe-signature'];
@@ -15,6 +14,7 @@ exports.payments = functions.https.onRequest(async (request, response) => {
         switch (event['type']) {
             case 'payment_intent.succeeded':
                 //Add new order document to firebase.
+                //TODO: Add customer and order data here.
                 var data = { orderID: 'fjaiefa', firstName: 'Trey', lastName: 'Hope', };
                 // doc: FirebaseFirestore.DocumentReference = await admin.firestore().collection('Orders').add(data);
                 await admin.firestore().collection('Orders').add(data);
@@ -34,7 +34,7 @@ exports.payments = functions.https.onRequest(async (request, response) => {
                 await admin.messaging().sendToDevice(adminDoc.data()['fcmToken'], payload);
 
                 //Return success message.
-                return response.json({ type: 'payment_intent.succeeded', admin: adminDoc.data()['fcmToken'], });
+                return response.json({ type: 'payment_intent.succeeded', admin: adminDoc.data()['fcmToken'], event: event });
             case 'payment_intent.payment_failed':
                 return response.json({ type: 'payment_intent.payment_failed' });
             default:

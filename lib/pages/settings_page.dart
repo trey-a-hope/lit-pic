@@ -29,7 +29,7 @@ class _SettingsPageState extends State<SettingsPage>
   // double topBarOpacity = 0.0;
 
   final Color iconColor = Colors.amber[700]!;
-  late UserModel _currentUser;
+  // late UserModel _currentUser;
   bool addAllListDataComplete = false;
 
   @override
@@ -74,36 +74,35 @@ class _SettingsPageState extends State<SettingsPage>
       addAllListDataComplete = true;
       int count = 3;
 
-      //Admin
-      if (_currentUser.uid == ADMIN_DOC_ID) {
-        listViews.add(
-          ListTileView(
-            animationController: animationController,
-            animation: Tween(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
-                parent: animationController,
-                curve:
-                    Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
-              ),
-            ),
-            icon: Icon(
-              MdiIcons.security,
-              color: iconColor,
-            ),
-            title: 'Admin',
-            subTitle: 'Do admin things.',
-            onTap: () async {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) {
-                  return AdminPage(
-                      animationController: animationController);
-                }),
-              );
-            },
-          ),
-        );
-      }
+      //TODO: Add back in Admin.
+      // if (_currentUser.uid == ADMIN_DOC_ID) {
+      //   listViews.add(
+      //     ListTileView(
+      //       animationController: animationController,
+      //       animation: Tween(begin: 0.0, end: 1.0).animate(
+      //         CurvedAnimation(
+      //           parent: animationController,
+      //           curve:
+      //               Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
+      //         ),
+      //       ),
+      //       icon: Icon(
+      //         MdiIcons.security,
+      //         color: iconColor,
+      //       ),
+      //       title: 'Admin',
+      //       subTitle: 'Do admin things.',
+      //       onTap: () async {
+      //         Navigator.push(
+      //           context,
+      //           MaterialPageRoute(builder: (_) {
+      //             return AdminPage(animationController: animationController);
+      //           }),
+      //         );
+      //       },
+      //     ),
+      //   );
+      // }
 
       //Go To Website
       listViews.add(
@@ -192,16 +191,16 @@ class _SettingsPageState extends State<SettingsPage>
     }
   }
 
-  Future<void> load() async {
-    try {
-      //Load user.
-      _currentUser = await locator<AuthService>().getCurrentUser();
-      return;
-    } on PlatformException catch (e) {
-      return locator<ModalService>()
-          .showAlert(context: context, title: 'Error', message: e.message!);
-    }
-  }
+  // Future<void> load() async {
+  //   try {
+  //     //Load user.
+  //     _currentUser = await locator<AuthService>().getCurrentUser();
+  //     return;
+  //   } on PlatformException catch (e) {
+  //     return locator<ModalService>()
+  //         .showAlert(context: context, title: 'Error', message: e.message!);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +223,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   Widget getMainListViewUI() {
     List<Future> futures = [];
-    futures.add(load());
+    // futures.add(load());
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {
