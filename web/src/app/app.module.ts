@@ -10,6 +10,8 @@ import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.co
 import { SupportComponent } from './pages/support/support.component';
 import { FooterComponent } from './widgets/footer/footer.component';
 import { ToolbarComponent } from './widgets/toolbar/toolbar.component';
+import { PaymentSuccessComponent } from './pages/payment-success/payment-success.component';
+import { PaymentCancelComponent } from './pages/payment-cancel/payment-cancel.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { ToolbarComponent } from './widgets/toolbar/toolbar.component';
     PrivacyPolicyComponent,
     SupportComponent,
     FooterComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    PaymentSuccessComponent,
+    PaymentCancelComponent
   ],
   imports: [
     BrowserModule,

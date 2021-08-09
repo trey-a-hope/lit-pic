@@ -8,9 +8,9 @@ const String PRODUCT_ID = 'prod_JyZNMebQ8eAizv';
 const String PRICE_ID = 'price_1JKcEpGQvSy9RLmzKGyqcqy1';
 const String ADMIN_DOC_ID = '5ztYxwc2L9ZbM8UCDRnVmGC1J6N2';
 
-const String STRIPE_SUCCESS_URL = 'https://www.success.com/';
-const String STRIPE_CANCEL_URL =
-    'https://www.merriam-webster.com/dictionary/cancel';
+const String STRIPE_SUCCESS_URL =
+    'https://litpic-f293c.web.app/payment-success';
+const String STRIPE_CANCEL_URL = 'https://litpic-f293c.web.app/payment-cancel';
 
 //These are set in main().
 late String version;
