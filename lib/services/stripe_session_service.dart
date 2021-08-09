@@ -16,8 +16,8 @@ class StripeSessionService extends IStripeSessionService {
   Future<String> create({required SessionModel session}) async {
     http.Response response = await http.post(
       Uri.parse('${GCF_ENDPOINT}StripeCreateSession'),
-      body: session.toMap(),
-      headers: {'content-type': 'application/x-www-form-urlencoded'},
+      body: json.encode(session.toMap()),
+      headers: {'content-type': 'application/json'},
     );
 
     try {

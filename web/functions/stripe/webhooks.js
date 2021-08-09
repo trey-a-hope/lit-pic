@@ -14,10 +14,8 @@ exports.payments = functions.https.onRequest(async (request, response) => {
         switch (event['type']) {
             case 'payment_intent.succeeded':
                 //Add new order document to firebase.
-                //TODO: Add customer and order data here.
-                var data = { orderID: 'fjaiefa', firstName: 'Trey', lastName: 'Hope', };
-                // doc: FirebaseFirestore.DocumentReference = await admin.firestore().collection('Orders').add(data);
-                await admin.firestore().collection('Orders').add(data);
+                //var data = { orderID: 'fjaiefa', firstName: 'Trey', lastName: 'Hope', };
+                //await admin.firestore().collection('Orders').add(data);
 
                 //TODO: Clear shopping cart for this user.
 

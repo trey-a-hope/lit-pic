@@ -2,12 +2,13 @@ const stripe = require('stripe');
 const functions = require('firebase-functions');
 const env = functions.config();
 
-
 exports.create = functions.https.onRequest((request, response) => {
     const success_url = request.body.success_url;
     const cancel_url = request.body.cancel_url;
     const customer = request.body.customer;
-    // const line_items = request.body.line_items;
+    const line_items = request.body.line_items;
+
+    //TODO: Look into https://stripe.com/docs/payments/checkout/adjustable-quantity
 
     return stripe(env.stripe.test.secret_key).checkout.sessions.create(
         {
@@ -15,12 +16,7 @@ exports.create = functions.https.onRequest((request, response) => {
             cancel_url: cancel_url,
             payment_method_types: ['card'],
             mode: 'payment',
-            line_items: [
-                {
-                    'price': 'price_1JKcEpGQvSy9RLmzKGyqcqy1',
-                    'quantity': 2,
-                },
-            ],
+            line_items: line_items,
             customer: customer,
         }, (err, session) => {
             if (err) {
@@ -30,7 +26,6 @@ exports.create = functions.https.onRequest((request, response) => {
             }
         });
 });
-
 
 exports.retrieve = functions.https.onRequest((request, response) => {
     const sessionID = request.body.sessionID;
@@ -43,7 +38,6 @@ exports.retrieve = functions.https.onRequest((request, response) => {
                 response.send(session);
             }
         });
-
 });
 
 exports.list = functions.https.onRequest((request, response) => {
@@ -59,5 +53,4 @@ exports.list = functions.https.onRequest((request, response) => {
                 response.send(sessions);
             }
         });
-
 });
