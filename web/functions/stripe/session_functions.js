@@ -8,8 +8,6 @@ exports.create = functions.https.onRequest((request, response) => {
     const customer = request.body.customer;
     const line_items = request.body.line_items;
 
-    //TODO: Look into https://stripe.com/docs/payments/checkout/adjustable-quantity
-
     return stripe(env.stripe.test.secret_key).checkout.sessions.create(
         {
             success_url: success_url,
