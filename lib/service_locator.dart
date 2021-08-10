@@ -8,6 +8,7 @@ import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/image_service.dart';
 import 'package:litpic/services/litpic_service.dart';
 import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/services/order_service.dart';
 import 'package:litpic/services/storage_service.dart';
 import 'package:litpic/services/stripe_card_service.dart';
 import 'package:litpic/services/stripe_coupon_service.dart';
@@ -34,6 +35,7 @@ void setUpLocater() {
   locator.registerLazySingleton(() => ImageService());
   locator.registerLazySingleton(() => LitPicService());
   locator.registerLazySingleton(() => ModalService());
+  locator.registerLazySingleton(() => OrderService());
   locator.registerLazySingleton(() => StorageService());
   locator.registerLazySingleton(() => StripeCardService());
   locator.registerLazySingleton(() => StripeCustomerService());
