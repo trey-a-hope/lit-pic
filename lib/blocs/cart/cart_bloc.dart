@@ -128,16 +128,35 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
 
     if (event is ProceedToStripeCheckout) {
+      //Convert cart items to line items for Session API.
+      List<Map<dynamic, dynamic>> lineItems = _cartItems
+          .map(
+            (cartItem) => {
+              'name': 'Image ${_cartItems.indexOf(cartItem) + 1}',
+              'description': 'Colored 3D-Printed Lithophane.',
+              'amount': _price.unitAmount * 100,
+              'currency': 'usd',
+              'quantity': cartItem.quantity,
+              'images': [
+                cartItem.imgUrl,
+              ],
+            },
+          )
+          .toList();
+
       SessionModel session = SessionModel(
         customer: _currentUser.customer!.id,
+        lineItems: lineItems,
       );
 
+      //Create checkout session.
       String sessionID = await locator<StripeSessionService>().create(
         session: session,
       );
 
       print('SessionID: $sessionID');
 
+      //Retrieve that session.
       SessionModel newSession = await locator<StripeSessionService>().retrieve(
         sessionID: sessionID,
       );
