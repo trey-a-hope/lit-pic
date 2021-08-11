@@ -24,7 +24,6 @@ exports.payments = functions.https.onRequest(async (request, response) => {
                     receiptUrl: receiptUrl,
                     paymentIntentID: paymentIntentID,
                     customerID: customerID,
-                    created: Date.now(),
                     modified: Date.now(),
                     status: 'created',
                     carrier: null,

@@ -8,11 +8,13 @@ import 'package:litpic/mixins/ui_properties_mixin.dart';
 import 'package:litpic/models/firebase_order_model.dart';
 import 'package:litpic/models/litpic_model.dart';
 import 'package:litpic/models/order_model.dart';
+import 'package:litpic/models/payment_intent_model.dart';
 import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/litpic_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/stripe_order_service.dart';
+import 'package:litpic/services/stripe_payment_intent_service.dart';
 import 'package:litpic/services/user_service.dart';
 import 'package:litpic/views/detail_card_view.dart';
 import 'package:litpic/views/recent_creations_view.dart';
@@ -149,17 +151,23 @@ class _HomePageState extends State<HomePage>
       List<OrderModel> completeOrders =
           await locator<StripeOrderService>().list(status: 'fulfilled');
 
+      PaymentIntentModel paymentIntent =
+          await locator<StripePaymentIntentService>()
+              .retrieve(paymentIntentID: 'pi_3JMn7GGQvSy9RLmz1XJKGjvq');
+
+      print(paymentIntent);
+
       // List<FirebaseOrderModel> completeOrders
 
-      List<FirebaseOrderModel> firebaseOrderModels = [];
-      for (int i = 0; i < completeOrders.length; i++) {
-        OrderModel orderModel = completeOrders[i];
-        FirebaseOrderModel firebaseOrderModel =
-            await locator<StripeOrderService>().get(orderID: orderModel.id);
-        firebaseOrderModels.add(firebaseOrderModel);
-      }
+      // List<FirebaseOrderModel> firebaseOrderModels = [];
+      // for (int i = 0; i < completeOrders.length; i++) {
+      //   OrderModel orderModel = completeOrders[i];
+      //   FirebaseOrderModel firebaseOrderModel =
+      //       await locator<StripeOrderService>().get(orderID: orderModel.id);
+      //   firebaseOrderModels.add(firebaseOrderModel);
+      // }
 
-      print(firebaseOrderModels);
+      // print(firebaseOrderModels);
 
       //Request permission on iOS device.
       if (Platform.isIOS) {

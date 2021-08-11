@@ -8,6 +8,17 @@ class FirebaseOrderModel {
   final String email;
   final List<CartItemModel> cartItems;
 
+  // var order = {
+  //     receiptUrl: receiptUrl,
+  //     paymentIntentID: paymentIntentID,
+  //     customerID: customerID,
+  //     modified: Date.now(),
+  //     status: 'created',
+  //     carrier: null,
+  //     trackingNumber: null,
+  //     shipping: customer['shipping'],
+  // };
+
   FirebaseOrderModel({
     required this.id,
     required this.name,
@@ -21,6 +32,6 @@ class FirebaseOrderModel {
       name: (doc.data() as dynamic)['name'],
       email: (doc.data() as dynamic)['email'],
       cartItems: (doc.data() as dynamic)['cartItems'],
-     );
+    );
   }
 }

@@ -7,6 +7,7 @@ const StripeCoupon = require('./stripe/coupon_functions');
 const StripeCharge = require('./stripe/charge_functions');
 const StripeSubscription = require('./stripe/subscription_functions');
 const StripeOrder = require('./stripe/order_functions');
+const StripePaymentIntent = require('./stripe/payment_intent_functions');
 const StripeProduct = require('./stripe/product_functions');
 const StripePrice = require('./stripe/price_functions');
 const StripeSession = require('./stripe/session_functions');
@@ -38,6 +39,9 @@ exports.StripeCreateOrder = StripeOrder.create;
 exports.StripeListOrders = StripeOrder.list;
 exports.StripeUpdateOrder = StripeOrder.update;
 exports.StripePayOrder = StripeOrder.pay;
+
+//Stripe Payment Intent
+exports.StripePaymentIntentRetrieve = StripePaymentIntent.retrieve;
 
 //Stripe Price
 exports.StripeRetrievePrice = StripePrice.retrieve;
