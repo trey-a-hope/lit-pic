@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/mixins/ui_properties_mixin.dart';
@@ -34,8 +36,36 @@ class _HomePageState extends State<HomePage>
   bool addAllListDataComplete = false;
   List<LitPicModel> litPics = [];
 
+  String? _authStatus;
+  Future<void> initTrackingPermission() async {
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      final TrackingStatus status =
+          await AppTrackingTransparency.trackingAuthorizationStatus;
+      // setState(() => _authStatus = '$status');
+      // If the system can show an authorization request dialog
+      if (status == TrackingStatus.notDetermined) {
+        //call timer here
+        // Show a custom explainer dialog before the system dialog
+        if (true /*await showCustomTrackingDialog(context)*/) {
+          // Wait for dialog popping animation
+          await Future.delayed(const Duration(milliseconds: 200));
+          // Request system's tracking authorization dialog
+          final TrackingStatus status =
+              await AppTrackingTransparency.requestTrackingAuthorization();
+          setState(() => _authStatus = '$status');
+        }
+      }
+    } on PlatformException {
+      setState(() => _authStatus = 'PlatformException was thrown');
+    }
+    final uuid = await AppTrackingTransparency.getAdvertisingIdentifier();
+    print("UUID: $uuid");
+  }
+
   @override
   void initState() {
+    initTrackingPermission();
     animationController =
         AnimationController(duration: Duration(milliseconds: 600), vsync: this);
 
