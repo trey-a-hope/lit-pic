@@ -1,37 +1,35 @@
 //TODO: Find better name.
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:litpic/models/cart_item_model.dart';
 
 class FirebaseOrderModel {
   final String id;
-  final String name;
-  final String email;
-  final List<CartItemModel> cartItems;
-
-  // var order = {
-  //     receiptUrl: receiptUrl,
-  //     paymentIntentID: paymentIntentID,
-  //     customerID: customerID,
-  //     modified: Date.now(),
-  //     status: 'created',
-  //     carrier: null,
-  //     trackingNumber: null,
-  //     shipping: customer['shipping'],
-  // };
+  final String customerID;
+  final String status;
+  final String? trackingNumber;
+  final String? carrier;
+  final Map shipping;
+  final String sessionID;
 
   FirebaseOrderModel({
     required this.id,
-    required this.name,
-    required this.email,
-    required this.cartItems,
+    required this.customerID,
+    required this.status,
+    required this.trackingNumber,
+    required this.carrier,
+    required this.shipping,
+    required this.sessionID,
   });
 
   factory FirebaseOrderModel.fromDoc({required DocumentSnapshot doc}) {
+    dynamic data = (doc.data() as dynamic);
     return FirebaseOrderModel(
-      id: (doc.data() as dynamic)['id'],
-      name: (doc.data() as dynamic)['name'],
-      email: (doc.data() as dynamic)['email'],
-      cartItems: (doc.data() as dynamic)['cartItems'],
+      id: data['id'],
+      customerID: data['customerID'],
+      status: data['status'],
+      trackingNumber: data['trackingNumber'],
+      carrier: data['carrier'],
+      shipping: data['shipping'],
+      sessionID: data['sessionID'],
     );
   }
 }

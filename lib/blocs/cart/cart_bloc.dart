@@ -161,7 +161,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         sessionID: sessionID,
       );
 
-      print('URL: ${newSession.url}');
+      print('New SessionID: ${newSession.id}');
 
       yield StripeCheckoutState(session: newSession);
     }

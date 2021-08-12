@@ -15,7 +15,7 @@ class StripePaymentIntentService extends IStripePaymentIntentService {
 
     http.Response response = await http.post(
       Uri.parse('${GCF_ENDPOINT}StripePaymentIntentRetrieve'),
-      body: json.encode(data),
+      body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
 

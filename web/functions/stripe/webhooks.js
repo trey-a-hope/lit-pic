@@ -12,34 +12,36 @@ exports.payments = functions.https.onRequest(async (request, response) => {
         let event = stripe.webhooks.constructEvent(request.rawBody, sig, env.webhooks.payments.endpoint_secret);
 
         switch (event['type']) {
-            case 'payment_intent.succeeded':
-                //Add object data to firebase.
-                var receiptUrl = event['data']['object']['charges']['data'][0]['receipt_url'];
-                var customerID = event['data']['object']['customer'];
-                var paymentIntentID = event['data']['object']['id'];
+            case 'checkout.session.completed':
+                var session = event.data.object;
+
+                var sessionID = session['id'];
+                var customerID = session['customer'];
 
                 var customer = await stripe(env.stripe.test.secret_key).customers.retrieve(customerID);
 
                 var order = {
-                    receiptUrl: receiptUrl,
-                    paymentIntentID: paymentIntentID,
+                    sessionID: sessionID,
                     customerID: customerID,
-                    modified: Date.now(),
                     status: 'created',
                     carrier: null,
                     trackingNumber: null,
                     shipping: customer['shipping'],
                 };
 
-                await admin.firestore().collection('Orders').add(order);
+                var orderDoc = await admin.firestore().collection('Orders').doc();
+                order['id'] = orderDoc.id;
+                await admin.firestore().collection('Orders').doc(order['id']).set(order);
 
                 //Clear shopping cart for this user.
                 var usersDB = admin.firestore().collection('Users');
 
+                var customerQuerySnap = await usersDB.where('customerID', '==', customerID).get();
+
+                var customerDocID = customerQuerySnap.docs[0].id;
+
                 var batch = admin.firestore().batch();
 
-                var customerQuerySnap = await usersDB.where('customerID', '==', customerID).get();
-                var customerDocID = customerQuerySnap.docs[0].id;
                 var cartItemsQuerySnap = await usersDB.doc(customerDocID).collection('cartItems').get();
 
                 cartItemsQuerySnap.docs.forEach((doc) => {
@@ -54,20 +56,13 @@ exports.payments = functions.https.onRequest(async (request, response) => {
                 var payload = {
                     notification: {
                         title: 'New Order',
-                        body: `${paymentIntentID}`,
+                        body: `Get to it bro!`,
                     }
                 };
 
                 await admin.messaging().sendToDevice(adminDoc.data()['fcmToken'], payload);
 
-                //Return success message.
-                return response.json({
-                    type: 'payment_intent.succeeded',
-                    admin: adminDoc.data()['fcmToken'],
-                    event: event,
-                    customer: customer,
-                    paymentIntentID: paymentIntentID,
-                });
+                return response.json({ event: event });
             case 'payment_intent.payment_failed':
                 return response.json({ type: 'payment_intent.payment_failed' });
             default:

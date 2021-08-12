@@ -5,16 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/mixins/ui_properties_mixin.dart';
-import 'package:litpic/models/firebase_order_model.dart';
 import 'package:litpic/models/litpic_model.dart';
-import 'package:litpic/models/order_model.dart';
-import 'package:litpic/models/payment_intent_model.dart';
+import 'package:litpic/models/session_model.dart';
 import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/litpic_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe_order_service.dart';
-import 'package:litpic/services/stripe_payment_intent_service.dart';
+import 'package:litpic/services/stripe_session_service.dart';
 import 'package:litpic/services/user_service.dart';
 import 'package:litpic/views/detail_card_view.dart';
 import 'package:litpic/views/recent_creations_view.dart';
@@ -147,15 +144,24 @@ class _HomePageState extends State<HomePage>
       //Load user.
       _currentUser = await locator<AuthService>().getCurrentUser();
 
+      //START DELETE
+
       //Get complete orders.
-      List<OrderModel> completeOrders =
-          await locator<StripeOrderService>().list(status: 'fulfilled');
+      // List<OrderModel> completeOrders =
+      //     await locator<StripeOrderService>().list(status: 'fulfilled');
 
-      PaymentIntentModel paymentIntent =
-          await locator<StripePaymentIntentService>()
-              .retrieve(paymentIntentID: 'pi_3JMn7GGQvSy9RLmz1XJKGjvq');
+      SessionModel session = await locator<StripeSessionService>().retrieve(
+        sessionID:
+            'cs_test_a1z6tqBeW51b1gaCF2uKcrhcmdu2yyLPAopP009devxqhdmuq2u12DZjFT',
+      );
 
-      print(paymentIntent);
+      print(session);
+
+      // PaymentIntentModel paymentIntent =
+      //     await locator<StripePaymentIntentService>()
+      //         .retrieve(paymentIntentID: 'pi_3JNQQ8GQvSy9RLmz3CHNem4N');
+
+      // print(paymentIntent);
 
       // List<FirebaseOrderModel> completeOrders
 
@@ -168,6 +174,8 @@ class _HomePageState extends State<HomePage>
       // }
 
       // print(firebaseOrderModels);
+
+      //END DELETE
 
       //Request permission on iOS device.
       if (Platform.isIOS) {
