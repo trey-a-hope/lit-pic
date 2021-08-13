@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/order_model.dart';
+import 'package:litpic/models/display_item_model.dart';
+import 'package:litpic/models/firebase_order_model.dart';
 import 'package:litpic/models/user_model.dart';
-import 'package:litpic/pages/profile/order_details_page.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/formatter_service.dart';
 import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/stripe_order_service.dart';
+import 'package:litpic/services/order_service.dart';
+import 'package:litpic/services/stripe_session_service.dart';
 import 'package:litpic/views/list_tile_view.dart';
 import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -33,7 +34,8 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
   final Color iconColor = Colors.amber[700]!;
 
   late UserModel _currentUser;
-  List<OrderModel> orders = [];
+  List<FirebaseOrderModel> orders = [];
+  // List<OrderModel> orders = [];
 
   bool addAllListDataComplete = false;
 
@@ -103,25 +105,14 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
           ),
         );
       } else {
+        //Iterate through each open order.
         for (int i = 0; i < orders.length; i++) {
-          OrderModel order = orders[i];
+          FirebaseOrderModel order = orders[i];
           listViews.add(
-            ListTileView(
-              icon: Icon(
-                MdiIcons.creditCardClock,
-                color: Colors.purple,
-              ),
-              subTitle: 'ID: ${order.id}',
-              title:
-                  '${order.quantity} ${order.description}(s) - ${locator<FormatterService>().money(amount: order.amount)}',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => OrderDetailsPage(order: order),
-                  ),
-                );
-              },
+            TitleView(
+              showExtra: false,
+              titleTxt: 'Order ${i + 1}',
+              subTxt: '',
               animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                   parent: animationController,
                   curve: Interval((1 / count) * 0, 1.0,
@@ -129,6 +120,39 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
               animationController: animationController,
             ),
           );
+
+          //Iterate through each display item.
+          for (int j = 0; j < order.session!.displayItems!.length; j++) {
+            DisplayItemModel displayItem = order.session!.displayItems![j];
+
+            listViews.add(
+              ListTileView(
+                icon: Icon(
+                  MdiIcons.creditCardClock,
+                  color: Colors.purple,
+                ),
+                subTitle: 'ID: ${order.id}',
+                title:
+                    '${displayItem.quantity} ${displayItem.custom.description}(s) - ${locator<FormatterService>().money(amount: displayItem.amount)}',
+                onTap: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => OrderDetailsPage(order: order),
+                  //   ),
+                  // );
+                },
+                animation: Tween(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                    parent: animationController,
+                    curve: Interval((1 / count) * 0, 1.0,
+                        curve: Curves.fastOutSlowIn),
+                  ),
+                ),
+                animationController: animationController,
+              ),
+            );
+          }
         }
       }
     }
@@ -138,8 +162,16 @@ class _MyOpenOrdersPageState extends State<MyOpenOrdersPage>
     try {
       //Load user and orders.
       _currentUser = await locator<AuthService>().getCurrentUser();
-      orders = await locator<StripeOrderService>()
-          .list(customerID: _currentUser.customerID, status: 'paid');
+      orders = await locator<OrderService>()
+          .list(customerID: _currentUser.customerID, status: 'created');
+
+      //Apply session to each order.
+      for (int i = 0; i < orders.length; i++) {
+        FirebaseOrderModel order = orders[i];
+
+        order.session = await locator<StripeSessionService>()
+            .retrieve(sessionID: order.sessionID);
+      }
 
       return;
     } catch (e) {

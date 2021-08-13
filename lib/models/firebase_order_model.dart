@@ -1,5 +1,6 @@
 //TODO: Find better name.
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:litpic/models/session_model.dart';
 
 class FirebaseOrderModel {
   final String id;
@@ -9,6 +10,8 @@ class FirebaseOrderModel {
   final String? carrier;
   final Map shipping;
   final String sessionID;
+  
+  SessionModel? session;
 
   FirebaseOrderModel({
     required this.id,
