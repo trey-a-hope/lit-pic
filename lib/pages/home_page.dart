@@ -13,6 +13,8 @@ import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/litpic_service.dart';
 import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/services/order_service.dart';
+import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/services/stripe_session_service.dart';
 import 'package:litpic/services/user_service.dart';
 import 'package:litpic/views/detail_card_view.dart';
@@ -42,12 +44,10 @@ class _HomePageState extends State<HomePage>
     try {
       final TrackingStatus status =
           await AppTrackingTransparency.trackingAuthorizationStatus;
-      // setState(() => _authStatus = '$status');
       // If the system can show an authorization request dialog
       if (status == TrackingStatus.notDetermined) {
-        //call timer here
         // Show a custom explainer dialog before the system dialog
-        if (true /*await showCustomTrackingDialog(context)*/) {
+        if (true) {
           // Wait for dialog popping animation
           await Future.delayed(const Duration(milliseconds: 200));
           // Request system's tracking authorization dialog
@@ -174,38 +174,15 @@ class _HomePageState extends State<HomePage>
       //Load user.
       _currentUser = await locator<AuthService>().getCurrentUser();
 
-      //START DELETE
+      // //START DELETE
+      // _currentUser.customer = await locator<StripeCustomerService>()
+      //     .retrieve(customerID: _currentUser.customerID);
 
-      //Get complete orders.
-      // List<OrderModel> completeOrders =
-      //     await locator<StripeOrderService>().list(status: 'fulfilled');
+      // var orders = await locator<OrderService>()
+      //     .list(customerID: _currentUser.customerID, status: 'created');
 
-      SessionModel session = await locator<StripeSessionService>().retrieve(
-        sessionID:
-            'cs_test_a1z6tqBeW51b1gaCF2uKcrhcmdu2yyLPAopP009devxqhdmuq2u12DZjFT',
-      );
-
-      print(session);
-
-      // PaymentIntentModel paymentIntent =
-      //     await locator<StripePaymentIntentService>()
-      //         .retrieve(paymentIntentID: 'pi_3JNQQ8GQvSy9RLmz3CHNem4N');
-
-      // print(paymentIntent);
-
-      // List<FirebaseOrderModel> completeOrders
-
-      // List<FirebaseOrderModel> firebaseOrderModels = [];
-      // for (int i = 0; i < completeOrders.length; i++) {
-      //   OrderModel orderModel = completeOrders[i];
-      //   FirebaseOrderModel firebaseOrderModel =
-      //       await locator<StripeOrderService>().get(orderID: orderModel.id);
-      //   firebaseOrderModels.add(firebaseOrderModel);
-      // }
-
-      // print(firebaseOrderModels);
-
-      //END DELETE
+      // print(orders);
+      // //END DELETE
 
       //Request permission on iOS device.
       if (Platform.isIOS) {
@@ -215,8 +192,12 @@ class _HomePageState extends State<HomePage>
       //Update user's fcm token.
       final String? fcmToken = await _fcm.getToken();
       if (fcmToken != null) {
-        locator<UserService>()
-            .updateUser(uid: _currentUser.uid, data: {'fcmToken': fcmToken});
+        locator<UserService>().updateUser(
+          uid: _currentUser.uid,
+          data: {
+            'fcmToken': fcmToken,
+          },
+        );
       }
 
       return;
