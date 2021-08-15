@@ -26,12 +26,6 @@ void main() async {
     [DeviceOrientation.portraitUp],
   );
 
-  // if (Platform.isAndroid) {
-  //   FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
-  // } else {
-  //   FlutterStatusbarcolor.setStatusBarColor(Colors.white);
-  // }
-
   //Make status bar in Android transparent.
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: Colors.transparent));

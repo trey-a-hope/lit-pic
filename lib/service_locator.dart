@@ -13,7 +13,6 @@ import 'package:litpic/services/storage_service.dart';
 import 'package:litpic/services/stripe_card_service.dart';
 import 'package:litpic/services/stripe_coupon_service.dart';
 import 'package:litpic/services/stripe_customer_service.dart';
-import 'package:litpic/services/stripe_order_service.dart';
 import 'package:litpic/services/stripe_payment_intent_service.dart';
 import 'package:litpic/services/stripe_price_service.dart';
 import 'package:litpic/services/stripe_product_service.dart';
@@ -44,7 +43,6 @@ void setUpLocater() {
   locator.registerLazySingleton(() => StripePaymentIntentService());
   locator.registerLazySingleton(() => StripePriceService());
   locator.registerLazySingleton(() => StripeProductService());
-  locator.registerLazySingleton(() => StripeOrderService());
   locator.registerLazySingleton(() => StripeSessionService());
   locator.registerLazySingleton(() => StripeSkuService());
   locator.registerLazySingleton(() => StripeTokenService());

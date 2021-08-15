@@ -33,7 +33,9 @@ class OrderView extends StatelessWidget {
                 child: ListTile(
                   onTap: onTap,
                   title: Text(
-                      locator<FormatterService>().money(amount: order.amount)),
+                    locator<FormatterService>()
+                        .money(amount: order.session!.paymentIntent!.amount),
+                  ),
                   subtitle: Text('ID : ${order.id}'),
                   trailing: Icon(Icons.chevron_right),
                 ),

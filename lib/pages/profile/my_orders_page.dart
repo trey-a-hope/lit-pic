@@ -1,20 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:litpic/common/spinner.dart';
+import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/pages/admin/admin_complete_orders.dart';
-import 'package:litpic/pages/admin/admin_open_orders.dart';
+import 'package:litpic/models/order_model.dart';
+import 'package:litpic/models/user_model.dart';
+import 'package:litpic/pages/profile/order_details_page.dart';
+import 'package:litpic/service_locator.dart';
+import 'package:litpic/services/auth_service.dart';
+import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/services/order_service.dart';
+import 'package:litpic/services/stripe_session_service.dart';
 import 'package:litpic/views/list_tile_view.dart';
+import 'package:litpic/views/title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class AdminPage extends StatefulWidget {
-  final AnimationController animationController;
+class MyOrdersPage extends StatefulWidget {
+  final String status;
 
-  const AdminPage({required this.animationController}) : super();
+  const MyOrdersPage({required this.status}) : super();
+
   @override
-  _AdminPageState createState() => _AdminPageState();
+  _MyOrdersPageState createState() => _MyOrdersPageState();
 }
 
-class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
+class _MyOrdersPageState extends State<MyOrdersPage>
+    with TickerProviderStateMixin {
+  late AnimationController animationController;
+
   late Animation<double> topBarAnimation;
 
   List<Widget> listViews = [];
@@ -23,13 +36,24 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
 
   final Color iconColor = Colors.amber[700]!;
 
+  late UserModel _currentUser;
+  List<OrderModel> orders = [];
+  // List<OrderModel> orders = [];
+
   bool addAllListDataComplete = false;
+
+  bool _isLoading = false;
 
   @override
   void initState() {
-    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-        parent: widget.animationController,
-        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+    animationController =
+        AnimationController(duration: Duration(milliseconds: 600), vsync: this);
+    topBarAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn),
+      ),
+    );
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -59,64 +83,91 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
   void addAllListData() {
     if (!addAllListDataComplete) {
       addAllListDataComplete = true;
+      var count = 5;
 
-      int count = 1;
-
-      //Open Orders
       listViews.add(
-        ListTileView(
-          animationController: widget.animationController,
-          animation: Tween(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-              parent: widget.animationController,
-              curve:
-                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
-            ),
-          ),
-          icon: Icon(
-            MdiIcons.clipboardList,
-            color: iconColor,
-          ),
-          title: 'Open Orders',
-          subTitle: 'Close and notify customer of finished orders.',
-          onTap: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AdminOpenOrdersPage(),
-              ),
-            );
-          },
-        ),
+        _isLoading
+            ? LinearProgressIndicator(
+                backgroundColor: Colors.blue[200],
+                valueColor: AlwaysStoppedAnimation(Colors.blue),
+              )
+            : SizedBox.shrink(),
       );
 
-      //Complete Orders
-      listViews.add(
-        ListTileView(
-          animationController: widget.animationController,
-          animation: Tween(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-              parent: widget.animationController,
-              curve:
-                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
-            ),
+      if (orders.isEmpty) {
+        listViews.add(
+          TitleView(
+            showExtra: false,
+            titleTxt:
+                'No ${widget.status == 'created' ? 'open' : 'complete'} orders.',
+            subTxt: '',
+            animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                parent: animationController,
+                curve: Interval((1 / count) * 0, 1.0,
+                    curve: Curves.fastOutSlowIn))),
+            animationController: animationController,
           ),
-          icon: Icon(
-            MdiIcons.clipboardList,
-            color: iconColor,
-          ),
-          title: 'Complete Orders',
-          subTitle: 'See what is finished.',
-          onTap: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AdminCompleteOrdersPage(),
+        );
+      } else {
+        //Iterate through each order.
+        for (int i = 0; i < orders.length; i++) {
+          OrderModel order = orders[i];
+
+          listViews.add(
+            ListTileView(
+              icon: Icon(
+                MdiIcons.creditCardClock,
+                color: Colors.purple,
               ),
-            );
-          },
-        ),
+              title: 'ID: ${order.id}',
+              subTitle:
+                  'Created: ${DateFormat(timeFormat).format(order.created)}',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OrderDetailsPage(order: order),
+                  ),
+                );
+              },
+              animation: Tween(begin: 0.0, end: 1.0).animate(
+                CurvedAnimation(
+                  parent: animationController,
+                  curve: Interval((1 / count) * 0, 1.0,
+                      curve: Curves.fastOutSlowIn),
+                ),
+              ),
+              animationController: animationController,
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> loadCustomerInfo() async {
+    try {
+      //Load user and orders.
+      _currentUser = await locator<AuthService>().getCurrentUser();
+      orders = await locator<OrderService>()
+          .list(customerID: _currentUser.customerID, status: widget.status);
+
+      //Apply session to each order.
+      for (int i = 0; i < orders.length; i++) {
+        OrderModel order = orders[i];
+
+        order.session = await locator<StripeSessionService>()
+            .retrieve(sessionID: order.sessionID);
+      }
+
+      return;
+    } catch (e) {
+      locator<ModalService>().showAlert(
+        context: context,
+        title: 'Error',
+        message: e.toString(),
       );
+      return;
     }
   }
 
@@ -141,7 +192,7 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
 
   Widget getMainListViewUI() {
     List<Future> futures = [];
-    futures.add(Future.delayed(Duration(seconds: 0)));
+    futures.add(loadCustomerInfo());
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {
@@ -160,7 +211,7 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
             itemCount: listViews.length,
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
-              widget.animationController.forward();
+              animationController.forward();
               return listViews[index];
             },
           );
@@ -173,7 +224,7 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
     return Column(
       children: <Widget>[
         AnimatedBuilder(
-          animation: widget.animationController,
+          animation: animationController,
           builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation,
@@ -218,7 +269,7 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "Admin",
+                                  '${widget.status == 'created' ? 'Open' : 'Complete'} Orders',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,

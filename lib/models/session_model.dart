@@ -12,7 +12,8 @@ class SessionModel {
   final String? paymentStatus;
   final List<DisplayItemModel>? displayItems;
   final String? paymentIntentID;
-  final PaymentIntentModel? paymentIntent;
+
+  PaymentIntentModel? paymentIntent;
 
   SessionModel({
     this.id,
@@ -37,6 +38,7 @@ class SessionModel {
       displayItems: (map['display_items'] as List)
           .map((e) => DisplayItemModel.fromMap(map: e))
           .toList(),
+      paymentIntentID: map['payment_intent'],
     );
   }
 

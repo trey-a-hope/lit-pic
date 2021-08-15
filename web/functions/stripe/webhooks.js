@@ -27,6 +27,8 @@ exports.payments = functions.https.onRequest(async (request, response) => {
                     carrier: null,
                     trackingNumber: null,
                     shipping: customer['shipping'],
+                    created: Date.now(),
+                    modified: Date.now(),
                 };
 
                 var orderDoc = await admin.firestore().collection('Orders').doc();

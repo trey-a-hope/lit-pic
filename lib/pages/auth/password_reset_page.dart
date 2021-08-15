@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/order_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/validater_service.dart';
@@ -28,8 +27,6 @@ class _PasswordResetPageState extends State<PasswordResetPage>
   double topBarOpacity = 0.0;
 
   final Color iconColor = Colors.amber[700]!;
-
-  List<OrderModel> orders = [];
 
   bool addAllListDataComplete = false;
 

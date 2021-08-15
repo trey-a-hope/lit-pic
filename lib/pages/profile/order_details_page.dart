@@ -1,34 +1,28 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:litpic/common/spinner.dart';
+import 'package:litpic/constants.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/cart_item_model.dart';
+import 'package:litpic/models/display_item_model.dart';
 import 'package:litpic/models/order_model.dart';
-import 'package:litpic/models/sku_model.dart';
+import 'package:litpic/service_locator.dart';
 import 'package:litpic/services/formatter_service.dart';
-import 'package:litpic/views/cart_item_bought_view.dart';
+import 'package:litpic/services/stripe_payment_intent_service.dart';
+import 'package:litpic/views/display_item_view.dart';
 import 'package:litpic/views/simple_title_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-import '../../service_locator.dart';
-
 class OrderDetailsPage extends StatefulWidget {
   final OrderModel order;
-  const OrderDetailsPage(
-      {
-      // Key key,
-      required this.order})
-      : super();
+
+  const OrderDetailsPage({required this.order}) : super();
+
   @override
-  _OrderDetailsPageState createState() => _OrderDetailsPageState(order: order);
+  _OrderDetailsPageState createState() => _OrderDetailsPageState();
 }
 
 class _OrderDetailsPageState extends State<OrderDetailsPage>
     with TickerProviderStateMixin {
-  final OrderModel order;
-
-  _OrderDetailsPageState({required this.order});
   late AnimationController animationController;
   late Animation<double> topBarAnimation;
 
@@ -37,13 +31,13 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
   double topBarOpacity = 0.0;
 
   bool addAllListDataComplete = false;
-  bool fetchLithophaneSkuComplete = false;
-  bool fetchCartItemsComplete = false;
+  // bool fetchLithophaneSkuComplete = false;
+  // bool fetchCartItemsComplete = false;
 
-  final String timeFormat = 'MMM d, yyyy @ h:mm a';
-  late SkuModel _sku;
+  // final String timeFormat = 'MMM d, yyyy @ h:mm a';
+  // late SkuModel _sku;
 
-  List<CartItemModel> cartItems = [];
+  // List<CartItemModel> cartItems = [];
 
   @override
   void initState() {
@@ -81,32 +75,25 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
     super.initState();
   }
 
+  Future<void> load() async {
+    final String paymentIntentID = widget.order.session!.paymentIntentID!;
+
+    widget.order.session!.paymentIntent =
+        await locator<StripePaymentIntentService>()
+            .retrieve(paymentIntentID: paymentIntentID);
+
+    return;
+  }
+
   void addAllListData() {
     if (!addAllListDataComplete) {
       addAllListDataComplete = true;
       var count = 5;
 
-      for (int i = 0; i < cartItems.length; i++) {
-        listViews.add(
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: CartItemBoughtView(
-              cartItem: cartItems[i],
-              price: _sku.price,
-              animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-                  parent: animationController,
-                  curve: Interval((1 / count) * 0, 1.0,
-                      curve: Curves.fastOutSlowIn))),
-              animationController: animationController,
-            ),
-          ),
-        );
-      }
-
       listViews.add(
         SimpleTitleView(
           titleTxt: 'ID',
-          subTxt: order.id,
+          subTxt: widget.order.id,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -120,7 +107,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'Name',
-          subTxt: order.shipping.name,
+          subTxt: widget.order.shipping.name,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -134,7 +121,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'Address',
-          subTxt: order.shipping.address.line1,
+          subTxt: widget.order.shipping.address.line1,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -148,7 +135,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'City',
-          subTxt: order.shipping.address.city,
+          subTxt: widget.order.shipping.address.city,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -162,7 +149,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'State',
-          subTxt: order.shipping.address.state,
+          subTxt: widget.order.shipping.address.state,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -176,7 +163,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'ZIP',
-          subTxt: order.shipping.address.postalCode,
+          subTxt: widget.order.shipping.address.postalCode,
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -187,31 +174,70 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
 
       listViews.add(Divider());
 
-      listViews.add(
-        SimpleTitleView(
-          titleTxt: 'Amount',
-          subTxt: locator<FormatterService>().money(amount: order.amount),
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: animationController,
-              curve:
-                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-          animationController: animationController,
-        ),
-      );
+      for (int i = 0; i < widget.order.session!.displayItems!.length; i++) {
+        DisplayItemModel displayItem = widget.order.session!.displayItems![i];
+
+        listViews.add(
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: DisplayItemView(
+              displayItem: displayItem,
+              animation: Tween(begin: 0.0, end: 1.0).animate(
+                CurvedAnimation(
+                  parent: animationController,
+                  curve: Interval((1 / count) * 0, 1.0,
+                      curve: Curves.fastOutSlowIn),
+                ),
+              ),
+              animationController: animationController,
+            ),
+          ),
+        );
+
+        // listViews.add(
+        //   SimpleTitleView(
+        //     titleTxt: ' Amount',
+        //     subTxt:
+        //         locator<FormatterService>().money(amount: displayItem.amount),
+        //     animation: Tween(begin: 0.0, end: 1.0).animate(
+        //       CurvedAnimation(
+        //           parent: animationController,
+        //           curve: Interval((1 / count) * 0, 1.0,
+        //               curve: Curves.fastOutSlowIn)),
+        //     ),
+        //     animationController: animationController,
+        //   ),
+        // );
+      }
 
       listViews.add(Divider());
 
       listViews.add(
         SimpleTitleView(
-          titleTxt: 'Quantity',
-          subTxt: '${order.quantity}',
-          animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-              parent: animationController,
-              curve:
-                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+          titleTxt: 'Total Amount',
+          subTxt: locator<FormatterService>()
+              .money(amount: widget.order.session!.paymentIntent!.amount),
+          animation: Tween(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+                parent: animationController,
+                curve: Interval((1 / count) * 0, 1.0,
+                    curve: Curves.fastOutSlowIn)),
+          ),
           animationController: animationController,
         ),
       );
+
+      // listViews.add(
+      //   SimpleTitleView(
+      //     titleTxt: 'Quantity',
+      //     subTxt: '${order.quantity}',
+      //     animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+      //         parent: animationController,
+      //         curve:
+      //             Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+      //     animationController: animationController,
+      //   ),
+      // );
 
       listViews.add(Divider());
 
@@ -219,7 +245,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
         SimpleTitleView(
           titleTxt: 'Carrier',
           subTxt:
-              '${order.carrier == null ? 'Not Shipped Yet' : order.carrier}',
+              '${widget.order.carrier == null ? 'Not Shipped Yet' : widget.order.carrier}',
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -229,11 +255,12 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       );
 
       listViews.add(Divider());
+
       listViews.add(
         SimpleTitleView(
           titleTxt: 'Tracking #',
           subTxt:
-              '${order.trackingNumber == null ? 'Not Shipped Yet' : order.trackingNumber}',
+              '${widget.order.trackingNumber == null ? 'Not Shipped Yet' : widget.order.trackingNumber}',
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -247,7 +274,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'Created',
-          subTxt: DateFormat(timeFormat).format(order.created),
+          subTxt: DateFormat(timeFormat).format(widget.order.created),
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -261,7 +288,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
       listViews.add(
         SimpleTitleView(
           titleTxt: 'Modified',
-          subTxt: DateFormat(timeFormat).format(order.updated),
+          subTxt: DateFormat(timeFormat).format(widget.order.modified),
           animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
               parent: animationController,
               curve:
@@ -269,52 +296,6 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
           animationController: animationController,
         ),
       );
-    }
-  }
-
-  // Future<void> fetchLithophaneSku() async {
-  //   if (!fetchLithophaneSkuComplete) {
-  //     fetchLithophaneSkuComplete = true;
-  //     // final String skuID = await locator<DBService>().retrieveSkuID();
-  //     _sku = await locator<StripeSkuService>().retrieve(skuID: SKU_UD);
-  //     // return;
-  //   } else {
-  //     return;
-  //   }
-  // }
-
-  Future<void> fetchCartItems() async {
-    if (!fetchCartItemsComplete) {
-      /*
-        Mark flag to prevent from multiple calls to this function.
-        setState((){}) called due to scaffold bar animation.
-      */
-      fetchCartItemsComplete = true;
-
-      //Clear list to prevent for duplicates later.
-      cartItems.clear();
-
-      //Fetch order that matches order id.
-      QuerySnapshot orderQuerySnapshot = await FirebaseFirestore.instance
-          .collection('Orders')
-          .where('id', isEqualTo: order.id)
-          .get();
-
-      //Fetch cart items for that order.
-      DocumentSnapshot cartItemDoc = orderQuerySnapshot.docs.first;
-      QuerySnapshot cartItemsSnapshot = await FirebaseFirestore.instance
-          .collection('Orders')
-          .doc(cartItemDoc.id)
-          .collection('cartItems')
-          .get();
-      List<DocumentSnapshot> cartItemDocs = cartItemsSnapshot.docs;
-
-      //Add cart items to list.
-      for (int i = 0; i < cartItemDocs.length; i++) {
-        cartItems.add(
-          CartItemModel.fromDoc(doc: cartItemDocs[i]),
-        );
-      }
     }
   }
 
@@ -340,7 +321,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage>
   Widget getMainListViewUI() {
     List<Future> futures = [];
     // futures.add(fetchLithophaneSku());
-    futures.add(fetchCartItems());
+    futures.add(load());
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {

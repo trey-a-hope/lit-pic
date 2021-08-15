@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:litpic/blocs/checkout/checkout_bloc.dart';
 import 'package:litpic/common/lit_pic_app_bar.dart';
 import 'package:litpic/common/lit_pic_list_views.dart';
 import 'package:litpic/common/spinner.dart';
