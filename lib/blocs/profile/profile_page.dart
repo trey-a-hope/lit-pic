@@ -68,6 +68,7 @@ class _ProfilePageState extends State<ProfilePage>
 
       listViews.add(
         ProfileButtonsView(
+          isAdmin: currentUser.uid == ADMIN_DOC_ID,
           mainScreenAnimation: Tween(begin: 0.0, end: 1.0).animate(
               CurvedAnimation(
                   parent: animationController,

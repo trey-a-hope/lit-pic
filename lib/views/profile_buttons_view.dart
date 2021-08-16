@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:litpic/litpic_theme.dart';
+import 'package:litpic/pages/admin_page.dart';
 import 'package:litpic/pages/profile/my_orders_page.dart';
 import 'package:litpic/pages/profile/profile_personal_info_page.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class ProfileButtonsView extends StatefulWidget {
+  final bool isAdmin;
   final AnimationController mainScreenAnimationController;
   final Animation<double> mainScreenAnimation;
 
   const ProfileButtonsView(
       { //Key key,
+      required this.isAdmin,
       required this.mainScreenAnimationController,
       required this.mainScreenAnimation})
       : super();
@@ -29,65 +32,71 @@ class _ProfileButtonsViewState extends State<ProfileButtonsView>
 
     profileBoxModels = [
       ProfileBoxModel(
-          title: 'Personal Info',
-          icon: Icon(
-            MdiIcons.face,
-            color: Colors.amber,
-            size: 40,
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) {
-                return ProfilePersonalInfoPage();
-              }),
-            );
-          }),
-      // ProfileBoxModel(
-      //     title: 'Saved Cards',
-      //     icon: Icon(
-      //       MdiIcons.creditCard,
-      //       color: Colors.blue,
-      //       size: 40,
-      //     ),
-      //     onTap: () {
-      //       Navigator.push(
-      //         context,
-      //         MaterialPageRoute(builder: (_) {
-      //           return SavedCardsPage();
-      //         }),
-      //       );
-      //     }),
+        title: 'Personal Info',
+        icon: Icon(
+          MdiIcons.face,
+          color: Colors.amber,
+          size: 40,
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) {
+              return ProfilePersonalInfoPage();
+            }),
+          );
+        },
+      ),
       ProfileBoxModel(
-          title: 'Open Orders',
-          icon: Icon(
-            MdiIcons.mailboxOpen,
-            color: Colors.purple,
-            size: 40,
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) {
-                return MyOrdersPage(status: 'created');
-              }),
-            );
-          }),
+        title: 'Open Orders',
+        icon: Icon(
+          MdiIcons.mailboxOpen,
+          color: Colors.purple,
+          size: 40,
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) {
+              return MyOrdersPage(status: 'created');
+            }),
+          );
+        },
+      ),
       ProfileBoxModel(
-          title: 'Complete Orders',
+        title: 'Complete Orders',
+        icon: Icon(
+          MdiIcons.mailboxUp,
+          color: Colors.green,
+          size: 40,
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) {
+              return MyOrdersPage(status: 'fulfilled');
+            }),
+          );
+        },
+      ),
+      if (widget.isAdmin) ...[
+        ProfileBoxModel(
+          title: 'Admin',
           icon: Icon(
-            MdiIcons.mailboxUp,
-            color: Colors.green,
+            MdiIcons.account,
+            color: Colors.red,
             size: 40,
           ),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) {
-                return MyOrdersPage(status: 'fulfilled');
+                return AdminPage();
               }),
             );
-          }),
+          },
+        ),
+      ]
     ];
 
     super.initState();

@@ -116,298 +116,149 @@ class _MainAppState extends State<MainApp> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: LitPicTheme.background,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(
-          children: <Widget>[
-            tabBody,
-            // bottomBar(),
-          ],
-        ),
-        bottomNavigationBar: BottomNavyBar(
-          selectedIndex: _tabIndex,
-          showElevation: true,
-          itemCornerRadius: 24,
-          curve: Curves.easeIn,
-          onItemSelected: (index) {
-            setState(() {
-              _tabIndex = index;
+        color: LitPicTheme.background,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            children: <Widget>[
+              tabBody,
+              // bottomBar(),
+            ],
+          ),
+          bottomNavigationBar: BottomNavyBar(
+            selectedIndex: _tabIndex,
+            showElevation: true,
+            itemCornerRadius: 24,
+            curve: Curves.easeIn,
+            onItemSelected: (index) {
+              setState(() {
+                _tabIndex = index;
 
-              _homeActiveColor =
-                  _tabIndex == 0 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
-              _homeInactiveColor =
-                  _tabIndex == 0 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
+                _homeActiveColor =
+                    _tabIndex == 0 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
+                _homeInactiveColor =
+                    _tabIndex == 0 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
 
-              _createActiveColor =
-                  _tabIndex == 1 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
-              _createInactiveColor =
-                  _tabIndex == 1 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
+                _createActiveColor =
+                    _tabIndex == 1 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
+                _createInactiveColor =
+                    _tabIndex == 1 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
 
-              _cartActiveColor =
-                  _tabIndex == 2 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
-              _cartInactiveColor =
-                  _tabIndex == 2 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
+                _cartActiveColor =
+                    _tabIndex == 2 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
+                _cartInactiveColor =
+                    _tabIndex == 2 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
 
-              _profileActiveColor =
-                  _tabIndex == 3 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
-              _profileInactiveColor =
-                  _tabIndex == 3 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
+                _profileActiveColor =
+                    _tabIndex == 3 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
+                _profileInactiveColor =
+                    _tabIndex == 3 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
 
-              _settingsActiveColor =
-                  _tabIndex == 4 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
-              _settingsInactiveColor =
-                  _tabIndex == 4 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
+                _settingsActiveColor =
+                    _tabIndex == 4 ? Colors.amber : LitPicTheme.nearlyDarkBlue;
+                _settingsInactiveColor =
+                    _tabIndex == 4 ? LitPicTheme.nearlyDarkBlue : Colors.amber;
 
-              switch (index) {
-                case 0:
-                  tabBody = HomePage();
-                  break;
-                case 1:
-                  tabBody = BlocProvider(
-                    lazy: true,
-                    create: (context) => CREATE_BP.CreateLithophaneBloc()
-                      ..add(CREATE_BP.LoadPageEvent()),
-                    child: CREATE_BP.CreateLithophanePage(),
-                  );
+                switch (index) {
+                  case 0:
+                    tabBody = HomePage();
+                    break;
+                  case 1:
+                    tabBody = BlocProvider(
+                      lazy: true,
+                      create: (context) => CREATE_BP.CreateLithophaneBloc()
+                        ..add(CREATE_BP.LoadPageEvent()),
+                      child: CREATE_BP.CreateLithophanePage(),
+                    );
 
-                  break;
-                case 2:
-                  tabBody = BlocProvider(
-                    lazy: true,
-                    create: (context) =>
-                        CART_BP.CartBloc()..add(CART_BP.LoadPageEvent()),
-                    child: CART_BP.CartPage(),
-                  );
-                  break;
-                case 3:
-                  tabBody = BlocProvider(
-                    lazy: true,
-                    create: (context) => PROFILE_BP.ProfileBloc()
-                      ..add(PROFILE_BP.LoadPageEvent()),
-                    child: PROFILE_BP.ProfilePage(),
-                  );
-                  break;
-                case 4:
-                  tabBody = SettingsPage();
-                  break;
-                default:
-                  break;
-              }
-            });
-          },
-          items: <BottomNavyBarItem>[
-            BottomNavyBarItem(
-              icon: Icon(
-                Icons.home,
-                color: _homeInactiveColor,
+                    break;
+                  case 2:
+                    tabBody = BlocProvider(
+                      lazy: true,
+                      create: (context) =>
+                          CART_BP.CartBloc()..add(CART_BP.LoadPageEvent()),
+                      child: CART_BP.CartPage(),
+                    );
+                    break;
+                  case 3:
+                    tabBody = BlocProvider(
+                      lazy: true,
+                      create: (context) => PROFILE_BP.ProfileBloc()
+                        ..add(PROFILE_BP.LoadPageEvent()),
+                      child: PROFILE_BP.ProfilePage(),
+                    );
+                    break;
+                  case 4:
+                    tabBody = SettingsPage();
+                    break;
+                  default:
+                    break;
+                }
+              });
+            },
+            items: <BottomNavyBarItem>[
+              BottomNavyBarItem(
+                icon: Icon(
+                  Icons.home,
+                  color: _homeInactiveColor,
+                ),
+                title: Text(
+                  'Home',
+                  style: TextStyle(color: _homeInactiveColor),
+                ),
+                activeColor: _homeActiveColor,
+                textAlign: TextAlign.center,
               ),
-              title: Text(
-                'Home',
-                style: TextStyle(color: _homeInactiveColor),
+              BottomNavyBarItem(
+                icon: Icon(
+                  Icons.add,
+                  color: _createInactiveColor,
+                ),
+                title: Text(
+                  'Create',
+                  style: TextStyle(color: _createInactiveColor),
+                ),
+                activeColor: _createActiveColor,
+                textAlign: TextAlign.center,
               ),
-              activeColor: _homeActiveColor,
-              textAlign: TextAlign.center,
-            ),
-            BottomNavyBarItem(
-              icon: Icon(
-                Icons.add,
-                color: _createInactiveColor,
+              BottomNavyBarItem(
+                icon: Icon(
+                  Icons.shopping_cart,
+                  color: _cartInactiveColor,
+                ),
+                title: Text(
+                  'Cart',
+                  style: TextStyle(color: _cartInactiveColor),
+                ),
+                activeColor: _cartActiveColor,
+                textAlign: TextAlign.center,
               ),
-              title: Text(
-                'Create',
-                style: TextStyle(color: _createInactiveColor),
+              BottomNavyBarItem(
+                icon: Icon(
+                  Icons.face,
+                  color: _profileInactiveColor,
+                ),
+                title: Text(
+                  'Profile',
+                  style: TextStyle(color: _profileInactiveColor),
+                ),
+                activeColor: _profileActiveColor,
+                textAlign: TextAlign.center,
               ),
-              activeColor: _createActiveColor,
-              textAlign: TextAlign.center,
-            ),
-            BottomNavyBarItem(
-              icon: Icon(
-                Icons.shopping_cart,
-                color: _cartInactiveColor,
+              BottomNavyBarItem(
+                icon: Icon(
+                  Icons.settings,
+                  color: _settingsInactiveColor,
+                ),
+                title: Text(
+                  'Settings',
+                  style: TextStyle(color: _settingsInactiveColor),
+                ),
+                activeColor: _settingsActiveColor,
+                textAlign: TextAlign.center,
               ),
-              title: Text(
-                'Cart',
-                style: TextStyle(color: _cartInactiveColor),
-              ),
-              activeColor: _cartActiveColor,
-              textAlign: TextAlign.center,
-            ),
-            BottomNavyBarItem(
-              icon: Icon(
-                Icons.face,
-                color: _profileInactiveColor,
-              ),
-              title: Text(
-                'Profile',
-                style: TextStyle(color: _profileInactiveColor),
-              ),
-              activeColor: _profileActiveColor,
-              textAlign: TextAlign.center,
-            ),
-            BottomNavyBarItem(
-              icon: Icon(
-                Icons.settings,
-                color: _settingsInactiveColor,
-              ),
-              title: Text(
-                'Settings',
-                style: TextStyle(color: _settingsInactiveColor),
-              ),
-              activeColor: _settingsActiveColor,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        // bottomNavigationBar: BottomBarView(
-        // tabIconsList: tabIconsList,
-        // addClick: () {},
-        // changeIndex: (index) {
-        // switch (index) {
-        //   case 0:
-        //     animationController!.reverse().then((data) {
-        //       if (!mounted) return;
-        //       setState(() {
-        //         tabBody =
-        //             HomePage(animationController: animationController!);
-        //       });
-        //     });
-        //     break;
-        //   case 1:
-        //     animationController!.reverse().then(
-        //       (data) {
-        //         if (!mounted) return;
-        //         setState(
-        //           () {
-        //             tabBody = BlocProvider(
-        //               lazy: true,
-        //               create: (context) => CREATE_BP.CreateLithophaneBloc()
-        //                 ..add(CREATE_BP.LoadPageEvent()),
-        //               child: CREATE_BP.CreateLithophanePage(),
-        //             );
-        //           },
-        //         );
-        //       },
-        //     );
-        //     break;
-        //   case 2:
-        //     animationController!.reverse().then((data) {
-        //       if (!mounted) return;
-        //       setState(() {
-        //         tabBody = BlocProvider(
-        //           lazy: true,
-        //           create: (context) =>
-        //               CART_BP.CartBloc()..add(CART_BP.LoadPageEvent()),
-        //           child: CART_BP.CartPage(),
-        //         );
-        //       });
-        //     });
-        //     break;
-        //   case 3:
-        //     animationController!.reverse().then((data) {
-        //       if (!mounted) return;
-        //       setState(() {
-        //         tabBody = BlocProvider(
-        //           lazy: true,
-        //           create: (context) => PROFILE_BP.ProfileBloc()
-        //             ..add(PROFILE_BP.LoadPageEvent()),
-        //           child: PROFILE_BP.ProfilePage(),
-        //         );
-        //       });
-        //     });
-        //     break;
-        //   case 4:
-        //     animationController!.reverse().then((data) {
-        //       if (!mounted) return;
-        //       setState(() {
-        //         tabBody =
-        //             SettingsPage(animationController: animationController!);
-        //       });
-        //     });
-        //     break;
-        // }
-        //   },
-        // ),
-      ),
-    );
+            ],
+          ),
+        ));
   }
-
-  // Widget bottomBar() {
-  //   return Column(
-  //     children: <Widget>[
-  //       Expanded(
-  //         child: SizedBox(),
-  //       ),
-  //       BottomBarView(
-  //         // tabIconsList: tabIconsList,
-  //         addClick: () {},
-  //         changeIndex: (index) {
-  //           // switch (index) {
-  //           //   case 0:
-  //           //     animationController!.reverse().then((data) {
-  //           //       if (!mounted) return;
-  //           //       setState(() {
-  //           //         tabBody =
-  //           //             HomePage(animationController: animationController!);
-  //           //       });
-  //           //     });
-  //           //     break;
-  //           //   case 1:
-  //           //     animationController!.reverse().then(
-  //           //       (data) {
-  //           //         if (!mounted) return;
-  //           //         setState(
-  //           //           () {
-  //           //             tabBody = BlocProvider(
-  //           //               lazy: true,
-  //           //               create: (context) => CREATE_BP.CreateLithophaneBloc()
-  //           //                 ..add(CREATE_BP.LoadPageEvent()),
-  //           //               child: CREATE_BP.CreateLithophanePage(),
-  //           //             );
-  //           //           },
-  //           //         );
-  //           //       },
-  //           //     );
-  //           //     break;
-  //           //   case 2:
-  //           //     animationController!.reverse().then((data) {
-  //           //       if (!mounted) return;
-  //           //       setState(() {
-  //           //         tabBody = BlocProvider(
-  //           //           lazy: true,
-  //           //           create: (context) =>
-  //           //               CART_BP.CartBloc()..add(CART_BP.LoadPageEvent()),
-  //           //           child: CART_BP.CartPage(),
-  //           //         );
-  //           //       });
-  //           //     });
-  //           //     break;
-  //           //   case 3:
-  //           //     animationController!.reverse().then((data) {
-  //           //       if (!mounted) return;
-  //           //       setState(() {
-  //           //         tabBody = BlocProvider(
-  //           //           lazy: true,
-  //           //           create: (context) => PROFILE_BP.ProfileBloc()
-  //           //             ..add(PROFILE_BP.LoadPageEvent()),
-  //           //           child: PROFILE_BP.ProfilePage(),
-  //           //         );
-  //           //       });
-  //           //     });
-  //           //     break;
-  //           //   case 4:
-  //           //     animationController!.reverse().then((data) {
-  //           //       if (!mounted) return;
-  //           //       setState(() {
-  //           //         tabBody =
-  //           //             SettingsPage(animationController: animationController!);
-  //           //       });
-  //           //     });
-  //           //     break;
-  //           // }
-  //         },
-  //       ),
-  //     ],
-  //   );
-  // }
 }

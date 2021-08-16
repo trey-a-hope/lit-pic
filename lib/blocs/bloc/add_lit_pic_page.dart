@@ -1,30 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:litpic/common/spinner.dart';
-import 'package:litpic/constants.dart';
-import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/models/order_model.dart';
-import 'package:litpic/models/user_model.dart';
-import 'package:litpic/pages/profile/order_details_page.dart';
-import 'package:litpic/service_locator.dart';
-import 'package:litpic/services/auth_service.dart';
-import 'package:litpic/services/modal_service.dart';
-import 'package:litpic/services/order_service.dart';
-import 'package:litpic/services/stripe_session_service.dart';
-import 'package:litpic/views/list_tile_view.dart';
-import 'package:litpic/views/title_view.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+part of 'add_lit_pic_bloc.dart';
 
-class MyOrdersPage extends StatefulWidget {
-  final String status;
-
-  const MyOrdersPage({required this.status}) : super();
-
+class AddLitPicPage extends StatefulWidget {
+  const AddLitPicPage() : super();
   @override
-  _MyOrdersPageState createState() => _MyOrdersPageState();
+  _AddLitPicPageState createState() => _AddLitPicPageState();
 }
 
-class _MyOrdersPageState extends State<MyOrdersPage>
+class _AddLitPicPageState extends State<AddLitPicPage>
     with TickerProviderStateMixin {
   late AnimationController animationController;
   late Animation<double> topBarAnimation;
@@ -35,12 +17,7 @@ class _MyOrdersPageState extends State<MyOrdersPage>
 
   final Color iconColor = Colors.amber[700]!;
 
-  late UserModel _currentUser;
-  List<OrderModel> orders = [];
-
   bool addAllListDataComplete = false;
-
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -81,91 +58,36 @@ class _MyOrdersPageState extends State<MyOrdersPage>
   void addAllListData() {
     if (!addAllListDataComplete) {
       addAllListDataComplete = true;
-      var count = 5;
 
+      int count = 1;
+
+      // Add Lit Pic
       listViews.add(
-        _isLoading
-            ? LinearProgressIndicator(
-                backgroundColor: Colors.blue[200],
-                valueColor: AlwaysStoppedAnimation(Colors.blue),
-              )
-            : SizedBox.shrink(),
-      );
-
-      if (orders.isEmpty) {
-        listViews.add(
-          TitleView(
-            showExtra: false,
-            titleTxt:
-                'No ${widget.status == 'created' ? 'open' : 'complete'} orders.',
-            subTxt: '',
-            animation: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-                parent: animationController,
-                curve: Interval((1 / count) * 0, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-            animationController: animationController,
-          ),
-        );
-      } else {
-        //Iterate through each order.
-        for (int i = 0; i < orders.length; i++) {
-          OrderModel order = orders[i];
-
-          listViews.add(
-            ListTileView(
-              icon: Icon(
-                MdiIcons.creditCardClock,
-                color: Colors.purple,
-              ),
-              title: 'ID: ${order.id}',
-              subTitle:
-                  'Created: ${DateFormat(timeFormat).format(order.created)}',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => OrderDetailsPage(order: order),
-                  ),
-                );
-              },
-              animation: Tween(begin: 0.0, end: 1.0).animate(
-                CurvedAnimation(
-                  parent: animationController,
-                  curve: Interval((1 / count) * 0, 1.0,
-                      curve: Curves.fastOutSlowIn),
-                ),
-              ),
-              animationController: animationController,
+        ListTileView(
+          animationController: animationController,
+          animation: Tween(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
             ),
-          );
-        }
-      }
-    }
-  }
-
-  Future<void> loadCustomerInfo() async {
-    try {
-      //Load user and orders.
-      _currentUser = await locator<AuthService>().getCurrentUser();
-      orders = await locator<OrderService>()
-          .list(customerID: _currentUser.customerID, status: widget.status);
-
-      //Apply session to each order.
-      for (int i = 0; i < orders.length; i++) {
-        OrderModel order = orders[i];
-
-        order.session = await locator<StripeSessionService>()
-            .retrieve(sessionID: order.sessionID);
-      }
-
-      return;
-    } catch (e) {
-      locator<ModalService>().showAlert(
-        context: context,
-        title: 'Error',
-        message: e.toString(),
+          ),
+          icon: Icon(
+            Icons.add,
+            color: iconColor,
+          ),
+          title: 'Add Lit Pic',
+          subTitle: 'To be displayed on home page.',
+          onTap: () async {
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => AdminOpenOrdersPage(),
+            //   ),
+            // );
+          },
+        ),
       );
-      return;
     }
   }
 
@@ -175,14 +97,45 @@ class _MyOrdersPageState extends State<MyOrdersPage>
       color: LitPicTheme.background,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Stack(
-          children: <Widget>[
-            getMainListViewUI(),
-            getAppBarUI(),
-            SizedBox(
-              height: MediaQuery.of(context).padding.bottom,
-            )
-          ],
+        body: BlocConsumer<AddLitPicBloc, AddLitPicState>(
+          builder: (context, state) {
+            if (state is AddLitPicLoadingState) {
+              return Spinner();
+            }
+
+            if (state is AddLitPicLoadedState) {
+              addAllListData();
+
+              return Stack(
+                children: <Widget>[
+                  LitPicListViews(
+                    listViews: listViews,
+                    animationController: animationController,
+                    scrollController: scrollController,
+                  ),
+                  LitPicAppBar(
+                    title: 'Add Lit Pic',
+                    topBarOpacity: topBarOpacity,
+                    animationController: animationController,
+                    // topBarAnimation: topBarAnimation,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.bottom,
+                  )
+                ],
+              );
+            }
+
+            if (state is ErrorState) {
+              final dynamic error = state.error;
+              return Center(
+                child: Text(error.toString()),
+              );
+            }
+
+            return Container();
+          },
+          listener: (context, state) {},
         ),
       ),
     );
@@ -190,7 +143,7 @@ class _MyOrdersPageState extends State<MyOrdersPage>
 
   Widget getMainListViewUI() {
     List<Future> futures = [];
-    futures.add(loadCustomerInfo());
+    futures.add(Future.delayed(Duration(seconds: 0)));
     return FutureBuilder(
       future: Future.wait(futures),
       builder: (context, snapshot) {
@@ -267,7 +220,7 @@ class _MyOrdersPageState extends State<MyOrdersPage>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  '${widget.status == 'created' ? 'Open' : 'Complete'} Orders',
+                                  'Add Lit Pic',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,
