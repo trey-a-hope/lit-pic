@@ -170,15 +170,16 @@ class _HomePageState extends State<HomePage>
       //Load user.
       _currentUser = await locator<AuthService>().getCurrentUser();
 
-      // //START DELETE
-      // _currentUser.customer = await locator<StripeCustomerService>()
-      //     .retrieve(customerID: _currentUser.customerID);
-
-      // var orders = await locator<OrderService>()
-      //     .list(customerID: _currentUser.customerID, status: 'created');
-
-      // print(orders);
-      // //END DELETE
+      // locator<LitPicService>().create(
+      //   litPic: LitPicModel(
+      //     dimensions: '5in x 5in',
+      //     id: null,
+      //     imgUrl:
+      //         'https://cdn.shopify.com/s/files/1/0256/9089/8507/files/17a4ce8d12c672808e18d3ba3f02dd54_preview_featured_large.jpeg?v=1582301532',
+      //     printMinutes: 60,
+      //     title: 'Trey Hope',
+      //   ),
+      // );
 
       //Request permission on iOS device.
       if (Platform.isIOS) {
@@ -208,8 +209,12 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> fetchLitPics() async {
-    litPics = await locator<LitPicService>().retrieveLitPics();
-    return;
+    try {
+      litPics = await locator<LitPicService>().list(limit: 5);
+      return;
+    } on PlatformException catch (e) {
+      throw PlatformException(message: e.message, code: e.code);
+    }
   }
 
   @override

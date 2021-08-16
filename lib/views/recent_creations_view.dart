@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:litpic/common/hero_screen.dart';
-import 'package:litpic/extensions/hexcolor.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/models/litpic_model.dart';
 
@@ -66,7 +65,7 @@ class _RecentCreationsViewState extends State<RecentCreationsView>
                               curve: Curves.fastOutSlowIn)));
                   animationController.forward();
 
-                  return MealsView(
+                  return LitPicView(
                     litPic: litPics[index],
                     animation: animation,
                     animationController: animationController,
@@ -81,12 +80,12 @@ class _RecentCreationsViewState extends State<RecentCreationsView>
   }
 }
 
-class MealsView extends StatelessWidget {
+class LitPicView extends StatelessWidget {
   final LitPicModel litPic;
   final AnimationController animationController;
   final Animation<double> animation;
 
-  const MealsView({
+  const LitPicView({
     //Key key,
     required this.litPic,
     required this.animationController,
@@ -114,14 +113,14 @@ class MealsView extends StatelessWidget {
                       decoration: BoxDecoration(
                         boxShadow: <BoxShadow>[
                           BoxShadow(
-                              color: HexColor(litPic.endColor).withOpacity(0.6),
+                              color: Colors.grey.withOpacity(0.6),
                               offset: Offset(1.1, 4.0),
                               blurRadius: 8.0),
                         ],
                         gradient: LinearGradient(
                           colors: [
-                            HexColor(litPic.startColor),
-                            HexColor(litPic.endColor),
+                            LitPicTheme.nearlyDarkBlue,
+                            LitPicTheme.nearlyDarkBlue.withOpacity(0.5),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
