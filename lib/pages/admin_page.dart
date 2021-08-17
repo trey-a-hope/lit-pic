@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:litpic/blocs/bloc/add_lit_pic_bloc.dart';
+import 'package:litpic/blocs/add_lit_pic/add_lit_pic_bloc.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/views/list_tile_view.dart';
@@ -251,7 +251,7 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "Admin",
+                                  'Admin',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: LitPicTheme.fontName,

@@ -8,8 +8,10 @@ import 'package:litpic/common/lit_pic_app_bar.dart';
 import 'package:litpic/common/lit_pic_list_views.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
-import 'package:litpic/views/list_tile_view.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:litpic/mixins/ui_properties_mixin.dart';
+import 'package:litpic/service_locator.dart';
+import 'package:litpic/services/validater_service.dart';
+import 'package:litpic/views/text_form_field_view.dart';
 
 part 'add_lit_pic_event.dart';
 part 'add_lit_pic_state.dart';
