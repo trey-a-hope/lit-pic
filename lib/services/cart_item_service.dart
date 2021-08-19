@@ -17,7 +17,7 @@ abstract class ICartItemService {
 
 class CartItemService extends ICartItemService {
   final CollectionReference _usersDB =
-      FirebaseFirestore.instance.collection('Users');
+      FirebaseFirestore.instance.collection('users');
 
   @override
   Future<void> createCartItem(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/mixins/ui_properties_mixin.dart';
+import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/views/list_tile_view.dart';
@@ -149,11 +150,23 @@ class _SettingsPageState extends State<SettingsPage>
           title: 'Delete Account',
           subTitle: 'Remove account from this app.',
           onTap: () async {
-            locator<ModalService>().showAlert(
+            bool confirm = await locator<ModalService>().showConfirmation(
                 context: context,
                 title: 'Delete Account',
-                message:
-                    'Contact tr3umphant.designs@gmail.com to remove your account. Thank you.');
+                message: 'Are you sure?');
+
+            if (!confirm) return;
+
+            UserModel currentUser =
+                await locator<AuthService>().getCurrentUser();
+
+            try {
+              locator<AuthService>().deleteUser(uid: currentUser.uid);
+              locator<AuthService>().signOut();
+            } catch (e) {
+              locator<ModalService>().showAlert(
+                  context: context, title: 'Error', message: e.toString());
+            }
           },
         ),
       );

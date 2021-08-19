@@ -10,7 +10,7 @@ abstract class IOrderService {
 
 class OrderService extends IOrderService {
   final CollectionReference _ordersDB =
-      FirebaseFirestore.instance.collection('Orders');
+      FirebaseFirestore.instance.collection('orders');
 
   @override
   Future<List<OrderModel>> list({

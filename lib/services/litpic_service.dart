@@ -8,7 +8,7 @@ abstract class ILitPicService {
 
 class LitPicService extends ILitPicService {
   final CollectionReference _litPicsDB =
-      FirebaseFirestore.instance.collection('Lit Pics');
+      FirebaseFirestore.instance.collection('lit_pics');
 
   @override
   Future<List<LitPicModel>> list({required int limit}) async {

@@ -13,7 +13,7 @@ abstract class IUserService {
 
 class UserService extends IUserService {
   final CollectionReference _usersDB =
-      FirebaseFirestore.instance.collection('Users');
+      FirebaseFirestore.instance.collection('users');
 
   @override
   Future<void> createUser({required UserModel user}) async {

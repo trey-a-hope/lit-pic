@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
- import 'package:flutter/services.dart';
+import 'package:flutter/services.dart';
 import 'package:litpic/models/user_model.dart';
 
 abstract class IAuthService {
@@ -22,7 +22,7 @@ abstract class IAuthService {
 class AuthService extends IAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final CollectionReference _usersDB =
-      FirebaseFirestore.instance.collection('Users');
+      FirebaseFirestore.instance.collection('users');
 
   @override
   Future<UserModel> getCurrentUser() async {
@@ -81,9 +81,10 @@ class AuthService extends IAuthService {
   @override
   Future<void> deleteUser({required String uid}) async {
     try {
+      //Get current user of the app.
       User firebaseUser = _auth.currentUser!;
+      //Delete them from auth.
       await firebaseUser.delete();
-      await _usersDB.doc(uid).delete();
       return;
     } on PlatformException catch (e) {
       throw PlatformException(message: e.message, code: e.code);
