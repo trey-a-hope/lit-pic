@@ -8,6 +8,8 @@ abstract class AddLitPicEvent extends Equatable {
 }
 
 class LoadPageEvent extends AddLitPicEvent {
+  const LoadPageEvent();
+
   @override
   List<Object> get props => [];
 }

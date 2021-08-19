@@ -25,7 +25,6 @@ import 'package:litpic/services/stripe_session_service.dart';
 import 'package:litpic/views/cart_item_view.dart';
 import 'package:litpic/views/round_button_view.dart';
 import 'package:litpic/views/title_view.dart';
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:url_launcher/url_launcher.dart';
 

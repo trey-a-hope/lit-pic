@@ -94,62 +94,6 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
           },
         ),
       );
-
-      //Open Orders
-      // listViews.add(
-      //   ListTileView(
-      //     animationController: widget.animationController,
-      //     animation: Tween(begin: 0.0, end: 1.0).animate(
-      //       CurvedAnimation(
-      //         parent: widget.animationController,
-      //         curve:
-      //             Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
-      //       ),
-      //     ),
-      //     icon: Icon(
-      //       MdiIcons.clipboardList,
-      //       color: iconColor,
-      //     ),
-      //     title: 'Open Orders',
-      //     subTitle: 'Close and notify customer of finished orders.',
-      //     onTap: () async {
-      //       Navigator.push(
-      //         context,
-      //         MaterialPageRoute(
-      //           builder: (context) => AdminOpenOrdersPage(),
-      //         ),
-      //       );
-      //     },
-      //   ),
-      // );
-
-      //Complete Orders
-      // listViews.add(
-      //   ListTileView(
-      //     animationController: widget.animationController,
-      //     animation: Tween(begin: 0.0, end: 1.0).animate(
-      //       CurvedAnimation(
-      //         parent: widget.animationController,
-      //         curve:
-      //             Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
-      //       ),
-      //     ),
-      //     icon: Icon(
-      //       MdiIcons.clipboardList,
-      //       color: iconColor,
-      //     ),
-      //     title: 'Complete Orders',
-      //     subTitle: 'See what is finished.',
-      //     onTap: () async {
-      //       Navigator.push(
-      //         context,
-      //         MaterialPageRoute(
-      //           builder: (context) => AdminCompleteOrdersPage(),
-      //         ),
-      //       );
-      //     },
-      //   ),
-      // );
     }
   }
 

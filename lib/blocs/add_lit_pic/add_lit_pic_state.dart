@@ -1,36 +1,26 @@
 part of 'add_lit_pic_bloc.dart';
 
-@immutable
-abstract class AddLitPicState extends Equatable {
-  const AddLitPicState();
+enum AddLitPicStates { initialState, loadingState, loadedState, errorState }
 
-  @override
-  List<Object> get props => [];
-}
+class AddLitPicState extends Equatable {
+  const AddLitPicState._(
+      {this.state = AddLitPicStates.initialState, this.error});
 
-class AddLitPicInitial extends AddLitPicState {}
+  const AddLitPicState.addLitPicInitial()
+      : this._(state: AddLitPicStates.initialState);
 
-class AddLitPicLoadingState extends AddLitPicState {
-  @override
-  List<Object> get props => [];
-}
+  const AddLitPicState.addLitPicLoadingState()
+      : this._(state: AddLitPicStates.loadingState);
 
-class AddLitPicLoadedState extends AddLitPicState {
-  AddLitPicLoadedState();
+  const AddLitPicState.addLitPicLoadedState()
+      : this._(state: AddLitPicStates.loadedState);
 
-  @override
-  List<Object> get props => [];
-}
+  const AddLitPicState.errorState(dynamic error)
+      : this._(state: AddLitPicStates.errorState);
 
-class ErrorState extends AddLitPicState {
+  final AddLitPicStates state;
   final dynamic error;
 
-  ErrorState({
-    required this.error,
-  });
-
   @override
-  List<Object> get props => [
-        error,
-      ];
+  List<Object> get props => [state];
 }

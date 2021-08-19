@@ -65,7 +65,7 @@ class _AddLitPicPageState extends State<AddLitPicPage>
     if (!addAllListDataComplete) {
       addAllListDataComplete = true;
 
-      int count = 1;
+      int count = 2;
 
       // Form
       listViews.add(
@@ -110,6 +110,26 @@ class _AddLitPicPageState extends State<AddLitPicPage>
           ),
         ),
       );
+
+      listViews.add(
+        Padding(
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+          child: RoundButtonView(
+            buttonColor: Colors.amber,
+            textColor: Colors.white,
+            onPressed: () async {},
+            text: 'SAVE',
+            animation: Tween(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                parent: animationController,
+                curve:
+                    Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn),
+              ),
+            ),
+            animationController: animationController,
+          ),
+        ),
+      );
     }
   }
 
@@ -121,44 +141,41 @@ class _AddLitPicPageState extends State<AddLitPicPage>
         backgroundColor: Colors.transparent,
         body: BlocConsumer<AddLitPicBloc, AddLitPicState>(
           builder: (context, state) {
-            if (state is AddLitPicLoadingState) {
-              return Spinner();
+            switch (state.state) {
+              case AddLitPicStates.loadingState:
+                return Spinner();
+              case AddLitPicStates.loadedState:
+                addAllListData();
+
+                return Stack(
+                  children: <Widget>[
+                    LitPicListViews(
+                      listViews: listViews,
+                      animationController: animationController,
+                      scrollController: scrollController,
+                    ),
+                    LitPicAppBar(
+                      goBackAction: () {
+                        Navigator.of(context).pop();
+                      },
+                      title: 'Add Lit Pic',
+                      topBarOpacity: topBarOpacity,
+                      animationController: animationController,
+                      // topBarAnimation: topBarAnimation,
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).padding.bottom,
+                    )
+                  ],
+                );
+              case AddLitPicStates.errorState:
+                final dynamic error = state.error;
+                return Center(
+                  child: Text(error.toString()),
+                );
+              default:
+                return Container();
             }
-
-            if (state is AddLitPicLoadedState) {
-              addAllListData();
-
-              return Stack(
-                children: <Widget>[
-                  LitPicListViews(
-                    listViews: listViews,
-                    animationController: animationController,
-                    scrollController: scrollController,
-                  ),
-                  LitPicAppBar(
-                    goBackAction: () {
-                      Navigator.of(context).pop();
-                    },
-                    title: 'Add Lit Pic',
-                    topBarOpacity: topBarOpacity,
-                    animationController: animationController,
-                    // topBarAnimation: topBarAnimation,
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).padding.bottom,
-                  )
-                ],
-              );
-            }
-
-            if (state is ErrorState) {
-              final dynamic error = state.error;
-              return Center(
-                child: Text(error.toString()),
-              );
-            }
-
-            return Container();
           },
           listener: (context, state) {},
         ),
