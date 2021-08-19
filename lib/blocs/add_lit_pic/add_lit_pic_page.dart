@@ -22,8 +22,10 @@ class _AddLitPicPageState extends State<AddLitPicPage>
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _dimensionsController = TextEditingController();
+  final TextEditingController _imageUrlController = TextEditingController();
+  final TextEditingController _printMinutesController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
 
   @override
   void initState() {
@@ -71,17 +73,16 @@ class _AddLitPicPageState extends State<AddLitPicPage>
       listViews.add(
         Form(
           key: _formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(20),
                 child: TextFormFieldView(
                   keyboardType: TextInputType.text,
-                  labelText: 'Name',
+                  labelText: 'Dimensions',
                   validator: locator<ValidatorService>().isEmpty,
-                  textEditingController: _nameController,
-                  iconData: Icons.face,
+                  textEditingController: _dimensionsController,
+                  iconData: Icons.account_box,
                   animation: Tween(begin: 0.0, end: 1.0).animate(
                       CurvedAnimation(
                           parent: animationController,
@@ -94,10 +95,42 @@ class _AddLitPicPageState extends State<AddLitPicPage>
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
                 child: TextFormFieldView(
                   keyboardType: TextInputType.text,
-                  labelText: 'Email',
-                  validator: locator<ValidatorService>().email,
-                  textEditingController: _emailController,
-                  iconData: Icons.email,
+                  labelText: 'Image URL',
+                  validator: locator<ValidatorService>().isEmpty,
+                  textEditingController: _imageUrlController,
+                  iconData: Icons.picture_in_picture,
+                  animation: Tween(begin: 0.0, end: 1.0).animate(
+                      CurvedAnimation(
+                          parent: animationController,
+                          curve: Interval((1 / count) * 1, 1.0,
+                              curve: Curves.fastOutSlowIn))),
+                  animationController: animationController,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: TextFormFieldView(
+                  keyboardType: TextInputType.text,
+                  labelText: 'Print Minutes',
+                  validator: locator<ValidatorService>().isEmpty,
+                  textEditingController: _printMinutesController,
+                  iconData: Icons.lock_clock,
+                  animation: Tween(begin: 0.0, end: 1.0).animate(
+                      CurvedAnimation(
+                          parent: animationController,
+                          curve: Interval((1 / count) * 1, 1.0,
+                              curve: Curves.fastOutSlowIn))),
+                  animationController: animationController,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                child: TextFormFieldView(
+                  keyboardType: TextInputType.text,
+                  labelText: 'Title',
+                  validator: locator<ValidatorService>().isEmpty,
+                  textEditingController: _titleController,
+                  iconData: Icons.text_fields,
                   animation: Tween(begin: 0.0, end: 1.0).animate(
                       CurvedAnimation(
                           parent: animationController,
@@ -117,7 +150,7 @@ class _AddLitPicPageState extends State<AddLitPicPage>
           child: RoundButtonView(
             buttonColor: Colors.amber,
             textColor: Colors.white,
-            onPressed: () async {},
+            onPressed: _save,
             text: 'SAVE',
             animation: Tween(begin: 0.0, end: 1.0).animate(
               CurvedAnimation(
@@ -133,6 +166,19 @@ class _AddLitPicPageState extends State<AddLitPicPage>
     }
   }
 
+  void _save() async {
+    if (_formKey.currentState!.validate() == false) return;
+
+    context.read<AddLitPicBloc>().add(
+          SubmitEvent(
+            dimensions: _dimensionsController.text,
+            imgUrl: _imageUrlController.text,
+            printMinutes: int.parse(_printMinutesController.text),
+            title: _titleController.text,
+          ),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -141,41 +187,76 @@ class _AddLitPicPageState extends State<AddLitPicPage>
         backgroundColor: Colors.transparent,
         body: BlocConsumer<AddLitPicBloc, AddLitPicState>(
           builder: (context, state) {
-            switch (state.state) {
-              case AddLitPicStates.loadingState:
-                return Spinner();
-              case AddLitPicStates.loadedState:
-                addAllListData();
-
-                return Stack(
-                  children: <Widget>[
-                    LitPicListViews(
-                      listViews: listViews,
-                      animationController: animationController,
-                      scrollController: scrollController,
-                    ),
-                    LitPicAppBar(
-                      goBackAction: () {
-                        Navigator.of(context).pop();
-                      },
-                      title: 'Add Lit Pic',
-                      topBarOpacity: topBarOpacity,
-                      animationController: animationController,
-                      // topBarAnimation: topBarAnimation,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).padding.bottom,
-                    )
-                  ],
-                );
-              case AddLitPicStates.errorState:
-                final dynamic error = state.error;
-                return Center(
-                  child: Text(error.toString()),
-                );
-              default:
-                return Container();
+            if (state is AddLitPicLoadingState) {
+              return Spinner();
             }
+
+            if (state is AddLitPicLoadedState) {
+              addAllListData();
+
+              return Stack(
+                children: <Widget>[
+                  LitPicListViews(
+                    listViews: listViews,
+                    animationController: animationController,
+                    scrollController: scrollController,
+                  ),
+                  LitPicAppBar(
+                    goBackAction: () {
+                      Navigator.of(context).pop();
+                    },
+                    title: 'Add Lit Pic',
+                    topBarOpacity: topBarOpacity,
+                    animationController: animationController,
+                    // topBarAnimation: topBarAnimation,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.bottom,
+                  )
+                ],
+              );
+            }
+
+            if (state is SuccessState) {
+              String litPicId = state.litPicId;
+
+              return Stack(
+                children: <Widget>[
+                  LitPicListViews(
+                    listViews: [
+                      Center(
+                        child: Text('Success! New Lit Pic ID: $litPicId'),
+                      )
+                    ],
+                    animationController: animationController,
+                    scrollController: scrollController,
+                  ),
+                  LitPicAppBar(
+                    goBackAction: () {
+                      Navigator.of(context).pop();
+                    },
+                    title: 'Add Lit Pic',
+                    topBarOpacity: topBarOpacity,
+                    animationController: animationController,
+                    // topBarAnimation: topBarAnimation,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.bottom,
+                  )
+                ],
+              );
+
+              // return
+            }
+
+            if (state is ErrorState) {
+              dynamic error = state.error;
+              return Center(
+                child: Text(error.toString()),
+              );
+            }
+
+            return Container();
           },
           listener: (context, state) {},
         ),

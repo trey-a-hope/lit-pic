@@ -32,6 +32,7 @@ class TextFormFieldView extends StatelessWidget {
                 0.0, 30 * (1.0 - animation.value), 0.0),
             child: TextFormField(
               validator: validator,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               keyboardType: keyboardType,
               textInputAction: TextInputAction.done,
               controller: textEditingController,
