@@ -11,6 +11,12 @@ abstract class IModalService {
       {required BuildContext context,
       required String title,
       required String message});
+
+  Future<String?> showInputDialog({
+    required BuildContext context,
+    required String title,
+    required String hintText,
+  });
 }
 
 class ModalService extends IModalService {
@@ -110,5 +116,70 @@ class ModalService extends IModalService {
               );
             },
           );
+  }
+
+  Future<String?> showInputDialog({
+    required BuildContext context,
+    required String title,
+    required String hintText,
+  }) async {
+    TextEditingController controller = TextEditingController();
+    return Platform.isIOS
+        ? showCupertinoDialog(
+            context: context,
+            builder: (context) {
+              return CupertinoAlertDialog(
+                title: Text(title),
+                content: Material(
+                  child: TextField(
+                    controller: controller,
+                    decoration: InputDecoration(hintText: hintText),
+                  ),
+                ),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    isDefaultAction: true,
+                    child: Text('Submit'),
+                    onPressed: () {
+                      if (controller.text.isNotEmpty)
+                        Navigator.of(context).pop(controller.text);
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    isDefaultAction: true,
+                    child: Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop(null);
+                    },
+                  )
+                ],
+              );
+            })
+        : showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(title),
+                content: TextField(
+                  controller: controller,
+                  decoration: InputDecoration(hintText: hintText),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Submit'),
+                    onPressed: () {
+                      if (controller.text.isNotEmpty)
+                        Navigator.of(context).pop(controller.text);
+                    },
+                  ),
+                  TextButton(
+                    child: Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop(null);
+                    },
+                  ),
+                ],
+              );
+            });
   }
 }

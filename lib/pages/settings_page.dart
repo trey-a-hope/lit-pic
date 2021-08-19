@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
 import 'package:litpic/mixins/ui_properties_mixin.dart';
 import 'package:litpic/models/user_model.dart';
 import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/modal_service.dart';
+import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/views/list_tile_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -157,15 +159,29 @@ class _SettingsPageState extends State<SettingsPage>
 
             if (!confirm) return;
 
+            String? password = await locator<ModalService>().showInputDialog(
+                context: context,
+                title: 'Enter your password.',
+                hintText: 'Password...');
+
+            if (password == null) return;
+
             UserModel currentUser =
                 await locator<AuthService>().getCurrentUser();
 
             try {
-              locator<AuthService>().deleteUser(uid: currentUser.uid);
-              locator<AuthService>().signOut();
-            } catch (e) {
+              //Delete user from Firestore and Auth.
+              await locator<AuthService>().deleteUser(password: password);
+
+              //Delete user from Stripe.
+              await locator<StripeCustomerService>()
+                  .delete(customerID: currentUser.customerID);
+
+              //Log user out.
+              await locator<AuthService>().signOut();
+            } on PlatformException catch (e) {
               locator<ModalService>().showAlert(
-                  context: context, title: 'Error', message: e.toString());
+                  context: context, title: 'Error', message: e.message!);
             }
           },
         ),

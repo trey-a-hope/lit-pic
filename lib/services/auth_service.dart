@@ -15,7 +15,7 @@ abstract class IAuthService {
   Future<void> updatePassword({required String password});
   Future<void> updateEmail({required String email});
 
-  Future<void> deleteUser({required String uid});
+  Future<void> deleteUser({required String password});
   Future<void> resetPassword({required String email});
 }
 
@@ -79,10 +79,18 @@ class AuthService extends IAuthService {
   }
 
   @override
-  Future<void> deleteUser({required String uid}) async {
+  Future<void> deleteUser({required String password}) async {
     try {
       //Get current user of the app.
       User firebaseUser = _auth.currentUser!;
+
+      //Re-create credential based on user email and password.
+      AuthCredential credential = EmailAuthProvider.credential(
+          email: firebaseUser.email!, password: password);
+
+      //Re-authenticate the user with credential.
+      firebaseUser.reauthenticateWithCredential(credential);
+
       //Delete them from auth.
       await firebaseUser.delete();
       return;
