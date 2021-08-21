@@ -228,7 +228,7 @@ class StripeCustomerService extends IStripeCustomerService {
 
     http.Response response = await http.post(
       Uri.parse('${GCF_ENDPOINT}StripeDeleteBulk'),
-      body: data,
+      body: json.encode(data),
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
 

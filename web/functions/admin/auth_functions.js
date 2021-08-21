@@ -10,7 +10,7 @@ exports.deleteUsers = functions.https.onRequest(async (request, response) => {
     var promises = [];
 
     result.users.forEach((user) => {
-      if (user.id !== adminDocId)
+      if (user.uid !== adminDocId)
         promises.push(admin.auth().deleteUser(user.uid));
     });
 
