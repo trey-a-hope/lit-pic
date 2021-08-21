@@ -116,7 +116,8 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
           title: 'Delete Customers',
           subTitle: 'Perminently delete all Stripe customers.',
           onTap: () async {
-            await locator<StripeCustomerService>().deleteBulk(limit: 20);
+            await locator<StripeCustomerService>()
+                .deleteBulk(limit: 20, customerIdOfAdmin: 'cus_K5DlHxxlZKYZOf');
           },
         ),
       );

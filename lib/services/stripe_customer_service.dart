@@ -14,7 +14,8 @@ abstract class IStripeCustomerService {
   });
   // Future<List<CustomerModel>> list();
   Future<bool> delete({required String customerID});
-  Future<bool> deleteBulk({required int limit});
+  Future<bool> deleteBulk(
+      {required int limit, required String customerIdOfAdmin});
   Future<CustomerModel> retrieve({required String customerID});
   Future<void> update({
     required String customerID,
@@ -223,7 +224,10 @@ class StripeCustomerService extends IStripeCustomerService {
   }
 
   @override
-  Future<bool> deleteBulk({required int limit}) async {
+  Future<bool> deleteBulk({
+    required int limit,
+    required String customerIdOfAdmin,
+  }) async {
     Map data = {'limit': limit};
 
     http.Response response = await http.post(
