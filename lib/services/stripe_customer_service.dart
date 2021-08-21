@@ -14,7 +14,7 @@ abstract class IStripeCustomerService {
   });
   // Future<List<CustomerModel>> list();
   Future<bool> delete({required String customerID});
-  Future<bool> delete10();
+  Future<bool> deleteBulk({required int limit});
   Future<CustomerModel> retrieve({required String customerID});
   Future<void> update({
     required String customerID,
@@ -223,10 +223,12 @@ class StripeCustomerService extends IStripeCustomerService {
   }
 
   @override
-  Future<bool> delete10() async {
+  Future<bool> deleteBulk({required int limit}) async {
+    Map data = {'limit': limit};
+
     http.Response response = await http.post(
-      Uri.parse('${GCF_ENDPOINT}StripeDelete10'),
-      body: {},
+      Uri.parse('${GCF_ENDPOINT}StripeDeleteBulk'),
+      body: data,
       headers: {'content-type': 'application/x-www-form-urlencoded'},
     );
 
@@ -238,23 +240,4 @@ class StripeCustomerService extends IStripeCustomerService {
           message: map['raw']['message'], code: map['raw']['code']);
     }
   }
-
-  // @override
-  // Future<List<CustomerModel>> list() async {
-  //   // Map data = {'customerID': customerID};
-  //
-  //   http.Response response = await http.post(
-  //     Uri.parse('${GCF_ENDPOINT}StripeListCustomers'),
-  //     body: {},
-  //     headers: {'content-type': 'application/x-www-form-urlencoded'},
-  //   );
-  //
-  //   Map map = json.decode(response.body);
-  //   if (map['statusCode'] == null) {
-  //     return map['deleted'];
-  //   } else {
-  //     throw PlatformException(
-  //         message: map['raw']['message'], code: map['raw']['code']);
-  //   }
-  // }
 }
