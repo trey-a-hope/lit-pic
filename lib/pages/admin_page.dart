@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:litpic/blocs/add_lit_pic/add_lit_pic_bloc.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
+import 'package:litpic/services/auth_service.dart';
 import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/views/list_tile_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -67,7 +68,7 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
     if (!addAllListDataComplete) {
       addAllListDataComplete = true;
 
-      int count = 2;
+      int count = 3;
 
       //Add Lit Pic
       listViews.add(
@@ -116,6 +117,29 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
           subTitle: 'Perminently delete all Stripe customers.',
           onTap: () async {
             await locator<StripeCustomerService>().deleteBulk(limit: 20);
+          },
+        ),
+      );
+
+      listViews.add(
+        ListTileView(
+          animationController: animationController,
+          animation: Tween(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
+            ),
+          ),
+          icon: Icon(
+            Icons.delete,
+            color: iconColor,
+          ),
+          title: 'Delete Auth Users',
+          subTitle: 'Perminently delete  Auth users.',
+          onTap: () async {
+            await locator<AuthService>()
+                .deleteUsers(); //Note: times out after 200 users.
           },
         ),
       );

@@ -285,9 +285,6 @@ class _LoginPageState extends State<LoginPage>
                         Spacer(),
                         GoodButton(
                           onPressed: () {
-                            //_formKey.currentState.reset();
-                            _emailController.clear();
-                            _passwordController.clear();
                             context.read<LoginBloc>().add(TryAgainEvent());
                           },
                           text: 'Try Again',

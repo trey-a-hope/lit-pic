@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const AdminAuth = require('./admin/auth_functions');
 const StripeCard = require('./stripe/card_functions');
 const StripeToken = require('./stripe/token_functions');
 const StripeCustomer = require('./stripe/customer_functions');
@@ -15,6 +16,9 @@ const StripeSku = require('./stripe/sku_functions');
 const Webhooks = require('./stripe/webhooks');
 
 admin.initializeApp(functions.config().firebase);
+
+//Admin
+exports.AdminAuthDeleteUsers = AdminAuth.deleteUsers;
 
 //Stripe Cards
 exports.StripeCreateCard = StripeCard.create;
