@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/validater_service.dart';
+import 'package:litpic/views/title_view.dart';
 
 import '../../service_locator.dart';
 
@@ -240,9 +242,33 @@ class _SignupPageState extends State<SignupPage>
           }
 
           if (state is ErrorState) {
+            String? errorMessage;
+            if (state.error is FirebaseAuthException) {
+              FirebaseAuthException firebaseAuthException = state.error;
+              print('Sorry, an error occured.');
+              print('Code: ${firebaseAuthException.code}');
+              errorMessage = firebaseAuthException.message;
+            }
             final dynamic error = state.error;
+            final String message = errorMessage ?? error.toString();
             return Center(
-              child: Text('${error.toString()}'),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('$message', textAlign: TextAlign.center),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  GoodButton(
+                    onPressed: () {
+                      context.read<SignupBloc>().add(TryAgainEvent());
+                    },
+                    text: 'Try Again',
+                    buttonColor: Colors.orange,
+                    textColor: Colors.white,
+                  )
+                ],
+              ),
             );
           }
 

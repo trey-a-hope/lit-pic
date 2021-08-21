@@ -26,3 +26,10 @@ class SubmitEvent extends SignupEvent {
         password,
       ];
 }
+
+class TryAgainEvent extends SignupEvent {
+  TryAgainEvent();
+
+  @override
+  List<Object> get props => [];
+}

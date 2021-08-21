@@ -3,8 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:litpic/blocs/add_lit_pic/add_lit_pic_bloc.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/litpic_theme.dart';
+import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/views/list_tile_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
+import '../service_locator.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage() : super();
@@ -64,7 +67,7 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
     if (!addAllListDataComplete) {
       addAllListDataComplete = true;
 
-      int count = 1;
+      int count = 2;
 
       //Add Lit Pic
       listViews.add(
@@ -91,6 +94,28 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
               ),
             );
             Navigator.push(context, route);
+          },
+        ),
+      );
+
+      listViews.add(
+        ListTileView(
+          animationController: animationController,
+          animation: Tween(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+              parent: animationController,
+              curve:
+                  Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
+            ),
+          ),
+          icon: Icon(
+            Icons.account_box,
+            color: iconColor,
+          ),
+          title: 'Delete 10 Customers',
+          subTitle: 'Perminently delete all Stripe customers.',
+          onTap: () async {
+            await locator<StripeCustomerService>().delete20();
           },
         ),
       );

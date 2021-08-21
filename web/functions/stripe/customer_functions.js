@@ -21,6 +21,30 @@ exports.retrieve = functions.https.onRequest((request, response) => {
 });
 
 /*
+    LIST ALL CUSTOMERS
+    Retrieves the details of an existing customer. You need only supply the unique customer identifier that was returned upon customer creation.
+    PARAMS
+    String customerID;
+*/
+exports.list = functions.https.onRequest(async (request, response) => {
+    const limit = request.body.limit;
+
+    try{
+        var params = {};
+
+        if(limit !== null){
+            params['limit'] = limit;
+        }
+
+        const customersData = await stripe(env.stripe.test.secret_key).customers.list(params);
+
+        response.send(customersData);
+    }catch(err){
+        response.send(err);
+    }
+});
+
+/*
     CREATE A CUSTOMER
     Creates a new customer.
     PARAMS
@@ -133,4 +157,28 @@ exports.delete = functions.https.onRequest((request, response) => {
             response.send(confirmation);
         }
     });
+});
+
+/*
+    DELETE ALL CUSTOMERS
+    Permanently deletes all customers. It cannot be undone. Also immediately cancels any active subscriptions on the customer.
+    PARAMS
+*/
+exports.delete10 = functions.https.onRequest(async (request, response) => {
+    try{
+        const customersData = await stripe(env.stripe.test.secret_key).customers.list();
+
+        var promises = [];
+
+        for(var i = 0; i < customersData['data'].length; i++){
+            var customer = customersData['data'][i];
+            promises.push(stripe(env.stripe.test.secret_key).customers.del(customer['id']));
+        }
+
+        await Promise.all(promises);
+
+        response.send('Deleted 10 customers.');
+    }catch(err){
+        response.send(err);
+    }
 });

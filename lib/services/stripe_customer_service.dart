@@ -12,6 +12,9 @@ abstract class IStripeCustomerService {
     required String name,
     required String description,
   });
+  // Future<List<CustomerModel>> list();
+  Future<bool> delete({required String customerID});
+  Future<bool> delete10();
   Future<CustomerModel> retrieve({required String customerID});
   Future<void> update({
     required String customerID,
@@ -24,7 +27,6 @@ abstract class IStripeCustomerService {
     String? name,
     String? email,
   });
-  Future<bool> delete({required String customerID});
 }
 
 class StripeCustomerService extends IStripeCustomerService {
@@ -219,4 +221,40 @@ class StripeCustomerService extends IStripeCustomerService {
           message: map['raw']['message'], code: map['raw']['code']);
     }
   }
+
+  @override
+  Future<bool> delete10() async {
+    http.Response response = await http.post(
+      Uri.parse('${GCF_ENDPOINT}StripeDelete10'),
+      body: {},
+      headers: {'content-type': 'application/x-www-form-urlencoded'},
+    );
+
+    Map map = json.decode(response.body);
+    if (map['statusCode'] == null) {
+      return map['deleted'];
+    } else {
+      throw PlatformException(
+          message: map['raw']['message'], code: map['raw']['code']);
+    }
+  }
+
+  // @override
+  // Future<List<CustomerModel>> list() async {
+  //   // Map data = {'customerID': customerID};
+  //
+  //   http.Response response = await http.post(
+  //     Uri.parse('${GCF_ENDPOINT}StripeListCustomers'),
+  //     body: {},
+  //     headers: {'content-type': 'application/x-www-form-urlencoded'},
+  //   );
+  //
+  //   Map map = json.decode(response.body);
+  //   if (map['statusCode'] == null) {
+  //     return map['deleted'];
+  //   } else {
+  //     throw PlatformException(
+  //         message: map['raw']['message'], code: map['raw']['code']);
+  //   }
+  // }
 }

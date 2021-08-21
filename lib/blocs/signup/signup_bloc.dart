@@ -66,5 +66,9 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
         yield ErrorState(error: error);
       }
     }
+
+    if (event is TryAgainEvent) {
+      yield SignupLoadedState(signupSuccessful: false);
+    }
   }
 }
