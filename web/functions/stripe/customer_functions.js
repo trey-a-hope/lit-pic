@@ -164,9 +164,17 @@ exports.delete = functions.https.onRequest((request, response) => {
     Permanently deletes all customers. It cannot be undone. Also immediately cancels any active subscriptions on the customer.
     PARAMS
 */
-exports.delete10 = functions.https.onRequest(async (request, response) => {
+exports.deleteBulk = functions.https.onRequest(async (request, response) => {
+    const limit = request.body.limit;
+
     try{
-        const customersData = await stripe(env.stripe.test.secret_key).customers.list();
+        var params = {};
+
+        if(limit !== null){
+            params['limit'] = limit;
+        }
+
+        const customersData = await stripe(env.stripe.test.secret_key).customers.list(params);
 
         var promises = [];
 
@@ -177,7 +185,7 @@ exports.delete10 = functions.https.onRequest(async (request, response) => {
 
         await Promise.all(promises);
 
-        response.send('Deleted 10 customers.');
+        response.send('Deleted customers.');
     }catch(err){
         response.send(err);
     }
