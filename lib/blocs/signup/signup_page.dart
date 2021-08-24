@@ -9,7 +9,6 @@ import 'package:litpic/common/good_button.dart';
 import 'package:litpic/common/spinner.dart';
 import 'package:litpic/services/modal_service.dart';
 import 'package:litpic/services/validater_service.dart';
-import 'package:litpic/views/title_view.dart';
 
 import '../../service_locator.dart';
 

@@ -181,7 +181,7 @@ exports.deleteBulk = functions.https.onRequest(async (request, response) => {
 
         for (var i = 0; i < customersData['data'].length; i++) {
             var customer = customersData['data'][i];
-            if (custom['id' !== customerIdOfAdmin])
+            if (customer['id' !== customerIdOfAdmin])
                 promises.push(stripe(env.stripe.test.secret_key).customers.del(customer['id']));
         }
 

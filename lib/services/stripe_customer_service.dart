@@ -228,7 +228,10 @@ class StripeCustomerService extends IStripeCustomerService {
     required int limit,
     required String customerIdOfAdmin,
   }) async {
-    Map data = {'limit': limit};
+    Map data = {
+      'limit': limit,
+      'customerIdOfAdmin': customerIdOfAdmin,
+    };
 
     http.Response response = await http.post(
       Uri.parse('${GCF_ENDPOINT}StripeDeleteBulk'),

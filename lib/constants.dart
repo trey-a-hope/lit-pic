@@ -8,7 +8,8 @@ const String timeFormat = 'MMM d, yyyy @ h:mm a';
 // const String SKU_UD = 'sku_GATEGxr1FwZMJQ';
 const String PRODUCT_ID = 'prod_JyZNMebQ8eAizv';
 const String PRICE_ID = 'price_1JKcEpGQvSy9RLmzKGyqcqy1';
-const String ADMIN_DOC_ID = 'K1WtTm2fMPfFoiA93uYeUR3sijB2';
+const String ADMIN_DOC_ID = '9eYRkVnBtHZy7woXS8ViDcm9HQh1';
+const String ADMIN_CUSTOMER_ID = 'cus_K6G6GifxAHNOZP';
 
 const String STRIPE_SUCCESS_URL =
     'https://litpic-f293c.web.app/payment-success';

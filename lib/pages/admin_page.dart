@@ -8,6 +8,7 @@ import 'package:litpic/services/stripe_customer_service.dart';
 import 'package:litpic/views/list_tile_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+import '../constants.dart';
 import '../service_locator.dart';
 
 class AdminPage extends StatefulWidget {
@@ -117,7 +118,7 @@ class _AdminPageState extends State<AdminPage> with TickerProviderStateMixin {
           subTitle: 'Perminently delete all Stripe customers.',
           onTap: () async {
             await locator<StripeCustomerService>()
-                .deleteBulk(limit: 20, customerIdOfAdmin: 'cus_K5DlHxxlZKYZOf');
+                .deleteBulk(limit: 20, customerIdOfAdmin: ADMIN_CUSTOMER_ID);
           },
         ),
       );

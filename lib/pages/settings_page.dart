@@ -73,36 +73,6 @@ class _SettingsPageState extends State<SettingsPage>
       addAllListDataComplete = true;
       int count = 3;
 
-      //TODO: Add back in Admin.
-      // if (_currentUser.uid == ADMIN_DOC_ID) {
-      //   listViews.add(
-      //     ListTileView(
-      //       animationController: animationController,
-      //       animation: Tween(begin: 0.0, end: 1.0).animate(
-      //         CurvedAnimation(
-      //           parent: animationController,
-      //           curve:
-      //               Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn),
-      //         ),
-      //       ),
-      //       icon: Icon(
-      //         MdiIcons.security,
-      //         color: iconColor,
-      //       ),
-      //       title: 'Admin',
-      //       subTitle: 'Do admin things.',
-      //       onTap: () async {
-      //         Navigator.push(
-      //           context,
-      //           MaterialPageRoute(builder: (_) {
-      //             return AdminPage(animationController: animationController);
-      //           }),
-      //         );
-      //       },
-      //     ),
-      //   );
-      // }
-
       //Go To Website
       listViews.add(
         ListTileView(
