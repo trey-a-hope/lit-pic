@@ -6,7 +6,7 @@ const admin = require('firebase-admin');
 exports.payments = functions.https.onRequest(async (request, response) => {
     let sig = request.headers['stripe-signature'];
 
-    const ADMIN_DOC_ID = '5ztYxwc2L9ZbM8UCDRnVmGC1J6N2';
+    const ADMIN_DOC_ID = 'wwiQQDkGoFN3mzDm664JW8NrT6B3';
 
     try {
         let event = stripe.webhooks.constructEvent(request.rawBody, sig, env.webhooks.payments.endpoint_secret);
