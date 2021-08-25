@@ -5,7 +5,6 @@ const String GCF_ENDPOINT =
 
 const String timeFormat = 'MMM d, yyyy @ h:mm a';
 
-// const String SKU_UD = 'sku_GATEGxr1FwZMJQ';
 const String PRODUCT_ID = 'prod_JyZNMebQ8eAizv';
 const String PRICE_ID = 'price_1JKcEpGQvSy9RLmzKGyqcqy1';
 const String ADMIN_DOC_ID = 'wwiQQDkGoFN3mzDm664JW8NrT6B3';
@@ -14,6 +13,8 @@ const String ADMIN_CUSTOMER_ID = 'cus_K6GEGXzW4O41HC';
 const String STRIPE_SUCCESS_URL =
     'https://litpic-f293c.web.app/payment-success';
 const String STRIPE_CANCEL_URL = 'https://litpic-f293c.web.app/payment-cancel';
+
+const String COMPANY_EMAIL = 'mylitpic.3d@gmail.com';
 
 //These are set in main().
 late String version;
