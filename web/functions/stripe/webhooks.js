@@ -31,12 +31,12 @@ exports.payments = functions.https.onRequest(async (request, response) => {
                     modified: Date.now(),
                 };
 
-                var orderDoc = await admin.firestore().collection('Orders').doc();
+                var orderDoc = await admin.firestore().collection('orders').doc();
                 order['id'] = orderDoc.id;
-                await admin.firestore().collection('Orders').doc(order['id']).set(order);
+                await admin.firestore().collection('orders').doc(order['id']).set(order);
 
                 //Clear shopping cart for this user.
-                var usersDB = admin.firestore().collection('Users');
+                var usersDB = admin.firestore().collection('users');
 
                 var customerQuerySnap = await usersDB.where('customerID', '==', customerID).get();
 
@@ -53,7 +53,7 @@ exports.payments = functions.https.onRequest(async (request, response) => {
                 await batch.commit();
 
                 //Send notification to admin of new order.
-                var adminDoc = await admin.firestore().collection('Users').doc(ADMIN_DOC_ID).get();
+                var adminDoc = await admin.firestore().collection('users').doc(ADMIN_DOC_ID).get();
 
                 var payload = {
                     notification: {
