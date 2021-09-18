@@ -11,7 +11,7 @@ const env = functions.config();
 exports.retrieve = functions.https.onRequest((request, response) => {
     const customerID = request.body.customerID;
 
-    return stripe(env.stripe.test.secret_key).customers.retrieve(customerID, (err, charge) => {
+    return stripe(env.stripe.live.secret_key).customers.retrieve(customerID, (err, charge) => {
         if (err) {
             response.send(err);
         } else {
@@ -36,7 +36,7 @@ exports.list = functions.https.onRequest(async (request, response) => {
             params['limit'] = limit;
         }
 
-        const customersData = await stripe(env.stripe.test.secret_key).customers.list(params);
+        const customersData = await stripe(env.stripe.live.secret_key).customers.list(params);
 
         response.send(customersData);
     } catch (err) {
@@ -69,7 +69,7 @@ exports.create = functions.https.onRequest((request, response) => {
         data['name'] = name
     }
 
-    return stripe(env.stripe.test.secret_key).customers.create(data, (err, customer) => {
+    return stripe(env.stripe.live.secret_key).customers.create(data, (err, customer) => {
         if (err) {
             response.send(err);
         } else {
@@ -131,7 +131,7 @@ exports.update = functions.https.onRequest((request, response) => {
         data['default_source'] = default_source
     }
 
-    return stripe(env.stripe.test.secret_key).customers.update(customerID,
+    return stripe(env.stripe.live.secret_key).customers.update(customerID,
         data, (err, customer) => {
             if (err) {
                 response.send(err);
@@ -150,7 +150,7 @@ exports.update = functions.https.onRequest((request, response) => {
 exports.delete = functions.https.onRequest((request, response) => {
     const customerID = request.body.customerID;
 
-    return stripe(env.stripe.test.secret_key).customers.del(customerID, (err, confirmation) => {
+    return stripe(env.stripe.live.secret_key).customers.del(customerID, (err, confirmation) => {
         if (err) {
             response.send(err);
         } else {
@@ -175,14 +175,14 @@ exports.deleteBulk = functions.https.onRequest(async (request, response) => {
             params['limit'] = limit;
         }
 
-        const customersData = await stripe(env.stripe.test.secret_key).customers.list(params);
+        const customersData = await stripe(env.stripe.live.secret_key).customers.list(params);
 
         var promises = [];
 
         for (var i = 0; i < customersData['data'].length; i++) {
             var customer = customersData['data'][i];
             if (customer['id' !== customerIdOfAdmin])
-                promises.push(stripe(env.stripe.test.secret_key).customers.del(customer['id']));
+                promises.push(stripe(env.stripe.live.secret_key).customers.del(customer['id']));
         }
 
         await Promise.all(promises);

@@ -20,7 +20,7 @@ exports.create = functions.https.onRequest((request, response) => {
     const token = request.body.token;
 
 
-    return stripe(env.stripe.test.secret_key).customers.createSource(
+    return stripe(env.stripe.live.secret_key).customers.createSource(
         customerID,
         {
             source: token,
@@ -55,7 +55,7 @@ exports.delete = functions.https.onRequest((request, response) => {
     const cardID = request.body.cardID;
 
 
-    return stripe(env.stripe.test.secret_key).customers.deleteSource(
+    return stripe(env.stripe.live.secret_key).customers.deleteSource(
         customerID,
         cardID, 
         (err, charge) => {

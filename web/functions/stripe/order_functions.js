@@ -14,7 +14,7 @@ exports.create = functions.https.onRequest((request, response) => {
     const itemQuantity = request.body.itemQuantity;
     const metadata = request.body.metadata;
 
-    return stripe(env.stripe.test.secret_key).orders.create(
+    return stripe(env.stripe.live.secret_key).orders.create(
         {
             currency: 'usd',
             customer: customerID,
@@ -46,7 +46,7 @@ exports.list = functions.https.onRequest((request, response) => {
     const customerID = request.body.customerID;
     const status = request.body.status;
 
-    return stripe(env.stripe.test.secret_key).orders.list(
+    return stripe(env.stripe.live.secret_key).orders.list(
         {
             customer: customerID,
             status: status,
@@ -72,7 +72,7 @@ exports.update = functions.https.onRequest((request, response) => {
     const carrier = request.body.carrier;
     const tracking_number = request.body.tracking_number;
 
-    return stripe(env.stripe.test.secret_key).orders.update(
+    return stripe(env.stripe.live.secret_key).orders.update(
         orderID,
         {
             status: status,
@@ -101,7 +101,7 @@ exports.pay = functions.https.onRequest((request, response) => {
     const source = request.body.source;
     const customerID = request.body.customerID;
 
-    return stripe(env.stripe.test.secret_key).orders.pay(
+    return stripe(env.stripe.live.secret_key).orders.pay(
         orderID,
         {
             source: source,

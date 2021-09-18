@@ -6,7 +6,7 @@ const admin = require('firebase-admin');
 exports.payments = functions.https.onRequest(async (request, response) => {
     let sig = request.headers['stripe-signature'];
 
-    const ADMIN_DOC_ID = 'wwiQQDkGoFN3mzDm664JW8NrT6B3';
+    const ADMIN_DOC_ID = 'pL8uH0SUszdavxI7MyQAfF67aIQ2';
 
     try {
         let event = stripe.webhooks.constructEvent(request.rawBody, sig, env.webhooks.payments.endpoint_secret);
@@ -18,7 +18,7 @@ exports.payments = functions.https.onRequest(async (request, response) => {
                 var sessionID = session['id'];
                 var customerID = session['customer'];
 
-                var customer = await stripe(env.stripe.test.secret_key).customers.retrieve(customerID);
+                var customer = await stripe(env.stripe.live.secret_key).customers.retrieve(customerID);
 
                 var order = {
                     sessionID: sessionID,

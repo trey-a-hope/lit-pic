@@ -11,7 +11,7 @@ const env = functions.config();
 exports.retrieve = functions.https.onRequest((request, response) => {
     const chargeID = request.body.chargeID;
 
-    return stripe(env.stripe.test.secret_key).charges.retrieve(chargeID, (err, charge) => {
+    return stripe(env.stripe.live.secret_key).charges.retrieve(chargeID, (err, charge) => {
         if (err) {
             response.send(err);
         } else {
@@ -32,7 +32,7 @@ exports.create = functions.https.onRequest((request, response) => {
     const description = request.body.description;
     const customerID = request.body.customerID;
 
-    return stripe(env.stripe.test.secret_key).charges.create({
+    return stripe(env.stripe.live.secret_key).charges.create({
         amount: amount,
         currency: "usd",
         customer: customerID,
@@ -56,7 +56,7 @@ exports.create = functions.https.onRequest((request, response) => {
 exports.listAll = functions.https.onRequest((request, response) => {
     const customerID = request.body.customerID;
 
-    return stripe(env.stripe.test.secret_key).charges.list({ customer: customerID }, (err, charge) => {
+    return stripe(env.stripe.live.secret_key).charges.list({ customer: customerID }, (err, charge) => {
         if (err) {
             response.send(err);
         } else {

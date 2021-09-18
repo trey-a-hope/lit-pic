@@ -5,10 +5,10 @@ const String GCF_ENDPOINT =
 
 const String timeFormat = 'MMM d, yyyy @ h:mm a';
 
-const String PRODUCT_ID = 'prod_JyZNMebQ8eAizv';
-const String PRICE_ID = 'price_1JKcEpGQvSy9RLmzKGyqcqy1';
-const String ADMIN_DOC_ID = 'wwiQQDkGoFN3mzDm664JW8NrT6B3';
-const String ADMIN_CUSTOMER_ID = 'cus_K6GEGXzW4O41HC';
+const String PRODUCT_ID = 'prod_JyaKXAONu5JPSw';
+const String PRICE_ID = 'price_1JKd9YGQvSy9RLmzjiMUFhOA';
+const String ADMIN_DOC_ID = 'pL8uH0SUszdavxI7MyQAfF67aIQ2';
+const String ADMIN_CUSTOMER_ID = 'cus_KFgyvvrLOitujf';
 
 const String STRIPE_SUCCESS_URL =
     'https://litpic-f293c.web.app/payment-success';

@@ -22,7 +22,7 @@ exports.create = functions.https.onRequest((request, response) => {
     const exp_year = request.body.exp_year;
     const cvc = request.body.cvc;
 
-    return stripe(env.stripe.test.secret_key).tokens.create(
+    return stripe(env.stripe.live.secret_key).tokens.create(
         {
             card: {
                 number: number,

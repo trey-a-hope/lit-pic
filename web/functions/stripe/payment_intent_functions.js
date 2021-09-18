@@ -6,7 +6,7 @@ exports.retrieve = functions.https.onRequest(async (request, response) => {
     const paymentIntentID = request.body.paymentIntentID;
 
     try {
-        const paymentIntent = await stripe(env.stripe.test.secret_key).paymentIntents.retrieve(
+        const paymentIntent = await stripe(env.stripe.live.secret_key).paymentIntents.retrieve(
             paymentIntentID,
         );
         response.send(paymentIntent);

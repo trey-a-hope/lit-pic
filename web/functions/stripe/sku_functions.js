@@ -10,7 +10,7 @@ const env = functions.config();
 exports.retrieve = functions.https.onRequest((request, response) => {
     const skuID = request.body.skuID;
 
-    return stripe(env.stripe.test.secret_key).skus.retrieve(
+    return stripe(env.stripe.live.secret_key).skus.retrieve(
         skuID,
         (err, sku) => {
             if (err) {

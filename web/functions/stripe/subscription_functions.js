@@ -11,7 +11,7 @@ exports.create = functions.https.onRequest((request, response) => {
     const customerID = request.body.customerID;
     const plan = request.body.plan;
 
-    return stripe(env.stripe.test.secret_key).subscriptions.create(
+    return stripe(env.stripe.live.secret_key).subscriptions.create(
         {
             customer: customerID,
             items: [

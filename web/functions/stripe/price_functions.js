@@ -9,7 +9,7 @@ const env = functions.config();
 exports.retrieve = functions.https.onRequest((request, response) => {
     const priceID = request.body.priceID;
 
-    return stripe(env.stripe.test.secret_key).prices.retrieve(
+    return stripe(env.stripe.live.secret_key).prices.retrieve(
         priceID, (err, price) => {
             if (err) {
                 response.send(err);

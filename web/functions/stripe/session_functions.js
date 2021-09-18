@@ -8,7 +8,7 @@ exports.create = functions.https.onRequest((request, response) => {
     const customer = request.body.customer;
     const line_items = request.body.line_items;
 
-    return stripe(env.stripe.test.secret_key).checkout.sessions.create(
+    return stripe(env.stripe.live.secret_key).checkout.sessions.create(
         {
             success_url: success_url,
             cancel_url: cancel_url,
@@ -28,7 +28,7 @@ exports.create = functions.https.onRequest((request, response) => {
 exports.retrieve = functions.https.onRequest((request, response) => {
     const sessionID = request.body.sessionID;
 
-    return stripe(env.stripe.test.secret_key).checkout.sessions.retrieve(
+    return stripe(env.stripe.live.secret_key).checkout.sessions.retrieve(
         sessionID, (err, session) => {
             if (err) {
                 response.send(err);
@@ -41,7 +41,7 @@ exports.retrieve = functions.https.onRequest((request, response) => {
 exports.list = functions.https.onRequest((request, response) => {
     const limit = request.body.limit;
 
-    return stripe(env.stripe.test.secret_key).checkout.sessions.list(
+    return stripe(env.stripe.live.secret_key).checkout.sessions.list(
         {
             limit: limit,
         }, (err, sessions) => {

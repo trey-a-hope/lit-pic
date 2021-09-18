@@ -11,7 +11,7 @@ exports.retrieve = functions.https.onRequest((request, response) => {
     const apiKey = request.body.apiKey;
     const couponID = request.body.couponID;
 
-    return stripe(env.stripe.test.secret_key).coupons.retrieve(
+    return stripe(env.stripe.live.secret_key).coupons.retrieve(
         couponID,
         (err, coupon) => {
             if (err) {

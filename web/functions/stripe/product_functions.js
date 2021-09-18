@@ -11,7 +11,7 @@ exports.create = functions.https.onRequest((request, response) => {
     const name = request.body.name;
     const type = request.body.type;
 
-    return stripe(env.stripe.test.secret_key).products.create(
+    return stripe(env.stripe.live.secret_key).products.create(
         {
             name: name,
             type: type,
@@ -29,7 +29,7 @@ exports.create = functions.https.onRequest((request, response) => {
 exports.retrieve = functions.https.onRequest((request, response) => {
     const prodID = request.body.prodID;
 
-    return stripe(env.stripe.test.secret_key).products.retrieve(
+    return stripe(env.stripe.live.secret_key).products.retrieve(
         prodID, (err, product) => {
             if (err) {
                 response.send(err);
